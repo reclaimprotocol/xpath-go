@@ -1,0 +1,3002 @@
+{
+  "total": 38,
+  "passed": 0,
+  "failed": 38,
+  "compatibility": "0.0",
+  "details": [
+    {
+      "name": "Basic element selection",
+      "xpath": "//div",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Hello",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Hello",
+            "startLocation": 12,
+            "endLocation": 28,
+            "path": "/#document/html/body[2]/div[1]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Hello",
+            "node_name": "div",
+            "node_type": 1,
+            "start_location": 12,
+            "end_location": 28,
+            "path": "/#document/html/body/div[2]",
+            "text_content": "Hello"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"div\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": "Hello",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Hello",
+            "startLocation": 12,
+            "endLocation": 28,
+            "path": "/#document/html/body[2]/div[1]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Hello",
+            "node_name": "div",
+            "node_type": 1,
+            "start_location": 12,
+            "end_location": 28,
+            "path": "/#document/html/body/div[2]",
+            "text_content": "Hello"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Root element selection",
+      "xpath": "/html",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "TestContent",
+            "nodeName": "html",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "TestContent",
+            "startLocation": 0,
+            "endLocation": 76,
+            "path": "/#document/html"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "node_name": "html",
+            "node_type": 1,
+            "start_location": 0,
+            "end_location": 76,
+            "path": "/#document/html[2]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"html\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": "TestContent",
+            "nodeName": "html",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "TestContent",
+            "startLocation": 0,
+            "endLocation": 76,
+            "path": "/#document/html"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "",
+            "node_name": "html",
+            "node_type": 1,
+            "start_location": 0,
+            "end_location": 76,
+            "path": "/#document/html[2]"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Child element selection",
+      "xpath": "/html/body/p",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Top level",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Top level",
+            "startLocation": 36,
+            "endLocation": 52,
+            "path": "/#document/html/body[2]/p[2]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Top level",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 36,
+            "end_location": 52,
+            "path": "/#document/html/body/p[2]",
+            "text_content": "Top level"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"p\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": "Top level",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Top level",
+            "startLocation": 36,
+            "endLocation": 52,
+            "path": "/#document/html/body[2]/p[2]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Top level",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 36,
+            "end_location": 52,
+            "path": "/#document/html/body/p[2]",
+            "text_content": "Top level"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Attribute selection",
+      "xpath": "//div[@id='test']",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Content",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "id": "test",
+              "class": "highlight"
+            },
+            "textContent": "Content",
+            "startLocation": 12,
+            "endLocation": 58,
+            "path": "/#document/html/body[2]/div[@id='test']"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Content",
+            "node_name": "div",
+            "node_type": 1,
+            "attributes": {
+              "class": "highlight",
+              "id": "test"
+            },
+            "start_location": 12,
+            "end_location": 58,
+            "path": "/#document/html/body/div[3]",
+            "text_content": "Content"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"div\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": "Content",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "id": "test",
+              "class": "highlight"
+            },
+            "textContent": "Content",
+            "startLocation": 12,
+            "endLocation": 58,
+            "path": "/#document/html/body[2]/div[@id='test']"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Content",
+            "node_name": "div",
+            "node_type": 1,
+            "attributes": {
+              "class": "highlight",
+              "id": "test"
+            },
+            "start_location": 12,
+            "end_location": 58,
+            "path": "/#document/html/body/div[3]",
+            "text_content": "Content"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Attribute existence",
+      "xpath": "//div[@id]",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "With ID",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "id": "test"
+            },
+            "textContent": "With ID",
+            "startLocation": 12,
+            "endLocation": 40,
+            "path": "/#document/html/body[2]/div[@id='test']"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "With ID",
+            "node_name": "div",
+            "node_type": 1,
+            "attributes": {
+              "id": "test"
+            },
+            "start_location": 12,
+            "end_location": 40,
+            "path": "/#document/html/body/div[3]",
+            "text_content": "With ID"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"div\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": "With ID",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "id": "test"
+            },
+            "textContent": "With ID",
+            "startLocation": 12,
+            "endLocation": 40,
+            "path": "/#document/html/body[2]/div[@id='test']"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "With ID",
+            "node_name": "div",
+            "node_type": 1,
+            "attributes": {
+              "id": "test"
+            },
+            "start_location": 12,
+            "end_location": 40,
+            "path": "/#document/html/body/div[3]",
+            "text_content": "With ID"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Multiple attribute selection",
+      "xpath": "//div[@id and @class]",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Both",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "id": "test",
+              "class": "highlight"
+            },
+            "textContent": "Both",
+            "startLocation": 12,
+            "endLocation": 55,
+            "path": "/#document/html/body[2]/div[@id='test']"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [],
+        "count": 0,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Count mismatch: JS=1, Go=0",
+        "jsResults": [
+          {
+            "value": "Both",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "id": "test",
+              "class": "highlight"
+            },
+            "textContent": "Both",
+            "startLocation": 12,
+            "endLocation": 55,
+            "path": "/#document/html/body[2]/div[@id='test']"
+          }
+        ],
+        "goResults": []
+      }
+    },
+    {
+      "name": "Text content selection",
+      "xpath": "//p[text()='Second']",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Second",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Second",
+            "startLocation": 24,
+            "endLocation": 37,
+            "path": "/#document/html/body[2]/p[2]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Second",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 24,
+            "end_location": 37,
+            "path": "/#document/html/body/p[4]",
+            "text_content": "Second"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"p\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": "Second",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Second",
+            "startLocation": 24,
+            "endLocation": 37,
+            "path": "/#document/html/body[2]/p[2]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Second",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 24,
+            "end_location": 37,
+            "path": "/#document/html/body/p[4]",
+            "text_content": "Second"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Text content existence",
+      "xpath": "//p[text()]",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Has text",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Has text",
+            "startLocation": 12,
+            "endLocation": 27,
+            "path": "/#document/html/body[2]/p[1]"
+          },
+          {
+            "value": "Also has text",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Also has text",
+            "startLocation": 34,
+            "endLocation": 54,
+            "path": "/#document/html/body[2]/p[3]"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Has text",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 12,
+            "end_location": 27,
+            "path": "/#document/html/body/p[4]",
+            "text_content": "Has text"
+          },
+          {
+            "value": "Also has text",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 34,
+            "end_location": 54,
+            "path": "/#document/html/body/p[4]",
+            "text_content": "Also has text"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"p\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": "Has text",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Has text",
+            "startLocation": 12,
+            "endLocation": 27,
+            "path": "/#document/html/body[2]/p[1]"
+          },
+          {
+            "value": "Also has text",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Also has text",
+            "startLocation": 34,
+            "endLocation": 54,
+            "path": "/#document/html/body[2]/p[3]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Has text",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 12,
+            "end_location": 27,
+            "path": "/#document/html/body/p[4]",
+            "text_content": "Has text"
+          },
+          {
+            "value": "Also has text",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 34,
+            "end_location": 54,
+            "path": "/#document/html/body/p[4]",
+            "text_content": "Also has text"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Contains text function",
+      "xpath": "//p[contains(text(), 'quick')]",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "The quick brown fox",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "The quick brown fox",
+            "startLocation": 12,
+            "endLocation": 38,
+            "path": "/#document/html/body[2]/p[1]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [],
+        "count": 0,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Count mismatch: JS=1, Go=0",
+        "jsResults": [
+          {
+            "value": "The quick brown fox",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "The quick brown fox",
+            "startLocation": 12,
+            "endLocation": 38,
+            "path": "/#document/html/body[2]/p[1]"
+          }
+        ],
+        "goResults": []
+      }
+    },
+    {
+      "name": "Position-based selection",
+      "xpath": "//li[position()=2]",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Item 2",
+            "nodeName": "li",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Item 2",
+            "startLocation": 31,
+            "endLocation": 46,
+            "path": "/#document/html/body[2]/ul/li[2]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Item 2",
+            "node_name": "li",
+            "node_type": 1,
+            "start_location": 31,
+            "end_location": 46,
+            "path": "/#document/html/body/ul/li[4]",
+            "text_content": "Item 2"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"li\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": "Item 2",
+            "nodeName": "li",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Item 2",
+            "startLocation": 31,
+            "endLocation": 46,
+            "path": "/#document/html/body[2]/ul/li[2]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Item 2",
+            "node_name": "li",
+            "node_type": 1,
+            "start_location": 31,
+            "end_location": 46,
+            "path": "/#document/html/body/ul/li[4]",
+            "text_content": "Item 2"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Last position selection",
+      "xpath": "//li[last()]",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Last",
+            "nodeName": "li",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Last",
+            "startLocation": 45,
+            "endLocation": 58,
+            "path": "/#document/html/body[2]/ul/li[3]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Last",
+            "node_name": "li",
+            "node_type": 1,
+            "start_location": 45,
+            "end_location": 58,
+            "path": "/#document/html/body/ul/li[4]",
+            "text_content": "Last"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"li\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": "Last",
+            "nodeName": "li",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Last",
+            "startLocation": 45,
+            "endLocation": 58,
+            "path": "/#document/html/body[2]/ul/li[3]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Last",
+            "node_name": "li",
+            "node_type": 1,
+            "start_location": 45,
+            "end_location": 58,
+            "path": "/#document/html/body/ul/li[4]",
+            "text_content": "Last"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Numeric position selection",
+      "xpath": "//li[3]",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Three",
+            "nodeName": "li",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Three",
+            "startLocation": 40,
+            "endLocation": 54,
+            "path": "/#document/html/body[2]/ol/li[3]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Three",
+            "node_name": "li",
+            "node_type": 1,
+            "start_location": 40,
+            "end_location": 54,
+            "path": "/#document/html/body/ol/li[5]",
+            "text_content": "Three"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"li\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": "Three",
+            "nodeName": "li",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Three",
+            "startLocation": 40,
+            "endLocation": 54,
+            "path": "/#document/html/body[2]/ol/li[3]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Three",
+            "node_name": "li",
+            "node_type": 1,
+            "start_location": 40,
+            "end_location": 54,
+            "path": "/#document/html/body/ol/li[5]",
+            "text_content": "Three"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Descendant axis",
+      "xpath": "//div//a",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Link",
+            "nodeName": "a",
+            "nodeType": 1,
+            "attributes": {
+              "href": "#"
+            },
+            "textContent": "Link",
+            "startLocation": 23,
+            "endLocation": 43,
+            "path": "/#document/html/body[2]/div[1]/span/a"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Link",
+            "node_name": "a",
+            "node_type": 1,
+            "attributes": {
+              "href": "#"
+            },
+            "start_location": 23,
+            "end_location": 43,
+            "path": "/#document/html/body/div/span/a[2]",
+            "text_content": "Link"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"a\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": "Link",
+            "nodeName": "a",
+            "nodeType": 1,
+            "attributes": {
+              "href": "#"
+            },
+            "textContent": "Link",
+            "startLocation": 23,
+            "endLocation": 43,
+            "path": "/#document/html/body[2]/div[1]/span/a"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Link",
+            "node_name": "a",
+            "node_type": 1,
+            "attributes": {
+              "href": "#"
+            },
+            "start_location": 23,
+            "end_location": 43,
+            "path": "/#document/html/body/div/span/a[2]",
+            "text_content": "Link"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Parent axis",
+      "xpath": "//p[@id='child']/parent::div",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Child",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Child",
+            "startLocation": 12,
+            "endLocation": 46,
+            "path": "/#document/html/body[2]/div"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "node_name": "div",
+            "node_type": 1,
+            "start_location": 12,
+            "end_location": 46,
+            "path": "/#document/html/body/div[2]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"div\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": "Child",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Child",
+            "startLocation": 12,
+            "endLocation": 46,
+            "path": "/#document/html/body[2]/div"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "",
+            "node_name": "div",
+            "node_type": 1,
+            "start_location": 12,
+            "end_location": 46,
+            "path": "/#document/html/body/div[2]"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Following sibling axis",
+      "xpath": "//h1/following-sibling::p",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "First para",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "First para",
+            "startLocation": 31,
+            "endLocation": 48,
+            "path": "/#document/html/body[2]/div/p[2]"
+          },
+          {
+            "value": "Second para",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Second para",
+            "startLocation": 48,
+            "endLocation": 66,
+            "path": "/#document/html/body[2]/div/p[3]"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "First para",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 31,
+            "end_location": 48,
+            "path": "/#document/html/body/div/p[3]",
+            "text_content": "First para"
+          },
+          {
+            "value": "Second para",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 48,
+            "end_location": 66,
+            "path": "/#document/html/body/div/p[3]",
+            "text_content": "Second para"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"p\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": "First para",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "First para",
+            "startLocation": 31,
+            "endLocation": 48,
+            "path": "/#document/html/body[2]/div/p[2]"
+          },
+          {
+            "value": "Second para",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Second para",
+            "startLocation": 48,
+            "endLocation": 66,
+            "path": "/#document/html/body[2]/div/p[3]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "First para",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 31,
+            "end_location": 48,
+            "path": "/#document/html/body/div/p[3]",
+            "text_content": "First para"
+          },
+          {
+            "value": "Second para",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 48,
+            "end_location": 66,
+            "path": "/#document/html/body/div/p[3]",
+            "text_content": "Second para"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Preceding sibling axis",
+      "xpath": "//h2/preceding-sibling::p",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Before",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Before",
+            "startLocation": 17,
+            "endLocation": 30,
+            "path": "/#document/html/body[2]/div/p[1]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Before",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 17,
+            "end_location": 30,
+            "path": "/#document/html/body/div/p[3]",
+            "text_content": "Before"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"p\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": "Before",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Before",
+            "startLocation": 17,
+            "endLocation": 30,
+            "path": "/#document/html/body[2]/div/p[1]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Before",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 17,
+            "end_location": 30,
+            "path": "/#document/html/body/div/p[3]",
+            "text_content": "Before"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Self axis",
+      "xpath": "//div[@id='target']/self::div",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Self",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "id": "target"
+            },
+            "textContent": "Self",
+            "startLocation": 12,
+            "endLocation": 39,
+            "path": "/#document/html/body[2]/div[@id='target']"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Self",
+            "node_name": "div",
+            "node_type": 1,
+            "attributes": {
+              "id": "target"
+            },
+            "start_location": 12,
+            "end_location": 39,
+            "path": "/#document/html/body/div[2]",
+            "text_content": "Self"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"div\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": "Self",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "id": "target"
+            },
+            "textContent": "Self",
+            "startLocation": 12,
+            "endLocation": 39,
+            "path": "/#document/html/body[2]/div[@id='target']"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Self",
+            "node_name": "div",
+            "node_type": 1,
+            "attributes": {
+              "id": "target"
+            },
+            "start_location": 12,
+            "end_location": 39,
+            "path": "/#document/html/body/div[2]",
+            "text_content": "Self"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Complex predicate with OR",
+      "xpath": "//div[@class='red' or @class='blue']",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Red",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "red"
+            },
+            "textContent": "Red",
+            "startLocation": 12,
+            "endLocation": 38,
+            "path": "/#document/html/body[2]/div[@class='red']"
+          },
+          {
+            "value": "Blue",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "blue"
+            },
+            "textContent": "Blue",
+            "startLocation": 38,
+            "endLocation": 66,
+            "path": "/#document/html/body[2]/div[@class='blue']"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [],
+        "count": 0,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Count mismatch: JS=2, Go=0",
+        "jsResults": [
+          {
+            "value": "Red",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "red"
+            },
+            "textContent": "Red",
+            "startLocation": 12,
+            "endLocation": 38,
+            "path": "/#document/html/body[2]/div[@class='red']"
+          },
+          {
+            "value": "Blue",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "blue"
+            },
+            "textContent": "Blue",
+            "startLocation": 38,
+            "endLocation": 66,
+            "path": "/#document/html/body[2]/div[@class='blue']"
+          }
+        ],
+        "goResults": []
+      }
+    },
+    {
+      "name": "Multiple predicates",
+      "xpath": "//div[@id='test'][@class='active']",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Target",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "id": "test",
+              "class": "active"
+            },
+            "textContent": "Target",
+            "startLocation": 12,
+            "endLocation": 54,
+            "path": "/#document/html/body[2]/div[@id='test']"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Target",
+            "node_name": "div",
+            "node_type": 1,
+            "attributes": {
+              "class": "active",
+              "id": "test"
+            },
+            "start_location": 12,
+            "end_location": 54,
+            "path": "/#document/html/body/div[4]",
+            "text_content": "Target"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"div\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": "Target",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "id": "test",
+              "class": "active"
+            },
+            "textContent": "Target",
+            "startLocation": 12,
+            "endLocation": 54,
+            "path": "/#document/html/body[2]/div[@id='test']"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Target",
+            "node_name": "div",
+            "node_type": 1,
+            "attributes": {
+              "class": "active",
+              "id": "test"
+            },
+            "start_location": 12,
+            "end_location": 54,
+            "path": "/#document/html/body/div[4]",
+            "text_content": "Target"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Nested predicates",
+      "xpath": "//li[span[text()='Second']]",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Second",
+            "nodeName": "li",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Second",
+            "startLocation": 43,
+            "endLocation": 71,
+            "path": "/#document/html/body[2]/ul/li[2]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "node_name": "li",
+            "node_type": 1,
+            "start_location": 16,
+            "end_location": 43,
+            "path": "/#document/html/body/ul/li[3]"
+          },
+          {
+            "value": "",
+            "node_name": "li",
+            "node_type": 1,
+            "start_location": 43,
+            "end_location": 71,
+            "path": "/#document/html/body/ul/li[3]"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Count mismatch: JS=1, Go=2",
+        "jsResults": [
+          {
+            "value": "Second",
+            "nodeName": "li",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Second",
+            "startLocation": 43,
+            "endLocation": 71,
+            "path": "/#document/html/body[2]/ul/li[2]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "",
+            "node_name": "li",
+            "node_type": 1,
+            "start_location": 16,
+            "end_location": 43,
+            "path": "/#document/html/body/ul/li[3]"
+          },
+          {
+            "value": "",
+            "node_name": "li",
+            "node_type": 1,
+            "start_location": 43,
+            "end_location": 71,
+            "path": "/#document/html/body/ul/li[3]"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Wildcard element selection",
+      "xpath": "//*",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "DivParaSpan",
+            "nodeName": "html",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "DivParaSpan",
+            "startLocation": 0,
+            "endLocation": 68,
+            "path": "/#document/html"
+          },
+          {
+            "value": "",
+            "nodeName": "head",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "",
+            "startLocation": 0,
+            "endLocation": 0,
+            "path": "/#document/html/head[1]"
+          },
+          {
+            "value": "DivParaSpan",
+            "nodeName": "body",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "DivParaSpan",
+            "startLocation": 6,
+            "endLocation": 61,
+            "path": "/#document/html/body[2]"
+          },
+          {
+            "value": "Div",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Div",
+            "startLocation": 12,
+            "endLocation": 26,
+            "path": "/#document/html/body[2]/div[1]"
+          },
+          {
+            "value": "Para",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Para",
+            "startLocation": 26,
+            "endLocation": 37,
+            "path": "/#document/html/body[2]/p[2]"
+          },
+          {
+            "value": "Span",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Span",
+            "startLocation": 37,
+            "endLocation": 54,
+            "path": "/#document/html/body[2]/span[3]"
+          }
+        ],
+        "count": 6,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [],
+        "count": 0,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Count mismatch: JS=6, Go=0",
+        "jsResults": [
+          {
+            "value": "DivParaSpan",
+            "nodeName": "html",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "DivParaSpan",
+            "startLocation": 0,
+            "endLocation": 68,
+            "path": "/#document/html"
+          },
+          {
+            "value": "",
+            "nodeName": "head",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "",
+            "startLocation": 0,
+            "endLocation": 0,
+            "path": "/#document/html/head[1]"
+          },
+          {
+            "value": "DivParaSpan",
+            "nodeName": "body",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "DivParaSpan",
+            "startLocation": 6,
+            "endLocation": 61,
+            "path": "/#document/html/body[2]"
+          },
+          {
+            "value": "Div",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Div",
+            "startLocation": 12,
+            "endLocation": 26,
+            "path": "/#document/html/body[2]/div[1]"
+          },
+          {
+            "value": "Para",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Para",
+            "startLocation": 26,
+            "endLocation": 37,
+            "path": "/#document/html/body[2]/p[2]"
+          },
+          {
+            "value": "Span",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Span",
+            "startLocation": 37,
+            "endLocation": 54,
+            "path": "/#document/html/body[2]/span[3]"
+          }
+        ],
+        "goResults": []
+      }
+    },
+    {
+      "name": "Wildcard with predicate",
+      "xpath": "//*[@class='highlight']",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Div",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "highlight"
+            },
+            "textContent": "Div",
+            "startLocation": 12,
+            "endLocation": 44,
+            "path": "/#document/html/body[2]/div[@class='highlight']"
+          },
+          {
+            "value": "Para",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "highlight"
+            },
+            "textContent": "Para",
+            "startLocation": 44,
+            "endLocation": 73,
+            "path": "/#document/html/body[2]/p[@class='highlight']"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [],
+        "count": 0,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Count mismatch: JS=2, Go=0",
+        "jsResults": [
+          {
+            "value": "Div",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "highlight"
+            },
+            "textContent": "Div",
+            "startLocation": 12,
+            "endLocation": 44,
+            "path": "/#document/html/body[2]/div[@class='highlight']"
+          },
+          {
+            "value": "Para",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "highlight"
+            },
+            "textContent": "Para",
+            "startLocation": 44,
+            "endLocation": 73,
+            "path": "/#document/html/body[2]/p[@class='highlight']"
+          }
+        ],
+        "goResults": []
+      }
+    },
+    {
+      "name": "Union expression",
+      "xpath": "//h1 | //h2",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Header",
+            "nodeName": "h1",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Header",
+            "startLocation": 12,
+            "endLocation": 27,
+            "path": "/#document/html/body[2]/h1[1]"
+          },
+          {
+            "value": "Subheader",
+            "nodeName": "h2",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Subheader",
+            "startLocation": 38,
+            "endLocation": 56,
+            "path": "/#document/html/body[2]/h2[3]"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Header",
+            "node_name": "h1",
+            "node_type": 1,
+            "start_location": 12,
+            "end_location": 27,
+            "path": "/#document/html/body/h1[2]",
+            "text_content": "Header"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Count mismatch: JS=2, Go=1",
+        "jsResults": [
+          {
+            "value": "Header",
+            "nodeName": "h1",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Header",
+            "startLocation": 12,
+            "endLocation": 27,
+            "path": "/#document/html/body[2]/h1[1]"
+          },
+          {
+            "value": "Subheader",
+            "nodeName": "h2",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Subheader",
+            "startLocation": 38,
+            "endLocation": 56,
+            "path": "/#document/html/body[2]/h2[3]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Header",
+            "node_name": "h1",
+            "node_type": 1,
+            "start_location": 12,
+            "end_location": 27,
+            "path": "/#document/html/body/h1[2]",
+            "text_content": "Header"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Attribute axis",
+      "xpath": "//div/@class",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "highlight",
+            "nodeName": "class",
+            "nodeType": 2,
+            "attributes": {},
+            "textContent": "highlight",
+            "startLocation": 0,
+            "endLocation": 0,
+            "path": "/class"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [],
+        "count": 0,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Count mismatch: JS=1, Go=0",
+        "jsResults": [
+          {
+            "value": "highlight",
+            "nodeName": "class",
+            "nodeType": 2,
+            "attributes": {},
+            "textContent": "highlight",
+            "startLocation": 0,
+            "endLocation": 0,
+            "path": "/class"
+          }
+        ],
+        "goResults": []
+      }
+    },
+    {
+      "name": "All attributes",
+      "xpath": "//input/@*",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "text",
+            "nodeName": "type",
+            "nodeType": 2,
+            "attributes": {},
+            "textContent": "text",
+            "startLocation": 0,
+            "endLocation": 0,
+            "path": "/type"
+          },
+          {
+            "value": "username",
+            "nodeName": "name",
+            "nodeType": 2,
+            "attributes": {},
+            "textContent": "username",
+            "startLocation": 0,
+            "endLocation": 0,
+            "path": "/name"
+          },
+          {
+            "value": "",
+            "nodeName": "required",
+            "nodeType": 2,
+            "attributes": {},
+            "textContent": "",
+            "startLocation": 0,
+            "endLocation": 0,
+            "path": "/required"
+          }
+        ],
+        "count": 3,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "node_name": "required",
+            "node_type": 2,
+            "start_location": 12,
+            "end_location": 12,
+            "path": "/#document/html/body/input/required"
+          },
+          {
+            "value": "text",
+            "node_name": "type",
+            "node_type": 2,
+            "start_location": 12,
+            "end_location": 12,
+            "path": "/#document/html/body/input/type",
+            "text_content": "text"
+          },
+          {
+            "value": "username",
+            "node_name": "name",
+            "node_type": 2,
+            "start_location": 12,
+            "end_location": 12,
+            "path": "/#document/html/body/input/name",
+            "text_content": "username"
+          }
+        ],
+        "count": 3,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"type\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": "text",
+            "nodeName": "type",
+            "nodeType": 2,
+            "attributes": {},
+            "textContent": "text",
+            "startLocation": 0,
+            "endLocation": 0,
+            "path": "/type"
+          },
+          {
+            "value": "username",
+            "nodeName": "name",
+            "nodeType": 2,
+            "attributes": {},
+            "textContent": "username",
+            "startLocation": 0,
+            "endLocation": 0,
+            "path": "/name"
+          },
+          {
+            "value": "",
+            "nodeName": "required",
+            "nodeType": 2,
+            "attributes": {},
+            "textContent": "",
+            "startLocation": 0,
+            "endLocation": 0,
+            "path": "/required"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "",
+            "node_name": "required",
+            "node_type": 2,
+            "start_location": 12,
+            "end_location": 12,
+            "path": "/#document/html/body/input/required"
+          },
+          {
+            "value": "text",
+            "node_name": "type",
+            "node_type": 2,
+            "start_location": 12,
+            "end_location": 12,
+            "path": "/#document/html/body/input/type",
+            "text_content": "text"
+          },
+          {
+            "value": "username",
+            "node_name": "name",
+            "node_type": 2,
+            "start_location": 12,
+            "end_location": 12,
+            "path": "/#document/html/body/input/name",
+            "text_content": "username"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Node type function",
+      "xpath": "//body/node()",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": " Comment ",
+            "nodeName": "#comment",
+            "nodeType": 8,
+            "attributes": {},
+            "textContent": " Comment ",
+            "startLocation": 12,
+            "endLocation": 28,
+            "path": "/#document/html/body[2]/#comment"
+          },
+          {
+            "value": "Element",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Element",
+            "startLocation": 28,
+            "endLocation": 46,
+            "path": "/#document/html/body[2]/div"
+          },
+          {
+            "value": "Text node",
+            "nodeName": "#text",
+            "nodeType": 3,
+            "attributes": {},
+            "textContent": "Text node",
+            "startLocation": 46,
+            "endLocation": 55,
+            "path": "/#document/html/body[2]/#text"
+          }
+        ],
+        "count": 3,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": " Comment ",
+            "node_name": "#comment",
+            "node_type": 8,
+            "start_location": 12,
+            "end_location": 28,
+            "path": "/#document/html/body/#comment[2]",
+            "text_content": " Comment "
+          },
+          {
+            "value": "Element",
+            "node_name": "div",
+            "node_type": 1,
+            "start_location": 28,
+            "end_location": 46,
+            "path": "/#document/html/body/div[2]",
+            "text_content": "Element"
+          },
+          {
+            "value": "Text node",
+            "node_name": "#text",
+            "node_type": 3,
+            "start_location": 46,
+            "end_location": 55,
+            "path": "/#document/html/body/#text[2]",
+            "text_content": "Text node"
+          }
+        ],
+        "count": 3,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"#comment\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": " Comment ",
+            "nodeName": "#comment",
+            "nodeType": 8,
+            "attributes": {},
+            "textContent": " Comment ",
+            "startLocation": 12,
+            "endLocation": 28,
+            "path": "/#document/html/body[2]/#comment"
+          },
+          {
+            "value": "Element",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Element",
+            "startLocation": 28,
+            "endLocation": 46,
+            "path": "/#document/html/body[2]/div"
+          },
+          {
+            "value": "Text node",
+            "nodeName": "#text",
+            "nodeType": 3,
+            "attributes": {},
+            "textContent": "Text node",
+            "startLocation": 46,
+            "endLocation": 55,
+            "path": "/#document/html/body[2]/#text"
+          }
+        ],
+        "goResults": [
+          {
+            "value": " Comment ",
+            "node_name": "#comment",
+            "node_type": 8,
+            "start_location": 12,
+            "end_location": 28,
+            "path": "/#document/html/body/#comment[2]",
+            "text_content": " Comment "
+          },
+          {
+            "value": "Element",
+            "node_name": "div",
+            "node_type": 1,
+            "start_location": 28,
+            "end_location": 46,
+            "path": "/#document/html/body/div[2]",
+            "text_content": "Element"
+          },
+          {
+            "value": "Text node",
+            "node_name": "#text",
+            "node_type": 3,
+            "start_location": 46,
+            "end_location": 55,
+            "path": "/#document/html/body/#text[2]",
+            "text_content": "Text node"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Count function",
+      "xpath": "//ul[count(li)=3]",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "ABC",
+            "nodeName": "ul",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "ABC",
+            "startLocation": 12,
+            "endLocation": 51,
+            "path": "/#document/html/body[2]/ul"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "node_name": "ul",
+            "node_type": 1,
+            "start_location": 12,
+            "end_location": 51,
+            "path": "/#document/html/body/ul[2]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"ul\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": "ABC",
+            "nodeName": "ul",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "ABC",
+            "startLocation": 12,
+            "endLocation": 51,
+            "path": "/#document/html/body[2]/ul"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "",
+            "node_name": "ul",
+            "node_type": 1,
+            "start_location": 12,
+            "end_location": 51,
+            "path": "/#document/html/body/ul[2]"
+          }
+        ]
+      }
+    },
+    {
+      "name": "String length function",
+      "xpath": "//p[string-length(text())>10]",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "This is a longer paragraph",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "This is a longer paragraph",
+            "startLocation": 24,
+            "endLocation": 57,
+            "path": "/#document/html/body[2]/p[2]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Short",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 12,
+            "end_location": 24,
+            "path": "/#document/html/body/p[3]",
+            "text_content": "Short"
+          },
+          {
+            "value": "This is a longer paragraph",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 24,
+            "end_location": 57,
+            "path": "/#document/html/body/p[3]",
+            "text_content": "This is a longer paragraph"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Count mismatch: JS=1, Go=2",
+        "jsResults": [
+          {
+            "value": "This is a longer paragraph",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "This is a longer paragraph",
+            "startLocation": 24,
+            "endLocation": 57,
+            "path": "/#document/html/body[2]/p[2]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Short",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 12,
+            "end_location": 24,
+            "path": "/#document/html/body/p[3]",
+            "text_content": "Short"
+          },
+          {
+            "value": "This is a longer paragraph",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 24,
+            "end_location": 57,
+            "path": "/#document/html/body/p[3]",
+            "text_content": "This is a longer paragraph"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Starts with function",
+      "xpath": "//a[starts-with(@href, 'https')]",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "HTTPS",
+            "nodeName": "a",
+            "nodeType": 1,
+            "attributes": {
+              "href": "https://example.com"
+            },
+            "textContent": "HTTPS",
+            "startLocation": 12,
+            "endLocation": 51,
+            "path": "/#document/html/body[2]/a[1]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [],
+        "count": 0,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Count mismatch: JS=1, Go=0",
+        "jsResults": [
+          {
+            "value": "HTTPS",
+            "nodeName": "a",
+            "nodeType": 1,
+            "attributes": {
+              "href": "https://example.com"
+            },
+            "textContent": "HTTPS",
+            "startLocation": 12,
+            "endLocation": 51,
+            "path": "/#document/html/body[2]/a[1]"
+          }
+        ],
+        "goResults": []
+      }
+    },
+    {
+      "name": "Normalize space function",
+      "xpath": "//p[normalize-space(text())='Lots of spaces']",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "  Lots   of    spaces  ",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "  Lots   of    spaces  ",
+            "startLocation": 12,
+            "endLocation": 42,
+            "path": "/#document/html/body[2]/p[1]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Lots   of    spaces",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 12,
+            "end_location": 42,
+            "path": "/#document/html/body/p[3]",
+            "text_content": "Lots   of    spaces"
+          },
+          {
+            "value": "Normal text",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 42,
+            "end_location": 60,
+            "path": "/#document/html/body/p[3]",
+            "text_content": "Normal text"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Count mismatch: JS=1, Go=2",
+        "jsResults": [
+          {
+            "value": "  Lots   of    spaces  ",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "  Lots   of    spaces  ",
+            "startLocation": 12,
+            "endLocation": 42,
+            "path": "/#document/html/body[2]/p[1]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Lots   of    spaces",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 12,
+            "end_location": 42,
+            "path": "/#document/html/body/p[3]",
+            "text_content": "Lots   of    spaces"
+          },
+          {
+            "value": "Normal text",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 42,
+            "end_location": 60,
+            "path": "/#document/html/body/p[3]",
+            "text_content": "Normal text"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Complex nested structure",
+      "xpath": "//article//section//p[not(ancestor::aside)]",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Content",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Content",
+            "startLocation": 61,
+            "endLocation": 75,
+            "path": "/#document/html/body[2]/article/section[2]/p[1]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Content",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 61,
+            "end_location": 75,
+            "path": "/#document/html/body/article/section/p[2]",
+            "text_content": "Content"
+          },
+          {
+            "value": "Sidebar",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 82,
+            "end_location": 96,
+            "path": "/#document/html/body/article/section/aside/p[2]",
+            "text_content": "Sidebar"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Count mismatch: JS=1, Go=2",
+        "jsResults": [
+          {
+            "value": "Content",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Content",
+            "startLocation": 61,
+            "endLocation": 75,
+            "path": "/#document/html/body[2]/article/section[2]/p[1]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Content",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 61,
+            "end_location": 75,
+            "path": "/#document/html/body/article/section/p[2]",
+            "text_content": "Content"
+          },
+          {
+            "value": "Sidebar",
+            "node_name": "p",
+            "node_type": 1,
+            "start_location": 82,
+            "end_location": 96,
+            "path": "/#document/html/body/article/section/aside/p[2]",
+            "text_content": "Sidebar"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Table cell selection",
+      "xpath": "//table//tr[2]/td[1]",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "A2",
+            "nodeName": "td",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "A2",
+            "startLocation": 54,
+            "endLocation": 65,
+            "path": "/#document/html/body[2]/table/tbody/tr[2]/td[1]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "A2",
+            "node_name": "td",
+            "node_type": 1,
+            "start_location": 54,
+            "end_location": 65,
+            "path": "/#document/html/body/table/tr[2]/td[3]",
+            "text_content": "A2"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"td\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": "A2",
+            "nodeName": "td",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "A2",
+            "startLocation": 54,
+            "endLocation": 65,
+            "path": "/#document/html/body[2]/table/tbody/tr[2]/td[1]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "A2",
+            "node_name": "td",
+            "node_type": 1,
+            "start_location": 54,
+            "end_location": 65,
+            "path": "/#document/html/body/table/tr[2]/td[3]",
+            "text_content": "A2"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Form element selection",
+      "xpath": "//form//input[@type='text']",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "nodeName": "input",
+            "nodeType": 1,
+            "attributes": {
+              "type": "text",
+              "name": "user"
+            },
+            "textContent": "",
+            "startLocation": 18,
+            "endLocation": 50,
+            "path": "/#document/html/body[2]/form/input[1]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "node_name": "input",
+            "node_type": 1,
+            "attributes": {
+              "name": "user",
+              "type": "text"
+            },
+            "start_location": 18,
+            "end_location": 50,
+            "path": "/#document/html/body/form/input[3]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"input\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": "",
+            "nodeName": "input",
+            "nodeType": 1,
+            "attributes": {
+              "type": "text",
+              "name": "user"
+            },
+            "textContent": "",
+            "startLocation": 18,
+            "endLocation": 50,
+            "path": "/#document/html/body[2]/form/input[1]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "",
+            "node_name": "input",
+            "node_type": 1,
+            "attributes": {
+              "name": "user",
+              "type": "text"
+            },
+            "start_location": 18,
+            "end_location": 50,
+            "path": "/#document/html/body/form/input[3]"
+          }
+        ]
+      }
+    },
+    {
+      "name": "List with classes",
+      "xpath": "//ul[@class='menu']/li[@class='active']",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Home",
+            "nodeName": "li",
+            "nodeType": 1,
+            "attributes": {
+              "class": "active"
+            },
+            "textContent": "Home",
+            "startLocation": 29,
+            "endLocation": 57,
+            "path": "/#document/html/body[2]/ul[@class='menu']/li[@class='active']"
+          },
+          {
+            "value": "Contact",
+            "nodeName": "li",
+            "nodeType": 1,
+            "attributes": {
+              "class": "active"
+            },
+            "textContent": "Contact",
+            "startLocation": 71,
+            "endLocation": 102,
+            "path": "/#document/html/body[2]/ul[@class='menu']/li[@class='active']"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Home",
+            "node_name": "li",
+            "node_type": 1,
+            "attributes": {
+              "class": "active"
+            },
+            "start_location": 29,
+            "end_location": 57,
+            "path": "/#document/html/body/ul/li[4]",
+            "text_content": "Home"
+          },
+          {
+            "value": "Contact",
+            "node_name": "li",
+            "node_type": 1,
+            "attributes": {
+              "class": "active"
+            },
+            "start_location": 71,
+            "end_location": 102,
+            "path": "/#document/html/body/ul/li[4]",
+            "text_content": "Contact"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"li\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": "Home",
+            "nodeName": "li",
+            "nodeType": 1,
+            "attributes": {
+              "class": "active"
+            },
+            "textContent": "Home",
+            "startLocation": 29,
+            "endLocation": 57,
+            "path": "/#document/html/body[2]/ul[@class='menu']/li[@class='active']"
+          },
+          {
+            "value": "Contact",
+            "nodeName": "li",
+            "nodeType": 1,
+            "attributes": {
+              "class": "active"
+            },
+            "textContent": "Contact",
+            "startLocation": 71,
+            "endLocation": 102,
+            "path": "/#document/html/body[2]/ul[@class='menu']/li[@class='active']"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Home",
+            "node_name": "li",
+            "node_type": 1,
+            "attributes": {
+              "class": "active"
+            },
+            "start_location": 29,
+            "end_location": 57,
+            "path": "/#document/html/body/ul/li[4]",
+            "text_content": "Home"
+          },
+          {
+            "value": "Contact",
+            "node_name": "li",
+            "node_type": 1,
+            "attributes": {
+              "class": "active"
+            },
+            "start_location": 71,
+            "end_location": 102,
+            "path": "/#document/html/body/ul/li[4]",
+            "text_content": "Contact"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Navigation breadcrumbs",
+      "xpath": "//nav//li[not(a)]",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Current Page",
+            "nodeName": "li",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Current Page",
+            "startLocation": 91,
+            "endLocation": 112,
+            "path": "/#document/html/body[2]/nav/ol/li[3]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "node_name": "li",
+            "node_type": 1,
+            "start_location": 21,
+            "end_location": 50,
+            "path": "/#document/html/body/nav/ol/li[4]"
+          },
+          {
+            "value": "",
+            "node_name": "li",
+            "node_type": 1,
+            "start_location": 50,
+            "end_location": 91,
+            "path": "/#document/html/body/nav/ol/li[4]"
+          },
+          {
+            "value": "Current Page",
+            "node_name": "li",
+            "node_type": 1,
+            "start_location": 91,
+            "end_location": 112,
+            "path": "/#document/html/body/nav/ol/li[4]",
+            "text_content": "Current Page"
+          }
+        ],
+        "count": 3,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Count mismatch: JS=1, Go=3",
+        "jsResults": [
+          {
+            "value": "Current Page",
+            "nodeName": "li",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Current Page",
+            "startLocation": 91,
+            "endLocation": 112,
+            "path": "/#document/html/body[2]/nav/ol/li[3]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "",
+            "node_name": "li",
+            "node_type": 1,
+            "start_location": 21,
+            "end_location": 50,
+            "path": "/#document/html/body/nav/ol/li[4]"
+          },
+          {
+            "value": "",
+            "node_name": "li",
+            "node_type": 1,
+            "start_location": 50,
+            "end_location": 91,
+            "path": "/#document/html/body/nav/ol/li[4]"
+          },
+          {
+            "value": "Current Page",
+            "node_name": "li",
+            "node_type": 1,
+            "start_location": 91,
+            "end_location": 112,
+            "path": "/#document/html/body/nav/ol/li[4]",
+            "text_content": "Current Page"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Data attributes",
+      "xpath": "//div[@data-type='product']",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Product",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-id": "123",
+              "data-type": "product"
+            },
+            "textContent": "Product",
+            "startLocation": 12,
+            "endLocation": 64,
+            "path": "/#document/html/body[2]/div[1]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Product",
+            "node_name": "div",
+            "node_type": 1,
+            "attributes": {
+              "data-id": "123",
+              "data-type": "product"
+            },
+            "start_location": 12,
+            "end_location": 64,
+            "path": "/#document/html/body/div[3]",
+            "text_content": "Product"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"div\", Go=\"undefined\"",
+        "jsResults": [
+          {
+            "value": "Product",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-id": "123",
+              "data-type": "product"
+            },
+            "textContent": "Product",
+            "startLocation": 12,
+            "endLocation": 64,
+            "path": "/#document/html/body[2]/div[1]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Product",
+            "node_name": "div",
+            "node_type": 1,
+            "attributes": {
+              "data-id": "123",
+              "data-type": "product"
+            },
+            "start_location": 12,
+            "end_location": 64,
+            "path": "/#document/html/body/div[3]",
+            "text_content": "Product"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Empty elements",
+      "xpath": "//div[not(node())]",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "",
+            "startLocation": 12,
+            "endLocation": 23,
+            "path": "/#document/html/body[2]/div[1]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "node_name": "div",
+            "node_type": 1,
+            "start_location": 12,
+            "end_location": 23,
+            "path": "/#document/html/body/div[4]"
+          },
+          {
+            "value": "Content",
+            "node_name": "div",
+            "node_type": 1,
+            "start_location": 23,
+            "end_location": 41,
+            "path": "/#document/html/body/div[4]",
+            "text_content": "Content"
+          },
+          {
+            "value": "",
+            "node_name": "div",
+            "node_type": 1,
+            "start_location": 41,
+            "end_location": 65,
+            "path": "/#document/html/body/div[4]"
+          }
+        ],
+        "count": 3,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Count mismatch: JS=1, Go=3",
+        "jsResults": [
+          {
+            "value": "",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "",
+            "startLocation": 12,
+            "endLocation": 23,
+            "path": "/#document/html/body[2]/div[1]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "",
+            "node_name": "div",
+            "node_type": 1,
+            "start_location": 12,
+            "end_location": 23,
+            "path": "/#document/html/body/div[4]"
+          },
+          {
+            "value": "Content",
+            "node_name": "div",
+            "node_type": 1,
+            "start_location": 23,
+            "end_location": 41,
+            "path": "/#document/html/body/div[4]",
+            "text_content": "Content"
+          },
+          {
+            "value": "",
+            "node_name": "div",
+            "node_type": 1,
+            "start_location": 41,
+            "end_location": 65,
+            "path": "/#document/html/body/div[4]"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Multiple classes",
+      "xpath": "//div[contains(@class, 'btn-primary')]",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Button",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "btn btn-primary btn-large"
+            },
+            "textContent": "Button",
+            "startLocation": 12,
+            "endLocation": 63,
+            "path": "/#document/html/body[2]/div[@class='btn btn-primary btn-large']"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [],
+        "count": 0,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Count mismatch: JS=1, Go=0",
+        "jsResults": [
+          {
+            "value": "Button",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "btn btn-primary btn-large"
+            },
+            "textContent": "Button",
+            "startLocation": 12,
+            "endLocation": 63,
+            "path": "/#document/html/body[2]/div[@class='btn btn-primary btn-large']"
+          }
+        ],
+        "goResults": []
+      }
+    }
+  ]
+}

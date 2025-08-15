@@ -1,6 +1,6 @@
 module xpath-test
 
-go 1.22
+go 1.24.6
 
 replace github.com/reclaimprotocol/xpath-go => ../..
 
