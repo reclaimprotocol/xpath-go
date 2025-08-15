@@ -11,13 +11,13 @@ import (
 // Result represents an XPath query result with location tracking
 type Result struct {
 	Value         string            `json:"value"`
-	NodeName      string            `json:"node_name"`
-	NodeType      int               `json:"node_type"`
+	NodeName      string            `json:"nodeName"`
+	NodeType      int               `json:"nodeType"`
 	Attributes    map[string]string `json:"attributes,omitempty"`
-	StartLocation int               `json:"start_location"`
-	EndLocation   int               `json:"end_location"`
+	StartLocation int               `json:"startLocation"`
+	EndLocation   int               `json:"endLocation"`
 	Path          string            `json:"path"`
-	TextContent   string            `json:"text_content,omitempty"`
+	TextContent   string            `json:"textContent,omitempty"`
 }
 
 // XPath represents a compiled XPath expression

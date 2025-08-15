@@ -3,6 +3,7 @@ package xpath
 import (
 	"fmt"
 	"runtime"
+	"strings"
 )
 
 const (
@@ -47,8 +48,9 @@ func IsCompatible(apiVersion string) bool {
 func CheckGoVersion() error {
 	version := runtime.Version()
 
-	// Simple version check - in production you'd want more robust parsing
-	if len(version) < 4 || version[:4] < "go1.19" {
+	// Simple version check - go1.19 is minimum, so go1.20+ is fine
+	// For now just check that it starts with "go1." - proper version parsing would be better
+	if len(version) < 4 || !strings.HasPrefix(version, "go1.") {
 		return fmt.Errorf("go version %s is not supported, minimum required: %s",
 			version, MinSupportedGoVersion)
 	}

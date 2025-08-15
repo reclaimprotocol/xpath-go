@@ -2,7 +2,6 @@ package utils
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 
 	"github.com/reclaimprotocol/xpath-go/pkg/types"

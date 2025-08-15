@@ -218,7 +218,14 @@ func (e *Evaluator) getAttributeNodes(node *types.Node) []*types.Node {
 // applyNodeTest filters nodes based on node test
 func (e *Evaluator) applyNodeTest(nodes []*types.Node, nodeTest string) []*types.Node {
 	if nodeTest == "*" {
-		return nodes // Match all
+		// Match all element nodes (not text or other node types)
+		var elementNodes []*types.Node
+		for _, node := range nodes {
+			if node.Type == types.ElementNode {
+				elementNodes = append(elementNodes, node)
+			}
+		}
+		return elementNodes
 	}
 
 	if nodeTest == "node()" {
@@ -278,6 +285,26 @@ func (e *Evaluator) applyPredicate(nodes []*types.Node, predicate types.XPathPre
 	// Handle function predicates like [position()=2]
 	if strings.Contains(expr, "position()") {
 		return e.applyPositionPredicate(nodes, expr)
+	}
+
+	// Handle contains() function like [contains(text(), 'substring')]
+	if strings.Contains(expr, "contains(") {
+		return e.applyContainsPredicate(nodes, expr)
+	}
+
+	// Handle starts-with() function like [starts-with(@href, 'https')]
+	if strings.Contains(expr, "starts-with(") {
+		return e.applyStartsWithPredicate(nodes, expr)
+	}
+
+	// Handle 'and' logic like [@id and @class]
+	if strings.Contains(expr, " and ") {
+		return e.applyAndPredicate(nodes, expr)
+	}
+
+	// Handle 'or' logic like [@class='red' or @class='blue']
+	if strings.Contains(expr, " or ") {
+		return e.applyOrPredicate(nodes, expr)
 	}
 
 	// Default: return all nodes (predicate not implemented)
@@ -391,4 +418,243 @@ func (e *Evaluator) removeDuplicates(nodes []*types.Node) []*types.Node {
 	}
 
 	return unique
+}
+
+// applyContainsPredicate handles contains() function predicates
+func (e *Evaluator) applyContainsPredicate(nodes []*types.Node, expr string) []*types.Node {
+	var filtered []*types.Node
+
+	// Parse contains(text(), 'substring') or contains(@attr, 'substring')
+	start := strings.Index(expr, "contains(")
+	if start == -1 {
+		return nodes
+	}
+
+	// Find the matching closing parenthesis
+	depth := 0
+	var end int
+	for i := start + 9; i < len(expr); i++ {
+		if expr[i] == '(' {
+			depth++
+		} else if expr[i] == ')' {
+			if depth == 0 {
+				end = i
+				break
+			}
+			depth--
+		}
+	}
+
+	if end == 0 {
+		return nodes
+	}
+
+	// Extract arguments: "text(), 'substring'"
+	args := expr[start+9 : end]
+	parts := strings.Split(args, ",")
+	if len(parts) != 2 {
+		return nodes
+	}
+
+	source := strings.TrimSpace(parts[0])
+	searchText := strings.Trim(strings.TrimSpace(parts[1]), "\"'")
+
+	for _, node := range nodes {
+		var textToSearch string
+
+		if source == "text()" {
+			textToSearch = node.TextContent
+		} else if strings.HasPrefix(source, "@") {
+			attrName := strings.TrimPrefix(source, "@")
+			if value, exists := node.Attributes[attrName]; exists {
+				textToSearch = value
+			}
+		}
+
+		if strings.Contains(textToSearch, searchText) {
+			filtered = append(filtered, node)
+		}
+	}
+
+	return filtered
+}
+
+// applyStartsWithPredicate handles starts-with() function predicates
+func (e *Evaluator) applyStartsWithPredicate(nodes []*types.Node, expr string) []*types.Node {
+	var filtered []*types.Node
+
+	// Parse starts-with(@attr, 'prefix') or starts-with(text(), 'prefix')
+	start := strings.Index(expr, "starts-with(")
+	if start == -1 {
+		return nodes
+	}
+
+	// Find the matching closing parenthesis
+	depth := 0
+	var end int
+	for i := start + 12; i < len(expr); i++ {
+		if expr[i] == '(' {
+			depth++
+		} else if expr[i] == ')' {
+			if depth == 0 {
+				end = i
+				break
+			}
+			depth--
+		}
+	}
+
+	if end == 0 {
+		return nodes
+	}
+
+	// Extract arguments
+	args := expr[start+12 : end]
+	parts := strings.Split(args, ",")
+	if len(parts) != 2 {
+		return nodes
+	}
+
+	source := strings.TrimSpace(parts[0])
+	prefix := strings.Trim(strings.TrimSpace(parts[1]), "\"'")
+
+	for _, node := range nodes {
+		var textToCheck string
+
+		if source == "text()" {
+			textToCheck = node.TextContent
+		} else if strings.HasPrefix(source, "@") {
+			attrName := strings.TrimPrefix(source, "@")
+			if value, exists := node.Attributes[attrName]; exists {
+				textToCheck = value
+			}
+		}
+
+		if strings.HasPrefix(textToCheck, prefix) {
+			filtered = append(filtered, node)
+		}
+	}
+
+	return filtered
+}
+
+// applyAndPredicate handles 'and' logic predicates
+func (e *Evaluator) applyAndPredicate(nodes []*types.Node, expr string) []*types.Node {
+	parts := strings.Split(expr, " and ")
+	if len(parts) != 2 {
+		return nodes
+	}
+
+	var filtered []*types.Node
+
+	// Apply both conditions to each node
+	for _, node := range nodes {
+		firstCondition := strings.TrimSpace(parts[0])
+		secondCondition := strings.TrimSpace(parts[1])
+
+		// Check first condition
+		firstMatches := e.evaluateSimpleCondition(node, firstCondition)
+		if !firstMatches {
+			continue
+		}
+
+		// Check second condition
+		secondMatches := e.evaluateSimpleCondition(node, secondCondition)
+		if secondMatches {
+			filtered = append(filtered, node)
+		}
+	}
+
+	return filtered
+}
+
+// applyOrPredicate handles 'or' logic predicates
+func (e *Evaluator) applyOrPredicate(nodes []*types.Node, expr string) []*types.Node {
+	parts := strings.Split(expr, " or ")
+	if len(parts) != 2 {
+		return nodes
+	}
+
+	var filtered []*types.Node
+	seen := make(map[*types.Node]bool)
+
+	firstCondition := strings.TrimSpace(parts[0])
+	secondCondition := strings.TrimSpace(parts[1])
+
+	// Check both conditions for each node
+	for _, node := range nodes {
+		if seen[node] {
+			continue
+		}
+
+		// Check first condition
+		if e.evaluateSimpleCondition(node, firstCondition) {
+			seen[node] = true
+			filtered = append(filtered, node)
+			continue
+		}
+
+		// Check second condition
+		if e.evaluateSimpleCondition(node, secondCondition) {
+			seen[node] = true
+			filtered = append(filtered, node)
+		}
+	}
+
+	return filtered
+}
+
+// evaluateSimpleCondition evaluates a simple condition against a single node
+func (e *Evaluator) evaluateSimpleCondition(node *types.Node, condition string) bool {
+	condition = strings.TrimSpace(condition)
+
+	// Attribute existence: @id
+	if strings.HasPrefix(condition, "@") && !strings.Contains(condition, "=") {
+		attrName := strings.TrimPrefix(condition, "@")
+		_, exists := node.Attributes[attrName]
+		return exists
+	}
+
+	// Attribute value comparison: @id="test"
+	if strings.HasPrefix(condition, "@") && strings.Contains(condition, "=") {
+		parts := strings.SplitN(condition, "=", 2)
+		if len(parts) != 2 {
+			return false
+		}
+		attrName := strings.TrimPrefix(strings.TrimSpace(parts[0]), "@")
+		expectedValue := strings.Trim(strings.TrimSpace(parts[1]), "\"'")
+		
+		if value, exists := node.Attributes[attrName]; exists {
+			return value == expectedValue
+		}
+		return false
+	}
+
+	// Text content conditions: text()="content"
+	if strings.HasPrefix(condition, "text()") && strings.Contains(condition, "=") {
+		parts := strings.SplitN(condition, "=", 2)
+		if len(parts) != 2 {
+			return false
+		}
+		expectedText := strings.Trim(strings.TrimSpace(parts[1]), "\"'")
+		return node.TextContent == expectedText
+	}
+
+	// Text content existence: text()
+	if condition == "text()" {
+		return strings.TrimSpace(node.TextContent) != ""
+	}
+
+	// Contains function: contains(text(), "substring")
+	if strings.Contains(condition, "contains(") {
+		return len(e.applyContainsPredicate([]*types.Node{node}, condition)) > 0
+	}
+
+	// Starts-with function: starts-with(@attr, "prefix")
+	if strings.Contains(condition, "starts-with(") {
+		return len(e.applyStartsWithPredicate([]*types.Node{node}, condition)) > 0
+	}
+
+	// Default: condition not recognized
+	return false
 }

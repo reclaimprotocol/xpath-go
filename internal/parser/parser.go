@@ -2,8 +2,6 @@ package parser
 
 import (
 	"fmt"
-	"regexp"
-	"strconv"
 	"strings"
 
 	"github.com/reclaimprotocol/xpath-go/pkg/types"
@@ -149,6 +147,13 @@ func (p *Parser) tokenize() error {
 			continue
 		}
 
+		// Comma for function arguments
+		if expr[pos] == ',' {
+			p.tokens = append(p.tokens, Token{TokenComma, ",", pos})
+			pos++
+			continue
+		}
+
 		// Pipe for union
 		if expr[pos] == '|' {
 			p.tokens = append(p.tokens, Token{TokenPipe, "|", pos})
@@ -232,9 +237,17 @@ func (p *Parser) parseOperator(expr string, pos int) string {
 	for _, op := range operators {
 		if pos+len(op) <= len(expr) && expr[pos:pos+len(op)] == op {
 			// For word operators, ensure they're not part of a larger identifier
+			// AND ensure there's a space or operator context
 			if isLetter(op[0]) {
+				// Skip if it's part of a larger identifier
 				if (pos > 0 && isNameChar(expr[pos-1])) ||
 					(pos+len(op) < len(expr) && isNameChar(expr[pos+len(op)])) {
+					continue
+				}
+				// For standalone word operators like "div", "mod", require operator context
+				// (i.e., they should be preceded by a value/expression)
+				if pos == 0 || (pos > 0 && !isWhitespace(expr[pos-1]) && 
+					expr[pos-1] != ')' && expr[pos-1] != ']') {
 					continue
 				}
 			}
@@ -260,7 +273,7 @@ func (p *Parser) parseExpression() (*types.ParsedXPath, error) {
 			// Add descendant-or-self step for //
 			parsed.Steps = append(parsed.Steps, types.XPathStep{
 				Axis:     types.AxisDescendantOrSelf,
-				NodeTest: "node",
+				NodeTest: "node()",
 			})
 		}
 		p.advance()
@@ -282,7 +295,7 @@ func (p *Parser) parseExpression() (*types.ParsedXPath, error) {
 			// Add descendant-or-self step
 			parsed.Steps = append(parsed.Steps, types.XPathStep{
 				Axis:     types.AxisDescendantOrSelf,
-				NodeTest: "node",
+				NodeTest: "node()",
 			})
 		} else if p.currentToken().Type != TokenEOF {
 			break // Could be union or other operator
@@ -333,6 +346,10 @@ func (p *Parser) parseLocationStep() (*types.XPathStep, error) {
 				p.advance()
 			}
 		}
+	} else if p.currentToken().Type == TokenOperator && p.currentToken().Value == "*" {
+		// Handle wildcard node test
+		step.NodeTest = "*"
+		p.advance()
 	} else if step.Axis == types.AxisAttribute {
 		// For attribute axis, the node test might be missing (select all attributes)
 		step.NodeTest = "*"
