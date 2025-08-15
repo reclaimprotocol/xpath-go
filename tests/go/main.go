@@ -50,8 +50,23 @@ func main() {
 	xpathExpr := string(xpathContent)
 	html := string(htmlContent)
 
-	// Execute XPath query
-	results, err := xpath.Query(xpathExpr, html)
+	// Execute XPath query with panic recovery
+	var results []xpath.Result
+	var xpathErr error
+	
+	func() {
+		defer func() {
+			if r := recover(); r != nil {
+				xpathErr = fmt.Errorf("panic during XPath execution: %v", r)
+			}
+		}()
+		results, xpathErr = xpath.Query(xpathExpr, html)
+	}()
+	
+	if xpathErr != nil {
+		err = xpathErr
+	}
+	
 	if err != nil {
 		result := TestResult{
 			Results: []xpath.Result{},
@@ -60,6 +75,11 @@ func main() {
 		}
 		outputJSON(result)
 		return
+	}
+
+	// Ensure results is never nil for JSON marshaling
+	if results == nil {
+		results = []xpath.Result{}
 	}
 
 	// Return successful result

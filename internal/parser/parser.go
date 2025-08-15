@@ -410,10 +410,28 @@ func (p *Parser) parsePredicate() (*types.XPathPredicate, error) {
 // tokensToString converts tokens back to string representation
 func (p *Parser) tokensToString(tokens []Token) string {
 	var parts []string
-	for _, token := range tokens {
+	for i, token := range tokens {
+		if i > 0 {
+			// Add space before word operators like "and", "or", "not", "div", "mod"
+			prevToken := tokens[i-1]
+			if isWordOperator(token.Value) || isWordOperator(prevToken.Value) {
+				parts = append(parts, " ")
+			}
+		}
 		parts = append(parts, token.Value)
 	}
 	return strings.Join(parts, "")
+}
+
+// isWordOperator checks if a token is a word-based operator that needs spacing
+func isWordOperator(value string) bool {
+	wordOps := []string{"and", "or", "not", "div", "mod"}
+	for _, op := range wordOps {
+		if value == op {
+			return true
+		}
+	}
+	return false
 }
 
 // currentToken returns the current token

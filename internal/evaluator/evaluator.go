@@ -272,6 +272,16 @@ func (e *Evaluator) applyPredicate(nodes []*types.Node, predicate types.XPathPre
 		return []*types.Node{}
 	}
 
+	// Handle 'and' logic like [@id and @class] - Check BEFORE simple attribute predicates
+	if strings.Contains(expr, " and ") {
+		return e.applyAndPredicate(nodes, expr)
+	}
+
+	// Handle 'or' logic like [@class='red' or @class='blue'] - Check BEFORE simple attribute predicates
+	if strings.Contains(expr, " or ") {
+		return e.applyOrPredicate(nodes, expr)
+	}
+
 	// Handle attribute predicates like [@id='test']
 	if strings.HasPrefix(expr, "@") {
 		return e.applyAttributePredicate(nodes, expr)
@@ -295,16 +305,6 @@ func (e *Evaluator) applyPredicate(nodes []*types.Node, predicate types.XPathPre
 	// Handle starts-with() function like [starts-with(@href, 'https')]
 	if strings.Contains(expr, "starts-with(") {
 		return e.applyStartsWithPredicate(nodes, expr)
-	}
-
-	// Handle 'and' logic like [@id and @class]
-	if strings.Contains(expr, " and ") {
-		return e.applyAndPredicate(nodes, expr)
-	}
-
-	// Handle 'or' logic like [@class='red' or @class='blue']
-	if strings.Contains(expr, " or ") {
-		return e.applyOrPredicate(nodes, expr)
 	}
 
 	// Default: return all nodes (predicate not implemented)
@@ -608,20 +608,22 @@ func (e *Evaluator) applyOrPredicate(nodes []*types.Node, expr string) []*types.
 func (e *Evaluator) evaluateSimpleCondition(node *types.Node, condition string) bool {
 	condition = strings.TrimSpace(condition)
 
-	// Attribute existence: @id
+	// Attribute existence: @id (handle spaced tokens like "@ id")
 	if strings.HasPrefix(condition, "@") && !strings.Contains(condition, "=") {
 		attrName := strings.TrimPrefix(condition, "@")
+		attrName = strings.TrimSpace(attrName) // Handle "@ id" -> "id"
 		_, exists := node.Attributes[attrName]
 		return exists
 	}
 
-	// Attribute value comparison: @id="test"
+	// Attribute value comparison: @id="test" (handle spaced tokens)
 	if strings.HasPrefix(condition, "@") && strings.Contains(condition, "=") {
 		parts := strings.SplitN(condition, "=", 2)
 		if len(parts) != 2 {
 			return false
 		}
 		attrName := strings.TrimPrefix(strings.TrimSpace(parts[0]), "@")
+		attrName = strings.TrimSpace(attrName) // Handle "@ id" -> "id"
 		expectedValue := strings.Trim(strings.TrimSpace(parts[1]), "\"'")
 		
 		if value, exists := node.Attributes[attrName]; exists {

@@ -1,8 +1,8 @@
 {
   "total": 38,
-  "passed": 22,
-  "failed": 16,
-  "compatibility": "57.9",
+  "passed": 24,
+  "failed": 14,
+  "compatibility": "63.2",
   "details": [
     {
       "name": "Basic element selection",
@@ -246,7 +246,7 @@
     {
       "name": "Multiple attribute selection",
       "xpath": "//div[@id and @class]",
-      "passed": false,
+      "passed": true,
       "jsResult": {
         "success": true,
         "results": [
@@ -269,29 +269,26 @@
       },
       "goResult": {
         "success": true,
-        "results": [],
-        "count": 0,
-        "error": null
-      },
-      "comparison": {
-        "match": false,
-        "reason": "Count mismatch: JS=1, Go=0",
-        "jsResults": [
+        "results": [
           {
             "value": "Both",
             "nodeName": "div",
             "nodeType": 1,
             "attributes": {
-              "id": "test",
-              "class": "highlight"
+              "class": "highlight",
+              "id": "test"
             },
-            "textContent": "Both",
             "startLocation": 12,
             "endLocation": 55,
-            "path": "/#document/html/body[2]/div[@id='test']"
+            "path": "/#document/html/body/div[4]",
+            "textContent": "Both"
           }
         ],
-        "goResults": []
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true
       }
     },
     {
@@ -818,7 +815,7 @@
     {
       "name": "Complex predicate with OR",
       "xpath": "//div[@class='red' or @class='blue']",
-      "passed": false,
+      "passed": true,
       "jsResult": {
         "success": true,
         "results": [
@@ -852,14 +849,7 @@
       },
       "goResult": {
         "success": true,
-        "results": [],
-        "count": 0,
-        "error": null
-      },
-      "comparison": {
-        "match": false,
-        "reason": "Count mismatch: JS=2, Go=0",
-        "jsResults": [
+        "results": [
           {
             "value": "Red",
             "nodeName": "div",
@@ -867,10 +857,10 @@
             "attributes": {
               "class": "red"
             },
-            "textContent": "Red",
             "startLocation": 12,
             "endLocation": 38,
-            "path": "/#document/html/body[2]/div[@class='red']"
+            "path": "/#document/html/body/div[4]",
+            "textContent": "Red"
           },
           {
             "value": "Blue",
@@ -879,13 +869,17 @@
             "attributes": {
               "class": "blue"
             },
-            "textContent": "Blue",
             "startLocation": 38,
             "endLocation": 66,
-            "path": "/#document/html/body[2]/div[@class='blue']"
+            "path": "/#document/html/body/div[4]",
+            "textContent": "Blue"
           }
         ],
-        "goResults": []
+        "count": 2,
+        "error": null
+      },
+      "comparison": {
+        "match": true
       }
     },
     {
