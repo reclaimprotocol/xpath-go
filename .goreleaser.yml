@@ -1,0 +1,110 @@
+project_name: xpath-go
+
+# Build configuration
+builds:
+  - id: xpath-example
+    dir: cmd/examples/basic
+    main: ./main.go
+    binary: xpath-example
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w
+      - -X main.Version={{.Version}}
+      - -X main.GitCommit={{.ShortCommit}}
+      - -X main.BuildTime={{.Date}}
+    skip: true  # Skip until we have cmd/examples/basic
+
+# Archive configuration
+archives:
+  - id: default
+    builds:
+      - xpath-example
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - README.md
+      - "docs/**"
+      - "cmd/examples/**"
+
+# Checksum configuration
+checksum:
+  name_template: "checksums.txt"
+
+# Snapshot configuration
+snapshot:
+  name_template: "{{ incpatch .Version }}-snapshot"
+
+# Release configuration
+release:
+  github:
+    owner: reclaimprotocol
+    name: xpath-go
+  draft: false
+  prerelease: auto
+  name_template: "v{{.Version}}"
+  header: |
+    ## XPath Go v{{.Version}}
+    
+    🎯 **100% jsdom Compatibility XPath Library**
+    
+    This release brings comprehensive XPath functionality with perfect jsdom compatibility and precise node location tracking.
+    
+    ### ✨ Highlights
+    - **jsdom Compatibility**: Perfect matching with jsdom XPath evaluation
+    - **Location Tracking**: Precise character positioning in source HTML/XML
+    - **Production Ready**: Comprehensive error handling and performance optimization
+    
+    ### What's Changed
+  footer: |
+    **Full Changelog**: https://github.com/reclaimprotocol/xpath-go/compare/{{.PreviousTag}}...{{.Tag}}
+
+# Changelog configuration
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^ci:"
+      - "^chore:"
+      - "^style:"
+      - "^refactor:"
+  groups:
+    - title: "New Features"
+      regexp: "^.*feat[(\\w)]*:+.*$"
+      order: 0
+    - title: "Bug Fixes"
+      regexp: "^.*fix[(\\w)]*:+.*$"
+      order: 1
+    - title: "Performance Improvements"
+      regexp: "^.*perf[(\\w)]*:+.*$"
+      order: 2
+    - title: "Other Changes"
+      order: 999
+
+# Source archives
+source:
+  enabled: true
+  name_template: "{{ .ProjectName }}-{{ .Version }}-source"
+  format: tar.gz
+
+# Git configuration
+git:
+  ignore_tags: []
+
+# Before hooks
+before:
+  hooks:
+    - go mod tidy
+    - go mod verify
+    - go test -short ./...
