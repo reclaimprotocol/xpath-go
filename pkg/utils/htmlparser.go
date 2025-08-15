@@ -1,0 +1,410 @@
+package utils
+
+import (
+	"fmt"
+	"regexp"
+	"strings"
+
+	"github.com/reclaimprotocol/xpath-go/pkg/types"
+)
+
+// HTMLParser parses HTML/XML with location tracking
+type HTMLParser struct {
+	content string
+	pos     int
+	line    int
+	col     int
+}
+
+// NewHTMLParser creates a new HTML parser
+func NewHTMLParser() *HTMLParser {
+	return &HTMLParser{}
+}
+
+// Parse parses HTML/XML content into a node tree with location information
+func (p *HTMLParser) Parse(content string) (*types.Node, error) {
+	p.content = content
+	p.pos = 0
+	p.line = 1
+	p.col = 1
+
+	// Create document root
+	root := &types.Node{
+		Type:        types.DocumentNode,
+		Name:        "#document",
+		Children:    []*types.Node{},
+		StartPos:    0,
+		EndPos:      len(content),
+		StartLine:   1,
+		StartColumn: 1,
+	}
+
+	// Parse child nodes
+	for p.pos < len(content) {
+		p.skipWhitespace()
+		if p.pos >= len(content) {
+			break
+		}
+
+		node, err := p.parseNode(root)
+		if err != nil {
+			return nil, err
+		}
+		if node != nil {
+			root.Children = append(root.Children, node)
+		}
+	}
+
+	// Calculate final position
+	root.EndLine = p.line
+	root.EndColumn = p.col
+	root.SourceLength = len(content)
+
+	return root, nil
+}
+
+// parseNode parses a single node (element, text, comment, etc.)
+func (p *HTMLParser) parseNode(parent *types.Node) (*types.Node, error) {
+	startPos := p.pos
+	startLine := p.line
+	startCol := p.col
+
+	if p.peek() == '<' {
+		return p.parseElement(parent, startPos, startLine, startCol)
+	}
+	
+	// Parse text node
+	return p.parseTextNode(parent, startPos, startLine, startCol)
+}
+
+// parseElement parses an HTML/XML element
+func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, startCol int) (*types.Node, error) {
+	if p.peek() != '<' {
+		return nil, fmt.Errorf("expected '<' at position %d", p.pos)
+	}
+
+	// Check for special elements
+	if p.pos+1 < len(p.content) {
+		if p.content[p.pos+1] == '!' {
+			return p.parseComment(parent, startPos, startLine, startCol)
+		}
+		if p.content[p.pos+1] == '?' {
+			return p.parseProcessingInstruction(parent, startPos, startLine, startCol)
+		}
+	}
+
+	p.advance() // Skip '<'
+
+	// Check for closing tag
+	if p.peek() == '/' {
+		return nil, nil // This is a closing tag, handled by parent
+	}
+
+	// Parse tag name
+	tagName := p.parseName()
+	if tagName == "" {
+		return nil, fmt.Errorf("expected tag name at position %d", p.pos)
+	}
+
+	node := &types.Node{
+		Type:        types.ElementNode,
+		Name:        strings.ToLower(tagName),
+		Attributes:  make(map[string]string),
+		Children:    []*types.Node{},
+		Parent:      parent,
+		StartPos:    startPos,
+		StartLine:   startLine,
+		StartColumn: startCol,
+	}
+
+	// Parse attributes
+	for p.pos < len(p.content) && p.peek() != '>' && p.peek() != '/' {
+		p.skipWhitespace()
+		if p.peek() == '>' || p.peek() == '/' {
+			break
+		}
+
+		name := p.parseName()
+		if name == "" {
+			break
+		}
+
+		value := ""
+		p.skipWhitespace()
+		if p.peek() == '=' {
+			p.advance() // Skip '='
+			p.skipWhitespace()
+			value = p.parseAttributeValue()
+		}
+
+		node.Attributes[strings.ToLower(name)] = value
+	}
+
+	// Check for self-closing tag
+	selfClosing := false
+	if p.peek() == '/' {
+		selfClosing = true
+		p.advance()
+	}
+
+	if p.peek() != '>' {
+		return nil, fmt.Errorf("expected '>' at position %d", p.pos)
+	}
+	p.advance() // Skip '>'
+
+	if selfClosing || p.isSelfClosingTag(node.Name) {
+		node.EndPos = p.pos
+		node.EndLine = p.line
+		node.EndColumn = p.col
+		return node, nil
+	}
+
+	// Parse child nodes
+	textContent := ""
+	for p.pos < len(p.content) {
+		p.skipWhitespace()
+		if p.pos >= len(p.content) {
+			break
+		}
+
+		// Check for closing tag
+		if p.peek() == '<' && p.pos+1 < len(p.content) && p.content[p.pos+1] == '/' {
+			closingTag := p.parseClosingTag()
+			if strings.ToLower(closingTag) == node.Name {
+				break
+			}
+			// If it's not our closing tag, treat as text
+			textContent += "</" + closingTag + ">"
+			continue
+		}
+
+		child, err := p.parseNode(node)
+		if err != nil {
+			return nil, err
+		}
+		if child != nil {
+			if child.Type == types.TextNode {
+				textContent += child.Value
+			}
+			node.Children = append(node.Children, child)
+		}
+	}
+
+	node.TextContent = strings.TrimSpace(textContent)
+	node.EndPos = p.pos
+	node.EndLine = p.line
+	node.EndColumn = p.col
+
+	return node, nil
+}
+
+// parseTextNode parses a text node
+func (p *HTMLParser) parseTextNode(parent *types.Node, startPos, startLine, startCol int) (*types.Node, error) {
+	text := ""
+	
+	for p.pos < len(p.content) && p.peek() != '<' {
+		text += string(p.peek())
+		p.advance()
+	}
+
+	if text == "" {
+		return nil, nil
+	}
+
+	// Trim whitespace but preserve structure
+	trimmed := strings.TrimSpace(text)
+	if trimmed == "" && parent.Type == types.ElementNode {
+		return nil, nil // Skip whitespace-only text nodes
+	}
+
+	return &types.Node{
+		Type:        types.TextNode,
+		Name:        "#text",
+		Value:       trimmed,
+		TextContent: trimmed,
+		Parent:      parent,
+		StartPos:    startPos,
+		EndPos:      p.pos,
+		StartLine:   startLine,
+		StartColumn: startCol,
+		EndLine:     p.line,
+		EndColumn:   p.col,
+	}, nil
+}
+
+// parseComment parses an HTML comment
+func (p *HTMLParser) parseComment(parent *types.Node, startPos, startLine, startCol int) (*types.Node, error) {
+	if !strings.HasPrefix(p.content[p.pos:], "<!--") {
+		return nil, fmt.Errorf("expected comment at position %d", p.pos)
+	}
+
+	p.pos += 4 // Skip "<!--"
+	
+	comment := ""
+	for p.pos < len(p.content)-2 {
+		if p.content[p.pos:p.pos+3] == "-->" {
+			p.pos += 3
+			break
+		}
+		comment += string(p.content[p.pos])
+		p.advance()
+	}
+
+	return &types.Node{
+		Type:        types.CommentNode,
+		Name:        "#comment",
+		Value:       comment,
+		TextContent: comment,
+		Parent:      parent,
+		StartPos:    startPos,
+		EndPos:      p.pos,
+		StartLine:   startLine,
+		StartColumn: startCol,
+		EndLine:     p.line,
+		EndColumn:   p.col,
+	}, nil
+}
+
+// parseProcessingInstruction parses a processing instruction
+func (p *HTMLParser) parseProcessingInstruction(parent *types.Node, startPos, startLine, startCol int) (*types.Node, error) {
+	if p.content[p.pos:p.pos+2] != "<?" {
+		return nil, fmt.Errorf("expected processing instruction at position %d", p.pos)
+	}
+
+	p.pos += 2 // Skip "<?"
+	
+	instruction := ""
+	for p.pos < len(p.content)-1 {
+		if p.content[p.pos:p.pos+2] == "?>" {
+			p.pos += 2
+			break
+		}
+		instruction += string(p.content[p.pos])
+		p.advance()
+	}
+
+	return &types.Node{
+		Type:        types.ProcessingInstructionNode,
+		Name:        "#processing-instruction",
+		Value:       instruction,
+		TextContent: instruction,
+		Parent:      parent,
+		StartPos:    startPos,
+		EndPos:      p.pos,
+		StartLine:   startLine,
+		StartColumn: startCol,
+		EndLine:     p.line,
+		EndColumn:   p.col,
+	}, nil
+}
+
+// parseClosingTag parses a closing tag and returns the tag name
+func (p *HTMLParser) parseClosingTag() string {
+	if p.content[p.pos:p.pos+2] != "</" {
+		return ""
+	}
+
+	p.pos += 2 // Skip "</"
+	name := p.parseName()
+	
+	// Skip to '>'
+	for p.pos < len(p.content) && p.peek() != '>' {
+		p.advance()
+	}
+	if p.peek() == '>' {
+		p.advance()
+	}
+
+	return name
+}
+
+// parseName parses an element or attribute name
+func (p *HTMLParser) parseName() string {
+	name := ""
+	for p.pos < len(p.content) {
+		c := p.peek()
+		if !isNameChar(c) {
+			break
+		}
+		name += string(c)
+		p.advance()
+	}
+	return name
+}
+
+// parseAttributeValue parses an attribute value
+func (p *HTMLParser) parseAttributeValue() string {
+	p.skipWhitespace()
+	
+	if p.peek() == '"' || p.peek() == '\'' {
+		quote := p.peek()
+		p.advance() // Skip opening quote
+		
+		value := ""
+		for p.pos < len(p.content) && p.peek() != quote {
+			value += string(p.peek())
+			p.advance()
+		}
+		if p.peek() == quote {
+			p.advance() // Skip closing quote
+		}
+		return value
+	}
+
+	// Unquoted value
+	value := ""
+	for p.pos < len(p.content) {
+		c := p.peek()
+		if c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '>' || c == '/' {
+			break
+		}
+		value += string(c)
+		p.advance()
+	}
+	return value
+}
+
+// Helper functions
+func (p *HTMLParser) peek() byte {
+	if p.pos >= len(p.content) {
+		return 0
+	}
+	return p.content[p.pos]
+}
+
+func (p *HTMLParser) advance() {
+	if p.pos < len(p.content) {
+		if p.content[p.pos] == '\n' {
+			p.line++
+			p.col = 1
+		} else {
+			p.col++
+		}
+		p.pos++
+	}
+}
+
+func (p *HTMLParser) skipWhitespace() {
+	for p.pos < len(p.content) {
+		c := p.peek()
+		if c != ' ' && c != '\t' && c != '\n' && c != '\r' {
+			break
+		}
+		p.advance()
+	}
+}
+
+func isNameChar(c byte) bool {
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || 
+		   (c >= '0' && c <= '9') || c == '-' || c == '_' || c == ':'
+}
+
+func (p *HTMLParser) isSelfClosingTag(name string) bool {
+	selfClosingTags := map[string]bool{
+		"area": true, "base": true, "br": true, "col": true,
+		"embed": true, "hr": true, "img": true, "input": true,
+		"link": true, "meta": true, "param": true, "source": true,
+		"track": true, "wbr": true,
+	}
+	return selfClosingTags[name]
+}
