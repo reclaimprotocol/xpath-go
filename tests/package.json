@@ -1,0 +1,17 @@
+{
+  "name": "xpath-go-tests",
+  "version": "1.0.0",
+  "description": "XPath Go library compatibility tests with jsdom",
+  "main": "compare.js",
+  "scripts": {
+    "test": "node compare.js",
+    "install-deps": "npm install"
+  },
+  "dependencies": {
+    "jsdom": "^23.0.0"
+  },
+  "devDependencies": {},
+  "keywords": ["xpath", "jsdom", "compatibility", "testing"],
+  "author": "Reclaim Protocol",
+  "license": "MIT"
+}
