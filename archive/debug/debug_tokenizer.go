@@ -7,18 +7,18 @@ import (
 
 func main() {
 	p := parser.NewParser()
-	
+
 	fmt.Println("Testing tokenization:")
-	
+
 	testCases := []string{
 		"//div",
-		"/html", 
+		"/html",
 		"div",
 	}
-	
+
 	for _, xpath := range testCases {
 		fmt.Printf("\n--- Tokenizing: %s ---\n", xpath)
-		
+
 		// We need to access the private tokenize method
 		// For now, let's just check what characters we have
 		fmt.Printf("Characters: ")
@@ -26,11 +26,11 @@ func main() {
 			fmt.Printf("[%d]='%c' ", i, char)
 		}
 		fmt.Println()
-		
+
 		// Check if 'd' in "div" would pass isNameStart
 		for i, char := range xpath {
 			if char == 'd' {
-				fmt.Printf("Character 'd' at position %d: isLetter=%v, isNameStart=%v\n", 
+				fmt.Printf("Character 'd' at position %d: isLetter=%v, isNameStart=%v\n",
 					i, isLetter(byte(char)), isNameStart(byte(char)))
 			}
 		}

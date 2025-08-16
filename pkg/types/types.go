@@ -20,20 +20,21 @@ const (
 
 // Node represents an HTML/XML node with location tracking
 type Node struct {
-	Type         NodeType          `json:"type"`
-	Name         string            `json:"name"`
-	Value        string            `json:"value,omitempty"`
-	TextContent  string            `json:"text_content,omitempty"`
-	Attributes   map[string]string `json:"attributes,omitempty"`
-	Children     []*Node           `json:"children,omitempty"`
-	Parent       *Node             `json:"-"` // Avoid circular JSON
-	StartPos     int               `json:"start_pos"`
-	EndPos       int               `json:"end_pos"`
-	StartLine    int               `json:"start_line"`
-	StartColumn  int               `json:"start_column"`
-	EndLine      int               `json:"end_line"`
-	EndColumn    int               `json:"end_column"`
-	SourceLength int               `json:"source_length"`
+	Type           NodeType          `json:"type"`
+	Name           string            `json:"name"`
+	Value          string            `json:"value,omitempty"`
+	TextContent    string            `json:"text_content,omitempty"`
+	Attributes     map[string]string `json:"attributes,omitempty"`
+	AttributeOrder []string          `json:"-"` // Track document order of attributes
+	Children       []*Node           `json:"children,omitempty"`
+	Parent         *Node             `json:"-"` // Avoid circular JSON
+	StartPos       int               `json:"start_pos"`
+	EndPos         int               `json:"end_pos"`
+	StartLine      int               `json:"start_line"`
+	StartColumn    int               `json:"start_column"`
+	EndLine        int               `json:"end_line"`
+	EndColumn      int               `json:"end_column"`
+	SourceLength   int               `json:"source_length"`
 }
 
 // LocationInfo holds detailed position information
@@ -50,40 +51,40 @@ type LocationInfo struct {
 type XPathAxis string
 
 const (
-	AxisChild             XPathAxis = "child"
-	AxisDescendant        XPathAxis = "descendant"
-	AxisParent            XPathAxis = "parent"
-	AxisAncestor          XPathAxis = "ancestor"
-	AxisFollowingSibling  XPathAxis = "following-sibling"
-	AxisPrecedingSibling  XPathAxis = "preceding-sibling"
-	AxisFollowing         XPathAxis = "following"
-	AxisPreceding         XPathAxis = "preceding"
-	AxisAttribute         XPathAxis = "attribute"
-	AxisNamespace         XPathAxis = "namespace"
-	AxisSelf              XPathAxis = "self"
-	AxisDescendantOrSelf  XPathAxis = "descendant-or-self"
-	AxisAncestorOrSelf    XPathAxis = "ancestor-or-self"
+	AxisChild            XPathAxis = "child"
+	AxisDescendant       XPathAxis = "descendant"
+	AxisParent           XPathAxis = "parent"
+	AxisAncestor         XPathAxis = "ancestor"
+	AxisFollowingSibling XPathAxis = "following-sibling"
+	AxisPrecedingSibling XPathAxis = "preceding-sibling"
+	AxisFollowing        XPathAxis = "following"
+	AxisPreceding        XPathAxis = "preceding"
+	AxisAttribute        XPathAxis = "attribute"
+	AxisNamespace        XPathAxis = "namespace"
+	AxisSelf             XPathAxis = "self"
+	AxisDescendantOrSelf XPathAxis = "descendant-or-self"
+	AxisAncestorOrSelf   XPathAxis = "ancestor-or-self"
 )
 
 // XPathFunction represents XPath functions
 type XPathFunction string
 
 const (
-	FuncText         XPathFunction = "text"
-	FuncNode         XPathFunction = "node"
-	FuncPosition     XPathFunction = "position"
-	FuncLast         XPathFunction = "last"
-	FuncCount        XPathFunction = "count"
-	FuncName         XPathFunction = "name"
-	FuncLocalName    XPathFunction = "local-name"
-	FuncNamespaceURI XPathFunction = "namespace-uri"
-	FuncString       XPathFunction = "string"
-	FuncNumber       XPathFunction = "number"
-	FuncBoolean      XPathFunction = "boolean"
-	FuncNot          XPathFunction = "not"
-	FuncStartsWith   XPathFunction = "starts-with"
-	FuncContains     XPathFunction = "contains"
-	FuncSubstring    XPathFunction = "substring"
+	FuncText           XPathFunction = "text"
+	FuncNode           XPathFunction = "node"
+	FuncPosition       XPathFunction = "position"
+	FuncLast           XPathFunction = "last"
+	FuncCount          XPathFunction = "count"
+	FuncName           XPathFunction = "name"
+	FuncLocalName      XPathFunction = "local-name"
+	FuncNamespaceURI   XPathFunction = "namespace-uri"
+	FuncString         XPathFunction = "string"
+	FuncNumber         XPathFunction = "number"
+	FuncBoolean        XPathFunction = "boolean"
+	FuncNot            XPathFunction = "not"
+	FuncStartsWith     XPathFunction = "starts-with"
+	FuncContains       XPathFunction = "contains"
+	FuncSubstring      XPathFunction = "substring"
 	FuncNormalizeSpace XPathFunction = "normalize-space"
 )
 
@@ -109,19 +110,20 @@ const (
 
 // ParsedXPath represents a parsed XPath expression
 type ParsedXPath struct {
-	Steps     []XPathStep `json:"steps"`
-	IsAbsolute bool       `json:"is_absolute"`
+	Steps      []XPathStep    `json:"steps"`
+	IsAbsolute bool           `json:"is_absolute"`
+	Union      []*ParsedXPath `json:"union,omitempty"` // For union expressions like //h1 | //h2
 }
 
 // XPathStep represents a single step in an XPath expression
 type XPathStep struct {
-	Axis       XPathAxis     `json:"axis"`
-	NodeTest   string        `json:"node_test"`
+	Axis       XPathAxis        `json:"axis"`
+	NodeTest   string           `json:"node_test"`
 	Predicates []XPathPredicate `json:"predicates,omitempty"`
 }
 
 // XPathPredicate represents an XPath predicate
 type XPathPredicate struct {
-	Expression string `json:"expression"`
+	Expression string      `json:"expression"`
 	Parsed     interface{} `json:"parsed,omitempty"`
 }

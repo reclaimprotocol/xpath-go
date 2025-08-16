@@ -8,29 +8,29 @@ import (
 func main() {
 	// Test the exact failing scenario with minimal HTML
 	html := `<li><span>Item 1</span></li>`
-	
+
 	fmt.Println("=== Isolating the Complex Boolean Bug ===")
 	fmt.Printf("HTML: %s\n", html)
 	fmt.Println()
-	
+
 	// Get the single li node to test evaluateSimpleCondition behavior
 	liNodes, err := xpath.Query("//li", html)
 	if err != nil {
 		fmt.Printf("ERROR getting li: %v\n", err)
 		return
 	}
-	
+
 	if len(liNodes) == 0 {
 		fmt.Println("ERROR: No li nodes found")
 		return
 	}
-	
+
 	fmt.Printf("Found %d li node(s)\n", len(liNodes))
 	fmt.Println()
-	
+
 	// Test individual components that should work
 	fmt.Println("=== Component Tests ===")
-	
+
 	tests := []struct {
 		query    string
 		expected int
@@ -40,7 +40,7 @@ func main() {
 		{"//li[not(a)]", 1, "Does not have a child"},
 		{"//li[span and not(a)]", 1, "Has span AND not a (FAILING)"},
 	}
-	
+
 	for _, test := range tests {
 		results, err := xpath.Query(test.query, html)
 		if err != nil {
@@ -53,7 +53,7 @@ func main() {
 			fmt.Printf("  %s: %d results (expected %d) %s\n", test.name, len(results), test.expected, status)
 		}
 	}
-	
+
 	fmt.Println()
 	fmt.Println("=== Key Insight ===")
 	fmt.Println("Both individual conditions work, but the combination fails.")

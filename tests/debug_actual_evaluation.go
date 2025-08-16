@@ -11,7 +11,7 @@ import (
 func main() {
 	fmt.Println("=== ACTUAL EVALUATION DEBUG ===")
 	fmt.Println()
-	
+
 	// Test each paragraph individually
 	testCases := []struct {
 		name string
@@ -21,20 +21,20 @@ func main() {
 		{"VeryLongTextHere", `<html><body><p>VeryLongTextHere</p></body></html>`},
 		{"Mid", `<html><body><p>Mid</p></body></html>`},
 	}
-	
+
 	xpathExpr := `//p[substring(text(), string-length(text()) - 3) = 'Text']`
-	
+
 	for _, tc := range testCases {
 		fmt.Printf("=== Testing: %s ===\n", tc.name)
-		
+
 		result, err := xpath.Query(xpathExpr, tc.html)
 		if err != nil {
 			log.Printf("Error for %s: %v", tc.name, err)
 			continue
 		}
-		
+
 		fmt.Printf("Results count: %d\n", len(result))
-		
+
 		if len(result) > 0 {
 			resultJson, _ := json.MarshalIndent(result[0], "", "  ")
 			fmt.Printf("Result: %s\n", resultJson)
@@ -42,7 +42,7 @@ func main() {
 		} else {
 			fmt.Printf("❌ NO MATCH\n")
 		}
-		
+
 		// Expected results
 		switch tc.name {
 		case "ShortText":

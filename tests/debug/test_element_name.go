@@ -22,29 +22,29 @@ func isSimpleElementName(condition string) bool {
 	if condition == "" {
 		return false
 	}
-	
+
 	// Check for disqualifying characters that indicate it's not a simple element name
 	if strings.ContainsAny(condition, "@()[]='\"<>!&|+ ") {
 		return false
 	}
-	
+
 	// Must start with a letter and contain only letters, numbers, hyphens, and underscores
 	if len(condition) == 0 || (!isLetter(condition[0]) && condition[0] != '_') {
 		return false
 	}
-	
+
 	for _, char := range condition {
 		if !isLetter(byte(char)) && !isDigit(byte(char)) && char != '-' && char != '_' && char != ':' {
 			return false
 		}
 	}
-	
+
 	return true
 }
 
 func main() {
 	testCases := []string{"span", "a", "div", "@id", "text()", "contains(text(), 'test')", "span and not(a)"}
-	
+
 	for _, test := range testCases {
 		fmt.Printf("'%s' -> isSimpleElementName: %t\n", test, isSimpleElementName(test))
 	}

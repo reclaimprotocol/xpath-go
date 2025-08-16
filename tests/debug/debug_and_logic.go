@@ -8,24 +8,24 @@ import (
 // Simulate the AND logic to debug
 func debugAndLogic(expr string) {
 	fmt.Printf("=== Debugging AND logic for: %s ===\n", expr)
-	
+
 	// Simulate applyAndPredicate splitting
 	parts := strings.Split(expr, " and ")
 	if len(parts) != 2 {
 		fmt.Printf("ERROR: Expected 2 parts, got %d\n", len(parts))
 		return
 	}
-	
+
 	firstCondition := strings.TrimSpace(parts[0])
 	secondCondition := strings.TrimSpace(parts[1])
-	
+
 	fmt.Printf("First condition: '%s'\n", firstCondition)
 	fmt.Printf("Second condition: '%s'\n", secondCondition)
-	
+
 	// Check what type of conditions these are
 	fmt.Printf("First condition analysis:\n")
 	analyzeCondition(firstCondition)
-	
+
 	fmt.Printf("Second condition analysis:\n")
 	analyzeCondition(secondCondition)
 }
@@ -45,23 +45,23 @@ func isSimpleElementName(condition string) bool {
 	if condition == "" {
 		return false
 	}
-	
+
 	// Check for disqualifying characters
 	if strings.ContainsAny(condition, "@()[]='\"<>!&|+ ") {
 		return false
 	}
-	
+
 	// Must start with a letter
 	if len(condition) == 0 || (!isLetter(condition[0]) && condition[0] != '_') {
 		return false
 	}
-	
+
 	for _, char := range condition {
 		if !isLetter(byte(char)) && !isDigit(byte(char)) && char != '-' && char != '_' && char != ':' {
 			return false
 		}
 	}
-	
+
 	return true
 }
 

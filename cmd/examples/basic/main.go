@@ -71,7 +71,7 @@ func main() {
 
 		fmt.Printf("    ✅ Found %d result(s):\n", len(results))
 		for j, result := range results {
-			fmt.Printf("       [%d] Node: %s, Text: %q\n", 
+			fmt.Printf("       [%d] Node: %s, Text: %q\n",
 				j+1, result.NodeName, truncateText(result.TextContent, 50))
 			if result.StartLocation > 0 || result.EndLocation > 0 {
 				fmt.Printf("           Location: %d-%d\n", result.StartLocation, result.EndLocation)

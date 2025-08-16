@@ -39,10 +39,10 @@ type Token struct {
 func main() {
 	expr := "//div"
 	tokens := tokenize(expr)
-	
+
 	fmt.Printf("Tokenizing: %s\n", expr)
 	for i, token := range tokens {
-		fmt.Printf("Token %d: Type=%s, Value='%s', Pos=%d\n", 
+		fmt.Printf("Token %d: Type=%s, Value='%s', Pos=%d\n",
 			i, getTokenTypeName(token.Type), token.Value, token.Pos)
 	}
 }
@@ -95,12 +95,18 @@ func tokenize(expr string) []Token {
 
 func getTokenTypeName(t TokenType) string {
 	switch t {
-	case TokenAxis: return "TokenAxis"
-	case TokenNodeTest: return "TokenNodeTest"
-	case TokenSlash: return "TokenSlash"
-	case TokenDoubleSlash: return "TokenDoubleSlash"
-	case TokenEOF: return "TokenEOF"
-	default: return "Unknown"
+	case TokenAxis:
+		return "TokenAxis"
+	case TokenNodeTest:
+		return "TokenNodeTest"
+	case TokenSlash:
+		return "TokenSlash"
+	case TokenDoubleSlash:
+		return "TokenDoubleSlash"
+	case TokenEOF:
+		return "TokenEOF"
+	default:
+		return "Unknown"
 	}
 }
 

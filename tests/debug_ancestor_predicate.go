@@ -15,13 +15,13 @@ func main() {
 			<p>Non-target paragraph</p>
 		</div>
 	</body></html>`
-	
+
 	fmt.Println("=== Testing Ancestor Axis with Predicates ===")
 	fmt.Println("HTML Structure:")
 	fmt.Println("- div.content > p (Target paragraph)")
 	fmt.Println("- div.other > p (Non-target paragraph)")
 	fmt.Println()
-	
+
 	testCases := []struct {
 		query       string
 		description string
@@ -49,16 +49,16 @@ func main() {
 		},
 		{
 			"//p[ancestor::div[@class='other']]",
-			"p elements with div.other ancestor", 
+			"p elements with div.other ancestor",
 			1, // Only 'Non-target paragraph' should match
 		},
 	}
-	
+
 	for i, test := range testCases {
 		fmt.Printf("%d. %s\n", i+1, test.description)
 		fmt.Printf("   Query: %s\n", test.query)
 		fmt.Printf("   Expected: %d results\n", test.expected)
-		
+
 		results, err := xpath.Query(test.query, html)
 		if err != nil {
 			fmt.Printf("   ERROR: %v\n", err)
@@ -67,7 +67,7 @@ func main() {
 			for j, result := range results {
 				fmt.Printf("     %d. %s\n", j+1, result.TextContent)
 			}
-			
+
 			if len(results) == test.expected {
 				fmt.Println("   ✅ PASS")
 			} else {

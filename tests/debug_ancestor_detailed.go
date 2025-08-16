@@ -28,7 +28,7 @@ func hasAncestorDebug(node *types.Node, ancestorType string) bool {
 func main() {
 	html := `<html><body><article><header><h1>Title</h1></header><section><p>Content</p><aside><p>Sidebar</p></aside></section></article></body></html>`
 	xpath := `//article//section//p`
-	
+
 	eval := evaluator.NewEvaluator()
 	results, err := eval.Evaluate(xpath, html)
 	if err != nil {
@@ -39,13 +39,13 @@ func main() {
 	fmt.Printf("All p elements in section: %d\n", len(results))
 	for i, result := range results {
 		fmt.Printf("Result %d: %s\n", i+1, result.TextContent)
-		
+
 		// Check ancestor manually
 		resultNode := &types.Node{
-			Name: result.NodeName,
+			Name:        result.NodeName,
 			TextContent: result.TextContent,
-			Type: types.NodeType(result.NodeType),
-			Parent: nil, // We need to reconstruct this...
+			Type:        types.NodeType(result.NodeType),
+			Parent:      nil, // We need to reconstruct this...
 		}
 		// This won't work because we've lost the parent relationships
 	}

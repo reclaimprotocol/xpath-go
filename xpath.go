@@ -17,7 +17,7 @@ type Result struct {
 	StartLocation int               `json:"startLocation"`
 	EndLocation   int               `json:"endLocation"`
 	Path          string            `json:"path"`
-	TextContent   string            `json:"textContent,omitempty"`
+	TextContent   string            `json:"textContent"`
 }
 
 // XPath represents a compiled XPath expression

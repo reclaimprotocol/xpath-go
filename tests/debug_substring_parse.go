@@ -8,16 +8,16 @@ import (
 // Simplified parseSubstringArgs to test parsing
 func parseSubstringArgs(argsStr string) []string {
 	fmt.Printf("DEBUG: Parsing args: '%s'\n", argsStr)
-	
+
 	var args []string
 	current := ""
 	inQuotes := false
 	quoteChar := byte(0)
 	parenDepth := 0
-	
+
 	for i := 0; i < len(argsStr); i++ {
 		c := argsStr[i]
-		
+
 		if !inQuotes && (c == '\'' || c == '"') {
 			inQuotes = true
 			quoteChar = c
@@ -40,12 +40,12 @@ func parseSubstringArgs(argsStr string) []string {
 			current += string(c)
 		}
 	}
-	
+
 	if current != "" {
 		args = append(args, strings.TrimSpace(current))
 		fmt.Printf("DEBUG: Final arg: '%s'\n", strings.TrimSpace(current))
 	}
-	
+
 	fmt.Printf("DEBUG: Total args: %d\n", len(args))
 	return args
 }
@@ -55,12 +55,12 @@ func main() {
 	argsStr := "text(), string-length(text()) - 3"
 	fmt.Println("Testing argument parsing for substring:")
 	args := parseSubstringArgs(argsStr)
-	
+
 	fmt.Printf("\nParsed %d arguments:\n", len(args))
 	for i, arg := range args {
 		fmt.Printf("  args[%d] = '%s'\n", i, arg)
 	}
-	
+
 	// Test the condition we're checking
 	if len(args) > 1 {
 		fmt.Printf("\nChecking if args[1] contains 'string-length(text())':\n")

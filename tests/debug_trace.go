@@ -8,10 +8,10 @@ import (
 // Simulate the exact applyAndPredicate logic
 func applyAndPredicate(nodes []map[string]string, expr string) []map[string]string {
 	fmt.Printf("=== applyAndPredicate called with expr: '%s' ===\n", expr)
-	
+
 	parts := strings.Split(expr, " and ")
 	fmt.Printf("Split parts: %v\n", parts)
-	
+
 	if len(parts) != 2 {
 		fmt.Printf("Not exactly 2 parts, returning original nodes\n")
 		return nodes
@@ -22,10 +22,10 @@ func applyAndPredicate(nodes []map[string]string, expr string) []map[string]stri
 	// Apply both conditions to each node
 	for i, node := range nodes {
 		fmt.Printf("\n--- Testing node %d: %v ---\n", i, node)
-		
+
 		firstCondition := strings.TrimSpace(parts[0])
 		secondCondition := strings.TrimSpace(parts[1])
-		
+
 		fmt.Printf("First condition: '%s'\n", firstCondition)
 		fmt.Printf("Second condition: '%s'\n", secondCondition)
 
@@ -75,7 +75,7 @@ func evaluateSimpleCondition(attributes map[string]string, condition string) boo
 		attrName := strings.TrimPrefix(strings.TrimSpace(parts[0]), "@")
 		expectedValue := strings.Trim(strings.TrimSpace(parts[1]), "\"'")
 		fmt.Printf("  Checking attribute value: '%s' == '%s'\n", attrName, expectedValue)
-		
+
 		if value, exists := attributes[attrName]; exists {
 			fmt.Printf("  Actual value: '%s', matches: %v\n", value, value == expectedValue)
 			return value == expectedValue
@@ -91,14 +91,14 @@ func evaluateSimpleCondition(attributes map[string]string, condition string) boo
 func main() {
 	// Test data
 	nodes := []map[string]string{
-		{"id": "test", "class": "highlight"},     // Should match
-		{"id": "other"},                         // Should not match  
-		{"class": "highlight"},                  // Should not match
+		{"id": "test", "class": "highlight"}, // Should match
+		{"id": "other"},                      // Should not match
+		{"class": "highlight"},               // Should not match
 	}
-	
+
 	fmt.Println("Testing AND predicate logic")
 	fmt.Printf("Nodes: %v\n", nodes)
-	
+
 	result := applyAndPredicate(nodes, "@id and @class")
 	fmt.Printf("\nFinal result: %v\n", result)
 }

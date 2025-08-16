@@ -7,16 +7,16 @@ import (
 
 func main() {
 	p := parser.NewParser()
-	
+
 	fmt.Println("Testing XPath parsing:")
-	
+
 	testCases := []string{
 		"//div",
-		"/html", 
+		"/html",
 		"div",
 		"//div[@id='test']",
 	}
-	
+
 	for _, xpath := range testCases {
 		fmt.Printf("\n--- Testing: %s ---\n", xpath)
 		parsed, err := p.Parse(xpath)
@@ -25,7 +25,7 @@ func main() {
 		} else {
 			fmt.Printf("SUCCESS: IsAbsolute=%v, Steps=%d\n", parsed.IsAbsolute, len(parsed.Steps))
 			for i, step := range parsed.Steps {
-				fmt.Printf("  Step %d: Axis=%s, NodeTest=%s, Predicates=%d\n", 
+				fmt.Printf("  Step %d: Axis=%s, NodeTest=%s, Predicates=%d\n",
 					i, step.Axis, step.NodeTest, len(step.Predicates))
 			}
 		}

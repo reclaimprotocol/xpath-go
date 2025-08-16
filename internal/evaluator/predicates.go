@@ -1,9 +1,6 @@
 package evaluator
 
 import (
-	"strconv"
-	"strings"
-
 	"github.com/reclaimprotocol/xpath-go/pkg/types"
 )
 
@@ -227,68 +224,3 @@ func (e *Evaluator) applyNestedPredicate(nodes []*types.Node, expr string) []*ty
 }
 
 // Helper functions for predicate evaluation
-
-// evaluatePositionExpression evaluates position-based expressions
-func (e *Evaluator) evaluatePositionExpression(expr string, position int) bool {
-	// Handle position() = n, position() != n, etc.
-	if strings.Contains(expr, "position()") {
-		if strings.Contains(expr, " = ") {
-			parts := strings.Split(expr, " = ")
-			if len(parts) == 2 {
-				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
-					return position == targetPos
-				}
-			}
-		}
-		// Add more position operators as needed
-	}
-
-	// Handle numeric position directly
-	if pos, err := strconv.Atoi(strings.TrimSpace(expr)); err == nil {
-		return position == pos
-	}
-
-	return false
-}
-
-// evaluatePositionModExpression evaluates position modulo expressions
-func (e *Evaluator) evaluatePositionModExpression(expr string, position int) bool {
-	// Handle position() mod n = 0
-	if strings.Contains(expr, "mod") && strings.Contains(expr, "position()") {
-		// Simple parsing for mod expressions
-		if strings.Contains(expr, "mod 2 = 0") {
-			return position%2 == 0
-		}
-		if strings.Contains(expr, "mod 2 = 1") {
-			return position%2 == 1
-		}
-	}
-
-	return false
-}
-
-// evaluatePositionComparison evaluates position comparison expressions
-func (e *Evaluator) evaluatePositionComparison(expr string, position int) bool {
-	// Handle position() > n, position() < n, etc.
-	if strings.Contains(expr, "position()") {
-		if strings.Contains(expr, " > ") {
-			parts := strings.Split(expr, " > ")
-			if len(parts) == 2 {
-				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
-					return position > targetPos
-				}
-			}
-		}
-		if strings.Contains(expr, " < ") {
-			parts := strings.Split(expr, " < ")
-			if len(parts) == 2 {
-				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
-					return position < targetPos
-				}
-			}
-		}
-		// Add more comparison operators as needed
-	}
-
-	return false
-}

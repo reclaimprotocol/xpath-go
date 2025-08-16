@@ -2,20 +2,20 @@ package main
 
 import (
 	"fmt"
-	"strings"
 	"github.com/reclaimprotocol/xpath-go"
+	"strings"
 )
 
 func main() {
 	html := `<html><body><div></div><div> </div><div><span></span></div><div>Content</div></body></html>`
-	
+
 	// Get all divs and examine their properties
 	results, err := xpath.Query("//div", html)
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)
 		return
 	}
-	
+
 	fmt.Printf("Found %d divs:\n", len(results))
 	for i, result := range results {
 		textContent := result.TextContent

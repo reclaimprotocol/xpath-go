@@ -7,7 +7,7 @@ import (
 
 func findMainBooleanOperator(expr string) (string, string, string) {
 	parenDepth := 0
-	
+
 	// Look for 'and' operator outside parentheses (AND has higher precedence)
 	for i := 0; i < len(expr); i++ {
 		if expr[i] == '(' {
@@ -20,7 +20,7 @@ func findMainBooleanOperator(expr string) (string, string, string) {
 			return "and", leftExpr, rightExpr
 		}
 	}
-	
+
 	// Look for 'or' operator outside parentheses
 	parenDepth = 0
 	for i := 0; i < len(expr); i++ {
@@ -34,7 +34,7 @@ func findMainBooleanOperator(expr string) (string, string, string) {
 			return "or", leftExpr, rightExpr
 		}
 	}
-	
+
 	return "", "", ""
 }
 

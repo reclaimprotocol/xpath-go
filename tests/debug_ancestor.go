@@ -10,7 +10,7 @@ import (
 func main() {
 	html := `<html><body><article><header><h1>Title</h1></header><section><p>Content</p><aside><p>Sidebar</p></aside></section></article></body></html>`
 	xpath := `//article//section//p[not(ancestor::aside)]`
-	
+
 	eval := evaluator.NewEvaluator()
 	results, err := eval.Evaluate(xpath, html)
 	if err != nil {

@@ -246,7 +246,7 @@ func (p *Parser) parseOperator(expr string, pos int) string {
 				}
 				// For standalone word operators like "div", "mod", require operator context
 				// (i.e., they should be preceded by a value/expression)
-				if pos == 0 || (pos > 0 && !isWhitespace(expr[pos-1]) && 
+				if pos == 0 || (pos > 0 && !isWhitespace(expr[pos-1]) &&
 					expr[pos-1] != ')' && expr[pos-1] != ']') {
 					continue
 				}
@@ -260,7 +260,136 @@ func (p *Parser) parseOperator(expr string, pos int) string {
 // parseExpression parses the tokenized expression into steps
 func (p *Parser) parseExpression() (*types.ParsedXPath, error) {
 	p.position = 0
-	
+
+	// Handle parenthesized expressions like (//section/h1 | //section/p)
+	if p.currentToken().Type == TokenLeftParen {
+		return p.parseParenthesizedExpression()
+	}
+
+	// Parse first path expression
+	firstExpr, err := p.parsePathExpression()
+	if err != nil {
+		return nil, err
+	}
+
+	// Check for union operator |
+	if p.currentToken().Type == TokenPipe {
+		// This is a union expression
+		parsed := &types.ParsedXPath{
+			Steps:      firstExpr.Steps,
+			IsAbsolute: firstExpr.IsAbsolute,
+			Union:      []*types.ParsedXPath{firstExpr},
+		}
+
+		// Parse additional union expressions
+		for p.currentToken().Type == TokenPipe {
+			p.advance() // Skip pipe token
+
+			nextExpr, err := p.parsePathExpression()
+			if err != nil {
+				return nil, err
+			}
+
+			parsed.Union = append(parsed.Union, nextExpr)
+		}
+
+		return parsed, nil
+	}
+
+	return firstExpr, nil
+}
+
+// parseParenthesizedExpression handles expressions wrapped in parentheses
+func (p *Parser) parseParenthesizedExpression() (*types.ParsedXPath, error) {
+	// Expect opening parenthesis
+	if p.currentToken().Type != TokenLeftParen {
+		return nil, fmt.Errorf("expected '(' at position %d", p.position)
+	}
+	p.advance()
+
+	// Parse the inner expression without recursion
+	innerExpr, err := p.parseUnionExpression()
+	if err != nil {
+		return nil, err
+	}
+
+	// Expect closing parenthesis
+	if p.currentToken().Type != TokenRightParen {
+		return nil, fmt.Errorf("expected ')' at position %d", p.position)
+	}
+	p.advance()
+
+	// Check if there's a union operator after the parentheses
+	if p.currentToken().Type == TokenPipe {
+		// Create a union expression starting with the parenthesized part
+		parsed := &types.ParsedXPath{
+			Steps:      []types.XPathStep{},
+			IsAbsolute: false,
+			Union:      []*types.ParsedXPath{innerExpr},
+		}
+
+		// Parse additional union expressions
+		for p.currentToken().Type == TokenPipe {
+			p.advance() // Skip pipe token
+
+			var nextExpr *types.ParsedXPath
+			if p.currentToken().Type == TokenLeftParen {
+				// Another parenthesized expression
+				nextExpr, err = p.parseParenthesizedExpression()
+			} else {
+				// Regular path expression
+				nextExpr, err = p.parsePathExpression()
+			}
+			if err != nil {
+				return nil, fmt.Errorf("parsing union expression: %v", err)
+			}
+
+			parsed.Union = append(parsed.Union, nextExpr)
+		}
+
+		return parsed, nil
+	}
+
+	return innerExpr, nil
+}
+
+// parseUnionExpression parses union expressions without handling parentheses
+func (p *Parser) parseUnionExpression() (*types.ParsedXPath, error) {
+	// Parse first path expression
+	firstExpr, err := p.parsePathExpression()
+	if err != nil {
+		return nil, err
+	}
+
+	// Check for union operator |
+	if p.currentToken().Type == TokenPipe {
+		// This is a union expression
+		parsed := &types.ParsedXPath{
+			Steps:      firstExpr.Steps,
+			IsAbsolute: firstExpr.IsAbsolute,
+			Union:      []*types.ParsedXPath{firstExpr},
+		}
+
+		// Parse additional union expressions
+		for p.currentToken().Type == TokenPipe {
+			p.advance() // Skip pipe token
+
+			nextExpr, err := p.parsePathExpression()
+			if err != nil {
+				return nil, fmt.Errorf("parsing union expression: %v", err)
+			}
+
+			parsed.Union = append(parsed.Union, nextExpr)
+		}
+
+		return parsed, nil
+	}
+
+	return firstExpr, nil
+}
+
+// parsePathExpression parses a single path expression (no unions)
+func (p *Parser) parsePathExpression() (*types.ParsedXPath, error) {
 	parsed := &types.ParsedXPath{
 		Steps:      []types.XPathStep{},
 		IsAbsolute: false,
@@ -280,7 +409,7 @@ func (p *Parser) parseExpression() (*types.ParsedXPath, error) {
 	}
 
 	// Parse location steps
-	for p.currentToken().Type != TokenEOF {
+	for p.currentToken().Type != TokenEOF && p.currentToken().Type != TokenPipe {
 		step, err := p.parseLocationStep()
 		if err != nil {
 			return nil, err
@@ -297,8 +426,8 @@ func (p *Parser) parseExpression() (*types.ParsedXPath, error) {
 				Axis:     types.AxisDescendantOrSelf,
 				NodeTest: "node()",
 			})
-		} else if p.currentToken().Type != TokenEOF {
-			break // Could be union or other operator
+		} else if p.currentToken().Type != TokenEOF && p.currentToken().Type != TokenPipe {
+			break // Unknown token
 		}
 	}
 
@@ -379,7 +508,7 @@ func (p *Parser) parsePredicate() (*types.XPathPredicate, error) {
 	// Collect all tokens until closing bracket
 	start := p.position
 	depth := 1
-	
+
 	for depth > 0 && p.currentToken().Type != TokenEOF {
 		if p.currentToken().Type == TokenLeftBracket {
 			depth++
@@ -398,7 +527,7 @@ func (p *Parser) parsePredicate() (*types.XPathPredicate, error) {
 	// Extract predicate expression
 	predicateTokens := p.tokens[start:p.position]
 	expression := p.tokensToString(predicateTokens)
-	
+
 	p.advance() // Skip closing bracket
 
 	return &types.XPathPredicate{

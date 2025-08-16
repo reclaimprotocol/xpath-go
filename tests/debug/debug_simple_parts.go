@@ -8,13 +8,13 @@ import (
 func main() {
 	// Test the simplest case piece by piece
 	html := `<html><body><div></div></body></html>`
-	
+
 	queries := []string{
 		"//div",
 		"//div[normalize-space(text())='']",
 		"//div[not(*)]",
 	}
-	
+
 	for _, query := range queries {
 		results, err := xpath.Query(query, html)
 		if err != nil {

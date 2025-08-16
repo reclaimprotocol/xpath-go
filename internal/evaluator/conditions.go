@@ -137,6 +137,11 @@ func (e *Evaluator) evaluateSimpleCondition(node *types.Node, condition string) 
 		}
 	}
 
+	// Text content existence: text()
+	if condition == "text()" {
+		return strings.TrimSpace(node.TextContent) != ""
+	}
+
 	// Text content comparison: text()='value'
 	if strings.Contains(condition, "text()") && strings.Contains(condition, "=") {
 		if strings.Contains(condition, "!=") {
@@ -696,4 +701,106 @@ func (e *Evaluator) evaluateOrExpression(expr string, node *types.Node) bool {
 	right := strings.TrimSpace(parts[1])
 
 	return e.evaluateSimpleCondition(node, left) || e.evaluateSimpleCondition(node, right)
+}
+
+// evaluatePositionExpression evaluates position-based expressions
+func (e *Evaluator) evaluatePositionExpression(expr string, position int) bool {
+	// Handle position() = n, position() != n, etc.
+	if strings.Contains(expr, "position()") {
+		if strings.Contains(expr, " = ") {
+			parts := strings.Split(expr, " = ")
+			if len(parts) == 2 {
+				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
+					return position == targetPos
+				}
+			}
+		} else if strings.Contains(expr, "=") {
+			parts := strings.Split(expr, "=")
+			if len(parts) == 2 {
+				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
+					return position == targetPos
+				}
+			}
+		}
+		// Add more position operators as needed
+	}
+
+	// Handle numeric position directly
+	if pos, err := strconv.Atoi(strings.TrimSpace(expr)); err == nil {
+		return position == pos
+	}
+
+	return false
+}
+
+// evaluatePositionModExpression evaluates position modulo expressions
+func (e *Evaluator) evaluatePositionModExpression(expr string, position int) bool {
+	// Handle position() mod n = 0
+	if strings.Contains(expr, "mod") && strings.Contains(expr, "position()") {
+		// Parse "position() mod N = X"
+		parts := strings.Split(expr, "=")
+		if len(parts) != 2 {
+			return false
+		}
+
+		leftSide := strings.TrimSpace(parts[0])
+		rightSide := strings.TrimSpace(parts[1])
+
+		// Extract mod operands from "position() mod N"
+		modParts := strings.Split(leftSide, "mod")
+		if len(modParts) != 2 {
+			return false
+		}
+
+		divisor, err1 := strconv.Atoi(strings.TrimSpace(modParts[1]))
+		remainder, err2 := strconv.Atoi(rightSide)
+
+		if err1 != nil || err2 != nil {
+			return false
+		}
+
+		return position%divisor == remainder
+	}
+
+	return false
+}
+
+// evaluatePositionComparison evaluates position comparison expressions
+func (e *Evaluator) evaluatePositionComparison(expr string, position int) bool {
+	// Handle position() > n, position() < n, etc.
+	if strings.Contains(expr, "position()") {
+		if strings.Contains(expr, " > ") {
+			parts := strings.Split(expr, " > ")
+			if len(parts) == 2 {
+				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
+					return position > targetPos
+				}
+			}
+		} else if strings.Contains(expr, ">") {
+			parts := strings.Split(expr, ">")
+			if len(parts) == 2 {
+				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
+					return position > targetPos
+				}
+			}
+		}
+		if strings.Contains(expr, " < ") {
+			parts := strings.Split(expr, " < ")
+			if len(parts) == 2 {
+				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
+					return position < targetPos
+				}
+			}
+		} else if strings.Contains(expr, "<") {
+			parts := strings.Split(expr, "<")
+			if len(parts) == 2 {
+				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
+					return position < targetPos
+				}
+			}
+		}
+		// Add more comparison operators as needed
+	}
+
+	return false
 }

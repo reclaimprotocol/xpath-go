@@ -12,7 +12,7 @@ func main() {
 		"@id and @class",
 		"@id='test' and @class='content'",
 	}
-	
+
 	for _, expr := range testCases {
 		fmt.Printf("Expression: '%s'\n", expr)
 		fmt.Printf("  Contains ' and ': %v\n", strings.Contains(expr, " and "))

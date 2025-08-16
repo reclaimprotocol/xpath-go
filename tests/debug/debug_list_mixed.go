@@ -7,11 +7,11 @@ import (
 
 func main() {
 	html := `<html><body><ul><li><span>Item 1</span><!-- comment --></li><li>Item 2</li><li><a href='#'>Item 3</a><span>Extra</span></li></ul></body></html>`
-	
+
 	fmt.Println("Testing: //li[span and not(a)]")
 	fmt.Println("Expected: 1 result (first li)")
 	fmt.Println()
-	
+
 	// Test all li elements
 	allLi, err := xpath.Query("//li", html)
 	if err != nil {
@@ -19,7 +19,7 @@ func main() {
 		return
 	}
 	fmt.Printf("Found %d li elements\n", len(allLi))
-	
+
 	// Test each li individually
 	for i := 1; i <= len(allLi); i++ {
 		// Test span existence
@@ -29,7 +29,7 @@ func main() {
 		} else {
 			fmt.Printf("Li %d has span: %v\n", i, len(spanResults) > 0)
 		}
-		
+
 		// Test not(a)
 		notAResults, err := xpath.Query(fmt.Sprintf("(//li)[%d][not(a)]", i), html)
 		if err != nil {
@@ -37,7 +37,7 @@ func main() {
 		} else {
 			fmt.Printf("Li %d matches not(a): %v\n", i, len(notAResults) > 0)
 		}
-		
+
 		// Test combined
 		combinedResults, err := xpath.Query(fmt.Sprintf("(//li)[%d][span and not(a)]", i), html)
 		if err != nil {
@@ -47,7 +47,7 @@ func main() {
 		}
 		fmt.Println()
 	}
-	
+
 	// Test all together
 	finalResults, err := xpath.Query("//li[span and not(a)]", html)
 	if err != nil {

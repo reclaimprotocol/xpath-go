@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"github.com/reclaimprotocol/xpath-go"
+	"os"
 )
 
 func main() {
@@ -24,7 +24,7 @@ func main() {
 	// Test individual parts
 	queries := []string{
 		"//div",
-		"//div[normalize-space(text())='']", 
+		"//div[normalize-space(text())='']",
 		"//div[not(*)]",
 		"//div[normalize-space(text())='' and not(*)]",
 	}

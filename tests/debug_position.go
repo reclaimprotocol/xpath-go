@@ -14,8 +14,8 @@ func main() {
 	// Test 54: Complex table navigation
 	html1 := `<html><body><table><thead><tr><th>Name</th><th>Age</th></tr></thead><tbody><tr><td>John</td><td>25</td></tr><tr><td>Jane</td><td>30</td></tr></tbody></table></body></html>`
 	xpath1 := `//tbody/tr[position()>1]/td[position()=1]`
-	
-	// Test 62: Position in filtered set  
+
+	// Test 62: Position in filtered set
 	html2 := `<html><body><div><span class='item'>A</span><p>X</p><span class='item'>B</span><div>Y</div><span class='item'>C</span><span class='item'>D</span></div></body></html>`
 	xpath2 := `//span[@class='item'][position() mod 2 = 0]`
 
@@ -35,14 +35,14 @@ func main() {
 
 	// Debug simpler position queries
 	fmt.Println("=== SIMPLER POSITION TESTS ===\n")
-	
+
 	simpleHTML := `<html><body><ul><li>Item 1</li><li>Item 2</li><li>Item 3</li></ul></body></html>`
-	
+
 	// Test basic position
 	fmt.Println("Basic position=2:")
 	testXPath(simpleHTML, "//li[position()=2]")
 	fmt.Println()
-	
+
 	// Test position>1
 	fmt.Println("Basic position>1:")
 	testXPath(simpleHTML, "//li[position()>1]")
@@ -68,29 +68,29 @@ func testXPath(html, xpathQuery string) {
 
 	// Execute XPath
 	iter := expr.Select(nav)
-	
+
 	results := []map[string]interface{}{}
 	count := 0
-	
+
 	for iter.MoveNext() {
 		count++
 		node := iter.Current()
-		
+
 		result := map[string]interface{}{
 			"nodeName":    strings.ToLower(node.LocalName()),
 			"textContent": strings.TrimSpace(node.Value()),
 			"nodeType":    1, // Element node
 			"attributes":  map[string]string{},
 		}
-		
+
 		results = append(results, result)
-		
-		fmt.Printf("  Result %d: <%s>%s</%s>\n", count, 
+
+		fmt.Printf("  Result %d: <%s>%s</%s>\n", count,
 			node.LocalName(), node.Value(), node.LocalName())
 	}
-	
+
 	fmt.Printf("Found %d results\n", count)
-	
+
 	// Output JSON for consistency
 	jsonResult := map[string]interface{}{
 		"results": results,

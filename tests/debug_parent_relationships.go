@@ -11,7 +11,7 @@ import (
 
 func main() {
 	html := `<html><body><article><header><h1>Title</h1></header><section><p>Content</p><aside><p>Sidebar</p></aside></section></article></body></html>`
-	
+
 	// Parse the HTML and check node structure
 	parser := utils.NewHTMLParser()
 	document, err := parser.Parse(html)
@@ -31,7 +31,7 @@ func main() {
 	fmt.Printf("Found %d p elements:\n", len(results))
 	for i, result := range results {
 		fmt.Printf("P element %d: '%s'\n", i+1, result.TextContent)
-		
+
 		// We need to find this node in the parsed tree to check its parents
 		findAndPrintAncestors(document, result.TextContent)
 		fmt.Println()
@@ -49,7 +49,7 @@ func findAndPrintAncestors(node *types.Node, targetText string) {
 		}
 		return
 	}
-	
+
 	// Recursively search children
 	for _, child := range node.Children {
 		findAndPrintAncestors(child, targetText)

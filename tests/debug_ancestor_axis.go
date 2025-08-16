@@ -21,13 +21,13 @@ func main() {
 			</article>
 		</div>
 	</body></html>`
-	
+
 	fmt.Println("=== Testing Ancestor Axis Filtering ===")
 	fmt.Println("HTML Structure:")
 	fmt.Println("- div.container > div.content > article > p.text (should match)")
 	fmt.Println("- div.other > article > p.text (should NOT match)")
 	fmt.Println()
-	
+
 	testCases := []struct {
 		query       string
 		description string
@@ -54,12 +54,12 @@ func main() {
 			1, // Only the first p has div.container as ancestor
 		},
 	}
-	
+
 	for i, test := range testCases {
 		fmt.Printf("%d. %s\n", i+1, test.description)
 		fmt.Printf("   Query: %s\n", test.query)
 		fmt.Printf("   Expected: %d results\n", test.expected)
-		
+
 		results, err := xpath.Query(test.query, html)
 		if err != nil {
 			fmt.Printf("   ERROR: %v\n", err)
@@ -68,7 +68,7 @@ func main() {
 			for j, result := range results {
 				fmt.Printf("     %d. %s\n", j+1, result.TextContent)
 			}
-			
+
 			if len(results) == test.expected {
 				fmt.Println("   ✅ PASS")
 			} else {

@@ -71,7 +71,7 @@ func (p *HTMLParser) parseNode(parent *types.Node) (*types.Node, error) {
 	if p.peek() == '<' {
 		return p.parseElement(parent, startPos, startLine, startCol)
 	}
-	
+
 	// Parse text node
 	return p.parseTextNode(parent, startPos, startLine, startCol)
 }
@@ -106,14 +106,15 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 	}
 
 	node := &types.Node{
-		Type:        types.ElementNode,
-		Name:        strings.ToLower(tagName),
-		Attributes:  make(map[string]string),
-		Children:    []*types.Node{},
-		Parent:      parent,
-		StartPos:    startPos,
-		StartLine:   startLine,
-		StartColumn: startCol,
+		Type:           types.ElementNode,
+		Name:           strings.ToLower(tagName),
+		Attributes:     make(map[string]string),
+		AttributeOrder: []string{},
+		Children:       []*types.Node{},
+		Parent:         parent,
+		StartPos:       startPos,
+		StartLine:      startLine,
+		StartColumn:    startCol,
 	}
 
 	// Parse attributes
@@ -136,7 +137,9 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 			value = p.parseAttributeValue()
 		}
 
-		node.Attributes[strings.ToLower(name)] = value
+		lowerName := strings.ToLower(name)
+		node.Attributes[lowerName] = value
+		node.AttributeOrder = append(node.AttributeOrder, lowerName)
 	}
 
 	// Check for self-closing tag
@@ -161,7 +164,6 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 	// Parse child nodes
 	textContent := ""
 	for p.pos < len(p.content) {
-		p.skipWhitespace()
 		if p.pos >= len(p.content) {
 			break
 		}
@@ -184,12 +186,15 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 		if child != nil {
 			if child.Type == types.TextNode {
 				textContent += child.Value
+			} else if child.Type == types.ElementNode {
+				// Recursively collect text content from element children
+				textContent += child.TextContent
 			}
 			node.Children = append(node.Children, child)
 		}
 	}
 
-	node.TextContent = strings.TrimSpace(textContent)
+	node.TextContent = textContent
 	node.EndPos = p.pos
 	node.EndLine = p.line
 	node.EndColumn = p.col
@@ -200,7 +205,7 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 // parseTextNode parses a text node
 func (p *HTMLParser) parseTextNode(parent *types.Node, startPos, startLine, startCol int) (*types.Node, error) {
 	text := ""
-	
+
 	for p.pos < len(p.content) && p.peek() != '<' {
 		text += string(p.peek())
 		p.advance()
@@ -210,17 +215,14 @@ func (p *HTMLParser) parseTextNode(parent *types.Node, startPos, startLine, star
 		return nil, nil
 	}
 
-	// Trim whitespace but preserve structure
-	trimmed := strings.TrimSpace(text)
-	if trimmed == "" && parent.Type == types.ElementNode {
-		return nil, nil // Skip whitespace-only text nodes
-	}
+	// Preserve all text nodes including whitespace-only text for XPath compatibility
+	// Don't skip whitespace-only text nodes as they are significant for XPath expressions
 
 	return &types.Node{
 		Type:        types.TextNode,
 		Name:        "#text",
-		Value:       trimmed,
-		TextContent: trimmed,
+		Value:       text, // Preserve original text with whitespace
+		TextContent: text, // Preserve original text with whitespace
 		Parent:      parent,
 		StartPos:    startPos,
 		EndPos:      p.pos,
@@ -238,7 +240,7 @@ func (p *HTMLParser) parseComment(parent *types.Node, startPos, startLine, start
 	}
 
 	p.pos += 4 // Skip "<!--"
-	
+
 	comment := ""
 	for p.pos < len(p.content)-2 {
 		if p.content[p.pos:p.pos+3] == "-->" {
@@ -271,7 +273,7 @@ func (p *HTMLParser) parseProcessingInstruction(parent *types.Node, startPos, st
 	}
 
 	p.pos += 2 // Skip "<?"
-	
+
 	instruction := ""
 	for p.pos < len(p.content)-1 {
 		if p.content[p.pos:p.pos+2] == "?>" {
@@ -305,7 +307,7 @@ func (p *HTMLParser) parseClosingTag() string {
 
 	p.pos += 2 // Skip "</"
 	name := p.parseName()
-	
+
 	// Skip to '>'
 	for p.pos < len(p.content) && p.peek() != '>' {
 		p.advance()
@@ -334,11 +336,11 @@ func (p *HTMLParser) parseName() string {
 // parseAttributeValue parses an attribute value
 func (p *HTMLParser) parseAttributeValue() string {
 	p.skipWhitespace()
-	
+
 	if p.peek() == '"' || p.peek() == '\'' {
 		quote := p.peek()
 		p.advance() // Skip opening quote
-		
+
 		value := ""
 		for p.pos < len(p.content) && p.peek() != quote {
 			value += string(p.peek())
@@ -394,8 +396,8 @@ func (p *HTMLParser) skipWhitespace() {
 }
 
 func isNameChar(c byte) bool {
-	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || 
-		   (c >= '0' && c <= '9') || c == '-' || c == '_' || c == ':'
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+		(c >= '0' && c <= '9') || c == '-' || c == '_' || c == ':'
 }
 
 func (p *HTMLParser) isSelfClosingTag(name string) bool {

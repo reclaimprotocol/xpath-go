@@ -9,9 +9,9 @@ import (
 
 func main() {
 	html := `<html><body><article><header><h1>Title</h1></header><section><p>Content</p><aside><p>Sidebar</p></aside></section></article></body></html>`
-	
+
 	eval := evaluator.NewEvaluator()
-	
+
 	// First, let's see all p elements in section
 	results1, err := eval.Evaluate(`//article//section//p`, html)
 	if err != nil {
