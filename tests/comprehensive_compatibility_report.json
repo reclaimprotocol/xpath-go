@@ -5102,23 +5102,14 @@
             "endLocation": 23,
             "path": "/#document/html/body/div[5]",
             "textContent": ""
-          },
-          {
-            "value": "",
-            "nodeName": "div",
-            "nodeType": 1,
-            "startLocation": 35,
-            "endLocation": 59,
-            "path": "/#document/html/body/div[5]",
-            "textContent": ""
           }
         ],
-        "count": 2,
+        "count": 1,
         "error": null
       },
       "comparison": {
         "match": false,
-        "reason": "Text content mismatch at index 1: JS=\" \", Go=\"\"",
+        "reason": "Count mismatch: JS=2, Go=1",
         "jsResults": [
           {
             "value": "",
@@ -5148,15 +5139,6 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 23,
-            "path": "/#document/html/body/div[5]",
-            "textContent": ""
-          },
-          {
-            "value": "",
-            "nodeName": "div",
-            "nodeType": 1,
-            "startLocation": 35,
-            "endLocation": 59,
             "path": "/#document/html/body/div[5]",
             "textContent": ""
           }
