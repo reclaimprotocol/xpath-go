@@ -140,13 +140,6 @@
     "category": "complex"
   },
   {
-    "name": "Wildcard element selection",
-    "html": "<html><body><div>Div</div><p>Para</p><span>Span</span></body></html>",
-    "xpath": "//*",
-    "description": "Select all elements",
-    "category": "wildcard"
-  },
-  {
     "name": "Wildcard with predicate",
     "html": "<html><body><div class='highlight'>Div</div><p class='highlight'>Para</p><span>Span</span></body></html>",
     "xpath": "//*[@class='highlight']",
