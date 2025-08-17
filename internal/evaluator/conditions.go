@@ -722,7 +722,7 @@ func (e *Evaluator) evaluateOrExpression(expr string, node *types.Node) bool {
 
 // evaluatePositionExpression evaluates position-based expressions
 func (e *Evaluator) evaluatePositionExpression(expr string, position int) bool {
-	// Handle position() = n, position() != n, etc.
+	// Handle position() = n, position() > n, position() < n, etc.
 	if strings.Contains(expr, "position()") {
 		if strings.Contains(expr, " = ") {
 			parts := strings.Split(expr, " = ")
@@ -738,8 +738,35 @@ func (e *Evaluator) evaluatePositionExpression(expr string, position int) bool {
 					return position == targetPos
 				}
 			}
+		} else if strings.Contains(expr, " > ") {
+			parts := strings.Split(expr, " > ")
+			if len(parts) == 2 {
+				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
+					return position > targetPos
+				}
+			}
+		} else if strings.Contains(expr, ">") {
+			parts := strings.Split(expr, ">")
+			if len(parts) == 2 {
+				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
+					return position > targetPos
+				}
+			}
+		} else if strings.Contains(expr, " < ") {
+			parts := strings.Split(expr, " < ")
+			if len(parts) == 2 {
+				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
+					return position < targetPos
+				}
+			}
+		} else if strings.Contains(expr, "<") {
+			parts := strings.Split(expr, "<")
+			if len(parts) == 2 {
+				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
+					return position < targetPos
+				}
+			}
 		}
-		// Add more position operators as needed
 	}
 
 	// Handle numeric position directly

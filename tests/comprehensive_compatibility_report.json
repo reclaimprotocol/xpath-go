@@ -1,8 +1,8 @@
 {
   "total": 73,
-  "passed": 65,
-  "failed": 8,
-  "compatibility": "89.0",
+  "passed": 67,
+  "failed": 6,
+  "compatibility": "91.8",
   "details": [
     {
       "name": "Basic element selection",
@@ -1852,7 +1852,7 @@
       "xpath": "//input/@*",
       "suite": "original",
       "category": "attributes",
-      "passed": false,
+      "passed": true,
       "jsResult": {
         "success": true,
         "results": [
@@ -1894,15 +1894,6 @@
         "success": true,
         "results": [
           {
-            "value": "",
-            "nodeName": "required",
-            "nodeType": 2,
-            "startLocation": 0,
-            "endLocation": 0,
-            "path": "/#document/html/body/input/required",
-            "textContent": ""
-          },
-          {
             "value": "text",
             "nodeName": "type",
             "nodeType": 2,
@@ -1919,14 +1910,23 @@
             "endLocation": 0,
             "path": "/#document/html/body/input/name",
             "textContent": "username"
+          },
+          {
+            "value": "",
+            "nodeName": "required",
+            "nodeType": 2,
+            "startLocation": 0,
+            "endLocation": 0,
+            "path": "/#document/html/body/input/required",
+            "textContent": ""
           }
         ],
         "count": 3,
         "error": null
       },
       "comparison": {
-        "match": false,
-        "reason": "Node name mismatch at index 0: JS=\"type\", Go=\"required\"",
+        "match": true,
+        "reason": "Perfect match",
         "jsResults": [
           {
             "value": "text",
@@ -1961,15 +1961,6 @@
         ],
         "goResults": [
           {
-            "value": "",
-            "nodeName": "required",
-            "nodeType": 2,
-            "startLocation": 0,
-            "endLocation": 0,
-            "path": "/#document/html/body/input/required",
-            "textContent": ""
-          },
-          {
             "value": "text",
             "nodeName": "type",
             "nodeType": 2,
@@ -1986,6 +1977,15 @@
             "endLocation": 0,
             "path": "/#document/html/body/input/name",
             "textContent": "username"
+          },
+          {
+            "value": "",
+            "nodeName": "required",
+            "nodeType": 2,
+            "startLocation": 0,
+            "endLocation": 0,
+            "path": "/#document/html/body/input/required",
+            "textContent": ""
           }
         ]
       }
@@ -4700,7 +4700,7 @@
       "xpath": "//tbody/tr[position()>1]/td[position()=1]",
       "suite": "extended",
       "category": "tables",
-      "passed": false,
+      "passed": true,
       "jsResult": {
         "success": true,
         "results": [
@@ -4720,13 +4720,23 @@
       },
       "goResult": {
         "success": true,
-        "results": [],
-        "count": 0,
+        "results": [
+          {
+            "value": "Jane",
+            "nodeName": "td",
+            "nodeType": 1,
+            "startLocation": 112,
+            "endLocation": 125,
+            "path": "/#document/html/body/table/tbody/tr[2]/td[3]",
+            "textContent": "Jane"
+          }
+        ],
+        "count": 1,
         "error": null
       },
       "comparison": {
-        "match": false,
-        "reason": "Count mismatch: JS=1, Go=0",
+        "match": true,
+        "reason": "Perfect match",
         "jsResults": [
           {
             "value": "Jane",
@@ -4739,7 +4749,17 @@
             "path": "/html/body/table/tbody/tr[2]/td[1]"
           }
         ],
-        "goResults": []
+        "goResults": [
+          {
+            "value": "Jane",
+            "nodeName": "td",
+            "nodeType": 1,
+            "startLocation": 112,
+            "endLocation": 125,
+            "path": "/#document/html/body/table/tbody/tr[2]/td[3]",
+            "textContent": "Jane"
+          }
+        ]
       }
     },
     {
