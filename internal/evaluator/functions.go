@@ -257,4 +257,3 @@ func (e *Evaluator) matchesSelector(node *types.Node, selector string) bool {
 
 	return node.Name == selector
 }
-

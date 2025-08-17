@@ -65,7 +65,6 @@ func (e *Evaluator) applyPositionModPredicate(nodes []*types.Node, expr string) 
 	return filtered
 }
 
-
 // applyContainsPredicate filters nodes based on contains() function
 func (e *Evaluator) applyContainsPredicate(nodes []*types.Node, expr string) []*types.Node {
 	var filtered []*types.Node
@@ -143,7 +142,6 @@ func (e *Evaluator) applySubstringPredicate(nodes []*types.Node, expr string) []
 
 	return filtered
 }
-
 
 // applyNotPredicate handles not() function predicates
 func (e *Evaluator) applyNotPredicate(nodes []*types.Node, expr string) []*types.Node {

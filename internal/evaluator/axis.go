@@ -145,4 +145,3 @@ func (e *Evaluator) getAllNodes(root *types.Node) []*types.Node {
 
 	return nodes
 }
-

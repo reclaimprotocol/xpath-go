@@ -170,4 +170,3 @@ func (e *Evaluator) hasChildElement(node *types.Node, elementName string) bool {
 }
 
 // Helper functions for character validation
-

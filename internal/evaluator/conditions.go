@@ -10,7 +10,6 @@ import (
 // conditions.go - XPath condition evaluation logic
 // Functions that evaluate individual conditions against nodes
 
-
 // evaluateSimpleCondition evaluates a simple condition against a single node
 func (e *Evaluator) evaluateSimpleCondition(node *types.Node, condition string) bool {
 	condition = strings.TrimSpace(condition)
@@ -733,7 +732,6 @@ func (e *Evaluator) evaluateAtomicCondition(node *types.Node, condition string) 
 	return result
 }
 
-
 // evaluateOrExpression evaluates expressions with 'or' operator
 func (e *Evaluator) evaluateOrExpression(expr string, node *types.Node) bool {
 	parts := strings.Split(expr, " or ")
@@ -842,7 +840,6 @@ func (e *Evaluator) evaluatePositionModExpression(expr string, position int) boo
 
 	return false
 }
-
 
 // evaluateSubstringAfterExpression evaluates substring-after() function expressions
 func (e *Evaluator) evaluateSubstringAfterExpression(expr string, node *types.Node) bool {
