@@ -10,91 +10,6 @@ import (
 // conditions.go - XPath condition evaluation logic
 // Functions that evaluate individual conditions against nodes
 
-// evaluateComplexBooleanExpression evaluates complex boolean expressions with and/or
-func (e *Evaluator) evaluateComplexBooleanExpression(expr string, node *types.Node) bool {
-	expr = strings.TrimSpace(expr)
-
-	// Find the main boolean operator outside parentheses
-	mainOperator, leftExpr, rightExpr := e.findMainBooleanOperator(expr)
-
-	if mainOperator == "" {
-		// No main operator found, evaluate as simple expression
-		return e.evaluateSimpleCondition(node, expr)
-	}
-
-	leftResult := false
-	rightResult := false
-
-	// Evaluate left expression
-	if strings.HasPrefix(leftExpr, "(") && strings.HasSuffix(leftExpr, ")") {
-		// Remove parentheses and evaluate the inner expression
-		innerExpr := leftExpr[1 : len(leftExpr)-1]
-		leftResult = e.evaluateComplexBooleanExpression(innerExpr, node)
-	} else if strings.Contains(leftExpr, " and ") || strings.Contains(leftExpr, " or ") {
-		// Left expression contains boolean operators, evaluate recursively
-		leftResult = e.evaluateComplexBooleanExpression(leftExpr, node)
-	} else {
-		leftResult = e.evaluateSimpleCondition(node, leftExpr)
-	}
-
-	// Evaluate right expression
-	if strings.HasPrefix(rightExpr, "(") && strings.HasSuffix(rightExpr, ")") {
-		// Remove parentheses and evaluate the inner expression
-		innerExpr := rightExpr[1 : len(rightExpr)-1]
-		rightResult = e.evaluateComplexBooleanExpression(innerExpr, node)
-	} else if strings.Contains(rightExpr, " and ") || strings.Contains(rightExpr, " or ") {
-		// Right expression contains boolean operators, evaluate recursively
-		rightResult = e.evaluateComplexBooleanExpression(rightExpr, node)
-	} else {
-		rightResult = e.evaluateSimpleCondition(node, rightExpr)
-	}
-
-	// Apply the operator
-	switch mainOperator {
-	case "and":
-		return leftResult && rightResult
-	case "or":
-		return leftResult || rightResult
-	default:
-		return false
-	}
-}
-
-// findMainBooleanOperator finds the main AND/OR operator outside parentheses
-func (e *Evaluator) findMainBooleanOperator(expr string) (string, string, string) {
-	parenDepth := 0
-
-	// Look for 'and' operator outside parentheses (AND has higher precedence)
-	for i := 0; i < len(expr)-4; i++ {
-		c := expr[i]
-		if c == '(' {
-			parenDepth++
-		} else if c == ')' {
-			parenDepth--
-		} else if parenDepth == 0 && expr[i:i+5] == " and " {
-			left := strings.TrimSpace(expr[:i])
-			right := strings.TrimSpace(expr[i+5:])
-			return "and", left, right
-		}
-	}
-
-	// Reset and look for 'or' operator
-	parenDepth = 0
-	for i := 0; i < len(expr)-3; i++ {
-		c := expr[i]
-		if c == '(' {
-			parenDepth++
-		} else if c == ')' {
-			parenDepth--
-		} else if parenDepth == 0 && expr[i:i+4] == " or " {
-			left := strings.TrimSpace(expr[:i])
-			right := strings.TrimSpace(expr[i+4:])
-			return "or", left, right
-		}
-	}
-
-	return "", "", ""
-}
 
 // evaluateSimpleCondition evaluates a simple condition against a single node
 func (e *Evaluator) evaluateSimpleCondition(node *types.Node, condition string) bool {
@@ -818,46 +733,6 @@ func (e *Evaluator) evaluateAtomicCondition(node *types.Node, condition string) 
 	return result
 }
 
-// splitBooleanExpression splits a boolean expression on an operator while respecting quotes
-func (e *Evaluator) splitBooleanExpression(expr string, operator string) (string, string, bool) {
-	inQuote := false
-	var quoteChar byte
-	parenDepth := 0
-
-	for i := 0; i <= len(expr)-len(operator); i++ {
-		char := expr[i]
-
-		// Handle quote state
-		if (char == '\'' || char == '"') && (i == 0 || expr[i-1] != '\\') {
-			if !inQuote {
-				inQuote = true
-				quoteChar = char
-			} else if char == quoteChar {
-				inQuote = false
-			}
-		}
-
-		// Handle parentheses depth (when not in quotes)
-		if !inQuote {
-			if char == '(' {
-				parenDepth++
-			} else if char == ')' {
-				parenDepth--
-			}
-
-			// Check for operator at this position (when not in quotes and at paren depth 0)
-			if parenDepth == 0 && i+len(operator) <= len(expr) {
-				if expr[i:i+len(operator)] == operator {
-					left := strings.TrimSpace(expr[:i])
-					right := strings.TrimSpace(expr[i+len(operator):])
-					return left, right, true
-				}
-			}
-		}
-	}
-
-	return "", "", false
-}
 
 // evaluateOrExpression evaluates expressions with 'or' operator
 func (e *Evaluator) evaluateOrExpression(expr string, node *types.Node) bool {
@@ -968,45 +843,6 @@ func (e *Evaluator) evaluatePositionModExpression(expr string, position int) boo
 	return false
 }
 
-// evaluatePositionComparison evaluates position comparison expressions
-func (e *Evaluator) evaluatePositionComparison(expr string, position int) bool {
-	// Handle position() > n, position() < n, etc.
-	if strings.Contains(expr, "position()") {
-		if strings.Contains(expr, " > ") {
-			parts := strings.Split(expr, " > ")
-			if len(parts) == 2 {
-				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
-					return position > targetPos
-				}
-			}
-		} else if strings.Contains(expr, ">") {
-			parts := strings.Split(expr, ">")
-			if len(parts) == 2 {
-				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
-					return position > targetPos
-				}
-			}
-		}
-		if strings.Contains(expr, " < ") {
-			parts := strings.Split(expr, " < ")
-			if len(parts) == 2 {
-				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
-					return position < targetPos
-				}
-			}
-		} else if strings.Contains(expr, "<") {
-			parts := strings.Split(expr, "<")
-			if len(parts) == 2 {
-				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
-					return position < targetPos
-				}
-			}
-		}
-		// Add more comparison operators as needed
-	}
-
-	return false
-}
 
 // evaluateSubstringAfterExpression evaluates substring-after() function expressions
 func (e *Evaluator) evaluateSubstringAfterExpression(expr string, node *types.Node) bool {

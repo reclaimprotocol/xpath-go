@@ -65,20 +65,6 @@ func (e *Evaluator) applyPositionModPredicate(nodes []*types.Node, expr string) 
 	return filtered
 }
 
-// applyPositionComparisonPredicate filters nodes based on position comparison predicates
-func (e *Evaluator) applyPositionComparisonPredicate(nodes []*types.Node, expr string) []*types.Node {
-	var filtered []*types.Node
-
-	for i, node := range nodes {
-		position := i + 1 // XPath positions are 1-based
-
-		if e.evaluatePositionComparison(expr, position) {
-			filtered = append(filtered, node)
-		}
-	}
-
-	return filtered
-}
 
 // applyContainsPredicate filters nodes based on contains() function
 func (e *Evaluator) applyContainsPredicate(nodes []*types.Node, expr string) []*types.Node {
@@ -158,18 +144,6 @@ func (e *Evaluator) applySubstringPredicate(nodes []*types.Node, expr string) []
 	return filtered
 }
 
-// applyComplexBooleanPredicate handles complex boolean expressions with and/or
-func (e *Evaluator) applyComplexBooleanPredicate(nodes []*types.Node, expr string) []*types.Node {
-	var filtered []*types.Node
-
-	for _, node := range nodes {
-		if e.evaluateComplexBooleanExpression(expr, node) {
-			filtered = append(filtered, node)
-		}
-	}
-
-	return filtered
-}
 
 // applyNotPredicate handles not() function predicates
 func (e *Evaluator) applyNotPredicate(nodes []*types.Node, expr string) []*types.Node {

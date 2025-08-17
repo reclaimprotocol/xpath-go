@@ -258,18 +258,3 @@ func (e *Evaluator) matchesSelector(node *types.Node, selector string) bool {
 	return node.Name == selector
 }
 
-// containsFunctionCall checks if an expression contains function calls
-func (e *Evaluator) containsFunctionCall(expr string) bool {
-	functions := []string{
-		"contains(", "starts-with(", "substring(", "string-length(",
-		"normalize-space(", "position()", "last()", "count(", "text()",
-	}
-
-	for _, fn := range functions {
-		if strings.Contains(expr, fn) {
-			return true
-		}
-	}
-
-	return false
-}
