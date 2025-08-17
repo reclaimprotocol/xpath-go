@@ -85,6 +85,11 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 	// Check for special elements
 	if p.pos+1 < len(p.content) {
 		if p.content[p.pos+1] == '!' {
+			// Check if it's a DOCTYPE declaration
+			if strings.HasPrefix(strings.ToUpper(p.content[p.pos:]), "<!DOCTYPE") {
+				return p.parseDoctype(parent, startPos, startLine, startCol)
+			}
+			// Otherwise it's a comment
 			return p.parseComment(parent, startPos, startLine, startCol)
 		}
 		if p.content[p.pos+1] == '?' {
@@ -256,6 +261,38 @@ func (p *HTMLParser) parseComment(parent *types.Node, startPos, startLine, start
 		Name:        "#comment",
 		Value:       comment,
 		TextContent: comment,
+		Parent:      parent,
+		StartPos:    startPos,
+		EndPos:      p.pos,
+		StartLine:   startLine,
+		StartColumn: startCol,
+		EndLine:     p.line,
+		EndColumn:   p.col,
+	}, nil
+}
+
+// parseDoctype parses a DOCTYPE declaration
+func (p *HTMLParser) parseDoctype(parent *types.Node, startPos, startLine, startCol int) (*types.Node, error) {
+	if !strings.HasPrefix(strings.ToUpper(p.content[p.pos:]), "<!DOCTYPE") {
+		return nil, fmt.Errorf("expected DOCTYPE at position %d", p.pos)
+	}
+
+	// Find the end of the DOCTYPE declaration
+	startDoctype := p.pos
+	for p.pos < len(p.content) && p.peek() != '>' {
+		p.advance()
+	}
+	if p.peek() == '>' {
+		p.advance() // Skip '>'
+	}
+
+	doctypeText := p.content[startDoctype:p.pos]
+
+	return &types.Node{
+		Type:        types.DocumentTypeNode,
+		Name:        "#doctype",
+		Value:       doctypeText,
+		TextContent: doctypeText,
 		Parent:      parent,
 		StartPos:    startPos,
 		EndPos:      p.pos,

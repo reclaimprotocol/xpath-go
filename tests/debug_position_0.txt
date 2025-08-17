@@ -1,1 +1,0 @@
-//p[substring(text(), 0) = 'd']
