@@ -95,6 +95,7 @@ func (c *PredicateClassifier) hasFunctionCalls() bool {
 	functions := []string{
 		"contains(", "starts-with(", "string-length(", "normalize-space(",
 		"substring(", "not(", "not (", "text()", "position()", "last()", "count(",
+		"true()", "false()",
 	}
 
 	for _, fn := range functions {
@@ -128,6 +129,7 @@ func (c *PredicateClassifier) isFunctionCall() bool {
 	functions := []string{
 		"contains(", "starts-with(", "string-length(", "normalize-space(",
 		"substring(", "not(", "not (", "position()", "last()", "count(",
+		"true()", "false()",
 	}
 
 	for _, fn := range functions {
@@ -346,6 +348,10 @@ func (e *Evaluator) routeFunctionCall(nodes []*types.Node, expr string) []*types
 		return e.applyCountPredicate(nodes, expr)
 	case strings.Contains(expr, "normalize-space("):
 		return e.applyNormalizeSpacePredicate(nodes, expr)
+	case expr == "true()":
+		return nodes  // true() always returns all nodes
+	case expr == "false()":
+		return []*types.Node{}  // false() always returns no nodes
 	default:
 		// Fallback
 		var filtered []*types.Node

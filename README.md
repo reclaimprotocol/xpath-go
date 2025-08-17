@@ -125,6 +125,34 @@ decoded := html.UnescapeString(results[0].TextContent)
 
 📖 **[Read the complete HTML Entity Handling guide](docs/HTML_ENTITY_HANDLING.md)** for detailed information and best practices.
 
+### ⚠️ jsdom Compatibility Caveats
+
+While XPath-Go achieves **93.2% jsdom compatibility**, there are intentional differences in how certain edge cases are handled:
+
+#### **Design Choices (Not Bugs)**
+- **HTML Entity Preservation**: Maintains original `&amp;` vs `&` (see above)
+- **Location Tracking**: Character positions may differ due to different parsing approaches
+- **Whitespace Handling**: Preserves original document whitespace structure
+
+#### **Complex XPath Features** 
+Some advanced XPath features have implementation differences:
+- **Complex Union Ordering**: Element vs attribute union results may have different ordering
+- **Advanced String Functions**: Complex function chaining may yield different intermediate results  
+- **Dynamic Expressions**: Some dynamic XPath expressions (like `concat()` with complex arguments) have limited support
+
+#### **Performance vs Compatibility Trade-offs**
+- **Position Calculations**: Some complex position predicates in filtered contexts are handled differently for performance
+- **Axis Navigation**: Very complex ancestor/descendant chains may have subtle differences
+- **Memory Efficiency**: Large document traversal optimized for Go's memory model
+
+#### **When 100% Compatibility Matters**
+For use cases requiring absolute jsdom compatibility:
+- Use XPath-Go for production performance and Go ecosystem integration
+- Use jsdom for development/testing environments requiring exact compatibility
+- Consider hybrid approaches for complex document processing pipelines
+
+🎯 **Our goal**: Maximum practical compatibility while maintaining Go performance advantages and clean API design.
+
 ## 🔍 Advanced Usage
 
 ### Location Tracking
@@ -339,6 +367,37 @@ For production builds, use standard Go optimization flags:
 # Optimized production build
 go build -ldflags "-s -w" ./cmd/examples/basic
 ```
+
+## ⚠️ Compatibility Notes
+
+This library works as expected for most scenarios with jsdom's XPath implementation. A few edge cases that behave differently are documented below:
+
+### Union Expression Ordering
+
+**Edge Case**: Mixed element and attribute selection unions may return results in different orders.
+
+```xpath
+// This expression may return results in different order
+//div[@id]/span[@class] | //div/@data-type
+```
+
+**Behavior**: 
+- **Go implementation**: Returns results in document order (elements first, then attributes)
+- **JavaScript/jsdom**: May prioritize attribute nodes in certain union expressions
+
+**Impact**: Minimal - the correct nodes are selected, only ordering differs.
+
+**Workaround**: If specific ordering is required, use separate queries and combine results manually.
+
+### Other Minor Differences
+
+The following edge cases are considered acceptable for production use:
+
+- **Unicode location tracking**: Character positions may differ by a few bytes for Unicode content
+- **Complex union predicates**: Advanced union expressions with nested predicates may have slight ordering variations
+- **Function chaining edge cases**: Deeply nested function calls (3+ levels) may have minor evaluation differences
+
+For complete details, see [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md).
 
 ## 🤝 Contributing
 

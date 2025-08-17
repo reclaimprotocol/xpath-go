@@ -1,6 +1,7 @@
 package evaluator
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -258,6 +259,78 @@ func (e *Evaluator) evaluateAncestorWithPosition(node *types.Node, nodeTest stri
 	
 	// Return true if any nodes remain after position filtering
 	return len(filtered) > 0
+}
+
+// isArithmeticExpression checks if an expression contains arithmetic operations
+func (e *Evaluator) isArithmeticExpression(expr string) bool {
+	expr = strings.TrimSpace(expr)
+	
+	// Check for parentheses and arithmetic operators
+	return (strings.HasPrefix(expr, "(") && strings.HasSuffix(expr, ")")) &&
+		   (strings.Contains(expr, "+") || strings.Contains(expr, "-") || 
+		    strings.Contains(expr, "*") || strings.Contains(expr, "/") ||
+		    strings.Contains(expr, "div") || strings.Contains(expr, "mod"))
+}
+
+// evaluateArithmeticExpression evaluates simple arithmetic expressions like (2 * 2)
+func (e *Evaluator) evaluateArithmeticExpression(expr string) (string, error) {
+	expr = strings.TrimSpace(expr)
+	
+	// Remove outer parentheses
+	if strings.HasPrefix(expr, "(") && strings.HasSuffix(expr, ")") {
+		expr = strings.TrimSpace(expr[1 : len(expr)-1])
+	}
+	
+	Trace("Evaluating arithmetic: '%s'", expr)
+	
+	// Handle simple binary operations: a op b
+	operators := []string{"*", "/", "div", "+", "-", "mod"}
+	
+	for _, op := range operators {
+		if strings.Contains(expr, op) {
+			parts := strings.Split(expr, op)
+			if len(parts) == 2 {
+				leftStr := strings.TrimSpace(parts[0])
+				rightStr := strings.TrimSpace(parts[1])
+				
+				// Convert to numbers
+				left, err1 := strconv.ParseFloat(leftStr, 64)
+				right, err2 := strconv.ParseFloat(rightStr, 64)
+				
+				if err1 != nil || err2 != nil {
+					continue // Skip if can't parse as numbers
+				}
+				
+				var result float64
+				switch op {
+				case "*":
+					result = left * right
+				case "/", "div":
+					if right == 0 {
+						return "", fmt.Errorf("division by zero")
+					}
+					result = left / right
+				case "+":
+					result = left + right
+				case "-":
+					result = left - right
+				case "mod":
+					if right == 0 {
+						return "", fmt.Errorf("modulo by zero")
+					}
+					result = float64(int(left) % int(right))
+				}
+				
+				// Convert back to string, handling integers cleanly
+				if result == float64(int(result)) {
+					return strconv.Itoa(int(result)), nil
+				}
+				return strconv.FormatFloat(result, 'f', -1, 64), nil
+			}
+		}
+	}
+	
+	return expr, fmt.Errorf("unsupported arithmetic expression")
 }
 
 // evaluateContainsExpression evaluates contains() function expressions
@@ -648,6 +721,14 @@ func (e *Evaluator) evaluateAtomicCondition(node *types.Node, condition string) 
 			if len(parts) == 2 {
 				attrName := strings.TrimSpace(strings.TrimPrefix(parts[0], "@"))
 				expectedValue := strings.Trim(strings.TrimSpace(parts[1]), "'\"")
+				
+				// Evaluate arithmetic expressions if present
+				if e.isArithmeticExpression(expectedValue) {
+					if evaluatedValue, err := e.evaluateArithmeticExpression(expectedValue); err == nil {
+						expectedValue = evaluatedValue
+						Trace("Arithmetic evaluation: '%s' -> '%s'", strings.Trim(strings.TrimSpace(parts[1]), "'\""), expectedValue)
+					}
+				}
 
 				if actualValue, exists := node.Attributes[attrName]; exists {
 					result := actualValue == expectedValue
@@ -895,6 +976,104 @@ func (e *Evaluator) evaluatePositionExpression(expr string, position int) bool {
 	// Handle numeric position directly
 	if pos, err := strconv.Atoi(strings.TrimSpace(expr)); err == nil {
 		return position == pos
+	}
+
+	return false
+}
+
+// evaluatePositionExpressionWithContext evaluates position-based expressions with context (node count)
+func (e *Evaluator) evaluatePositionExpressionWithContext(expr string, position int, totalNodes int) bool {
+	// Handle position() = n, position() > n, position() < n, etc.
+	if strings.Contains(expr, "position()") {
+		if strings.Contains(expr, " = ") {
+			parts := strings.Split(expr, " = ")
+			if len(parts) == 2 {
+				rightSide := strings.TrimSpace(parts[1])
+				// Handle last() function
+				if rightSide == "last()" {
+					return position == totalNodes
+				}
+				// Handle numeric values
+				if targetPos, err := strconv.Atoi(rightSide); err == nil {
+					return position == targetPos
+				}
+			}
+		} else if strings.Contains(expr, "=") {
+			parts := strings.Split(expr, "=")
+			if len(parts) == 2 {
+				rightSide := strings.TrimSpace(parts[1])
+				// Handle last() function
+				if rightSide == "last()" {
+					return position == totalNodes
+				}
+				// Handle numeric values
+				if targetPos, err := strconv.Atoi(rightSide); err == nil {
+					return position == targetPos
+				}
+			}
+		} else if strings.Contains(expr, " > ") {
+			parts := strings.Split(expr, " > ")
+			if len(parts) == 2 {
+				rightSide := strings.TrimSpace(parts[1])
+				// Handle last() function
+				if rightSide == "last()" {
+					return position > totalNodes
+				}
+				// Handle numeric values
+				if targetPos, err := strconv.Atoi(rightSide); err == nil {
+					return position > targetPos
+				}
+			}
+		} else if strings.Contains(expr, ">") {
+			parts := strings.Split(expr, ">")
+			if len(parts) == 2 {
+				rightSide := strings.TrimSpace(parts[1])
+				// Handle last() function
+				if rightSide == "last()" {
+					return position > totalNodes
+				}
+				// Handle numeric values
+				if targetPos, err := strconv.Atoi(rightSide); err == nil {
+					return position > targetPos
+				}
+			}
+		} else if strings.Contains(expr, " < ") {
+			parts := strings.Split(expr, " < ")
+			if len(parts) == 2 {
+				rightSide := strings.TrimSpace(parts[1])
+				// Handle last() function
+				if rightSide == "last()" {
+					return position < totalNodes
+				}
+				// Handle numeric values
+				if targetPos, err := strconv.Atoi(rightSide); err == nil {
+					return position < targetPos
+				}
+			}
+		} else if strings.Contains(expr, "<") {
+			parts := strings.Split(expr, "<")
+			if len(parts) == 2 {
+				rightSide := strings.TrimSpace(parts[1])
+				// Handle last() function
+				if rightSide == "last()" {
+					return position < totalNodes
+				}
+				// Handle numeric values
+				if targetPos, err := strconv.Atoi(rightSide); err == nil {
+					return position < targetPos
+				}
+			}
+		}
+	}
+
+	// Handle numeric position directly
+	if pos, err := strconv.Atoi(strings.TrimSpace(expr)); err == nil {
+		return position == pos
+	}
+
+	// Handle last() directly
+	if strings.TrimSpace(expr) == "last()" {
+		return position == totalNodes
 	}
 
 	return false

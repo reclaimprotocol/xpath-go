@@ -121,7 +121,8 @@ func (e *Evaluator) evaluateChildPath(node *types.Node, path string) bool {
 			// Find children matching element name and predicate
 			for _, currentNode := range currentNodes {
 				for _, child := range currentNode.Children {
-					if child.Name == elementName {
+					// Handle wildcard (*) or exact element name match
+					if elementName == "*" || child.Name == elementName {
 						if e.evaluateSimpleCondition(child, predicate) {
 							nextNodes = append(nextNodes, child)
 						}
@@ -132,7 +133,8 @@ func (e *Evaluator) evaluateChildPath(node *types.Node, path string) bool {
 			// Simple element name
 			for _, currentNode := range currentNodes {
 				for _, child := range currentNode.Children {
-					if child.Name == part {
+					// Handle wildcard (*) or exact element name match
+					if part == "*" || child.Name == part {
 						nextNodes = append(nextNodes, child)
 					}
 				}

@@ -41,7 +41,7 @@ func (e *Evaluator) applyPositionPredicate(nodes []*types.Node, expr string) []*
 	for i, node := range nodes {
 		position := i + 1 // XPath positions are 1-based
 
-		if e.evaluatePositionExpression(expr, position) {
+		if e.evaluatePositionExpressionWithContext(expr, position, len(nodes)) {
 			filtered = append(filtered, node)
 		}
 	}
