@@ -177,9 +177,9 @@ func (e *Evaluator) applyNodeTest(nodes []*types.Node, nodeTest string) []*types
 	// For element nodes, match by element name
 	var filtered []*types.Node
 	for _, node := range nodes {
-		if node.Type == types.AttributeNode && strings.ToLower(node.Name) == strings.ToLower(nodeTest) {
+		if node.Type == types.AttributeNode && strings.EqualFold(node.Name, nodeTest) {
 			filtered = append(filtered, node)
-		} else if node.Type == types.ElementNode && strings.ToLower(node.Name) == strings.ToLower(nodeTest) {
+		} else if node.Type == types.ElementNode && strings.EqualFold(node.Name, nodeTest) {
 			filtered = append(filtered, node)
 		}
 	}

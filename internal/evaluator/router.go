@@ -215,9 +215,7 @@ func (c *PredicateClassifier) parseNestedElement() (string, string) {
 	if idx := strings.Index(c.expr, "["); idx != -1 {
 		element := strings.TrimSpace(c.expr[:idx])
 		predicate := strings.TrimSpace(c.expr[idx+1:])
-		if strings.HasSuffix(predicate, "]") {
-			predicate = predicate[:len(predicate)-1]
-		}
+		predicate = strings.TrimSuffix(predicate, "]")
 		return element, predicate
 	}
 	return c.expr, ""

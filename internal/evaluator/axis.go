@@ -146,14 +146,3 @@ func (e *Evaluator) getAllNodes(root *types.Node) []*types.Node {
 	return nodes
 }
 
-// hasAncestor checks if a node has an ancestor of the specified type
-func (e *Evaluator) hasAncestor(node *types.Node, ancestorType string) bool {
-	current := node.Parent
-	for current != nil {
-		if current.Name == ancestorType {
-			return true
-		}
-		current = current.Parent
-	}
-	return false
-}

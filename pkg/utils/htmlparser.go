@@ -176,7 +176,7 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 		// Check for closing tag
 		if p.peek() == '<' && p.pos+1 < len(p.content) && p.content[p.pos+1] == '/' {
 			closingTag := p.parseClosingTag()
-			if strings.ToLower(closingTag) == node.Name {
+			if strings.EqualFold(closingTag, node.Name) {
 				break
 			}
 			// If it's not our closing tag, treat as text

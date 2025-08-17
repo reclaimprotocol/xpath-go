@@ -115,152 +115,6 @@ func (e *Evaluator) evaluateSimpleCondition(node *types.Node, condition string) 
 }
 
 // Legacy simple condition evaluation - kept for compatibility
-func (e *Evaluator) evaluateSimpleConditionLegacy(node *types.Node, condition string) bool {
-	condition = strings.TrimSpace(condition)
-
-	// Simple condition evaluation
-
-	// Attribute existence: @id (handle spaced tokens like "@ id")
-	if strings.HasPrefix(condition, "@") && !strings.Contains(condition, "=") {
-		attrName := strings.TrimPrefix(condition, "@")
-		attrName = strings.TrimSpace(attrName) // Handle "@ id" -> "id"
-		_, exists := node.Attributes[attrName]
-		return exists
-	}
-
-	// Attribute value comparison: @id='value' or @id = 'value'
-	if strings.HasPrefix(condition, "@") && (strings.Contains(condition, "=") || strings.Contains(condition, "!=")) {
-		if strings.Contains(condition, "!=") {
-			parts := strings.SplitN(condition, "!=", 2)
-			if len(parts) == 2 {
-				attrName := strings.TrimSpace(strings.TrimPrefix(parts[0], "@"))
-				expectedValue := strings.Trim(strings.TrimSpace(parts[1]), "'\"")
-
-				if actualValue, exists := node.Attributes[attrName]; exists {
-					return actualValue != expectedValue
-				}
-				return true // Attribute doesn't exist, so it's != any value
-			}
-		} else {
-			parts := strings.SplitN(condition, "=", 2)
-			if len(parts) == 2 {
-				attrName := strings.TrimSpace(strings.TrimPrefix(parts[0], "@"))
-				expectedValue := strings.Trim(strings.TrimSpace(parts[1]), "'\"")
-
-				if actualValue, exists := node.Attributes[attrName]; exists {
-					return actualValue == expectedValue
-				}
-				return false
-			}
-		}
-	}
-
-	// Node test: node() - returns true if there are any child nodes
-	if condition == "node()" {
-		// node() matches any child node (element, text, comment, etc.)
-		// Check if node has any children or any non-empty text content
-		if len(node.Children) > 0 {
-			return true
-		}
-		// Also check for text content (text nodes)
-		if strings.TrimSpace(node.TextContent) != "" {
-			return true
-		}
-		return false
-	}
-
-	// Text content existence: text()
-	if condition == "text()" {
-		return strings.TrimSpace(node.TextContent) != ""
-	}
-
-	// Text content comparison: text()='value'
-	if strings.Contains(condition, "text()") && strings.Contains(condition, "=") {
-		if strings.Contains(condition, "!=") {
-			parts := strings.SplitN(condition, "!=", 2)
-			if len(parts) == 2 {
-				expectedValue := strings.Trim(strings.TrimSpace(parts[1]), "'\"")
-				return node.TextContent != expectedValue
-			}
-		} else {
-			parts := strings.SplitN(condition, "=", 2)
-			if len(parts) == 2 {
-				expectedValue := strings.Trim(strings.TrimSpace(parts[1]), "'\"")
-				return node.TextContent == expectedValue
-			}
-		}
-	}
-
-	// Position function: position()=2
-	if strings.Contains(condition, "position()") && strings.Contains(condition, "=") {
-		// Position evaluation is context-dependent and should be handled by caller
-		return false
-	}
-
-	// Last function: last()
-	if condition == "last()" {
-		// Last evaluation is context-dependent and should be handled by caller
-		return false
-	}
-
-	// Not function: not(condition) - CHECK FIRST to avoid conflicts with nested functions
-	if strings.HasPrefix(condition, "not(") || strings.HasPrefix(condition, "not (") {
-		return e.evaluateNotExpression(condition, node)
-	}
-
-	// Contains function: contains(text(), 'value') or contains(@attr, 'value')
-	if strings.Contains(condition, "contains(") {
-		return e.evaluateContainsExpression(condition, node)
-	}
-
-	// Starts-with function: starts-with(text(), 'value')
-	if strings.Contains(condition, "starts-with(") {
-		return e.evaluateStartsWithExpression(condition, node)
-	}
-
-	// String-length function: string-length(text())>10
-	if strings.Contains(condition, "string-length(") {
-		return e.evaluateStringLengthExpression(condition, node)
-	}
-
-	// Count function: count(li)=3
-	if strings.Contains(condition, "count(") {
-		return e.evaluateCountExpression(condition, node)
-	}
-
-	// Normalize-space function: normalize-space(text()) = 'value'
-	if strings.Contains(condition, "normalize-space(") {
-		return e.evaluateNormalizeSpaceExpression(condition, node)
-	}
-
-	// Substring function: substring(text(), 1, 3) = 'Fir'
-	if strings.Contains(condition, "substring(") {
-		return e.evaluateSubstringExpression(condition, node)
-	}
-
-	// Axis expressions: parent::div, ancestor::table, etc.
-	if strings.Contains(condition, "::") {
-		return e.evaluateAxisExpression(node, condition)
-	}
-
-	// Child path expressions: head/title, head/meta[@charset] - CHECK FIRST before nested elements
-	if e.isChildPathExpression(condition) {
-		return e.evaluateChildPath(node, condition)
-	}
-
-	// Node test with predicate: span[@class='loading']
-	if strings.Contains(condition, "[") && strings.Contains(condition, "]") {
-		return e.evaluateNestedElementCondition(node, condition)
-	}
-
-	// Simple element existence
-	if e.isSimpleElementName(condition) {
-		return e.hasChildElement(node, condition)
-	}
-
-	// Default: try to match as element name
-	return node.Name == condition
-}
 
 // evaluateNestedElementCondition evaluates nested element conditions like span[@class='loading']
 func (e *Evaluator) evaluateNestedElementCondition(node *types.Node, condition string) bool {
@@ -273,9 +127,7 @@ func (e *Evaluator) evaluateNestedElementCondition(node *types.Node, condition s
 	predicate := strings.TrimSpace(condition[idx+1:])
 
 	// Remove closing bracket
-	if strings.HasSuffix(predicate, "]") {
-		predicate = predicate[:len(predicate)-1]
-	}
+	predicate = strings.TrimSuffix(predicate, "]")
 
 	// Check if any child matches the element name and predicate
 	for _, child := range node.Children {
@@ -392,9 +244,7 @@ func (e *Evaluator) matchesNodeTestWithPredicate(node *types.Node, nodeTest stri
 	predicate := strings.TrimSpace(nodeTest[idx+1:])
 
 	// Remove closing bracket
-	if strings.HasSuffix(predicate, "]") {
-		predicate = predicate[:len(predicate)-1]
-	}
+	predicate = strings.TrimSuffix(predicate, "]")
 
 	// Check element name match
 	if elementName != "*" && node.Name != elementName {

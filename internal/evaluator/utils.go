@@ -116,9 +116,7 @@ func (e *Evaluator) evaluateChildPath(node *types.Node, path string) bool {
 			predicate := strings.TrimSpace(part[idx+1:])
 
 			// Remove closing bracket
-			if strings.HasSuffix(predicate, "]") {
-				predicate = predicate[:len(predicate)-1]
-			}
+			predicate = strings.TrimSuffix(predicate, "]")
 
 			// Find children matching element name and predicate
 			for _, currentNode := range currentNodes {
@@ -173,12 +171,3 @@ func (e *Evaluator) hasChildElement(node *types.Node, elementName string) bool {
 
 // Helper functions for character validation
 
-// isLetter checks if a byte represents a letter
-func isLetter(b byte) bool {
-	return (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z')
-}
-
-// isDigit checks if a byte represents a digit
-func isDigit(b byte) bool {
-	return b >= '0' && b <= '9'
-}
