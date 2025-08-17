@@ -68,6 +68,11 @@ func (e *Evaluator) isValidElementName(name string) bool {
 		return false
 	}
 
+	// Special case for wildcard
+	if name == "*" {
+		return true
+	}
+
 	// Simple validation: letters, digits, hyphens, underscores, colons
 	for _, r := range name {
 		if !((r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') ||
@@ -147,6 +152,17 @@ func (e *Evaluator) evaluateChildPath(node *types.Node, path string) bool {
 
 // hasChildElement checks if a node has a child element with the given name
 func (e *Evaluator) hasChildElement(node *types.Node, elementName string) bool {
+	// Handle wildcard: * matches any child element
+	if elementName == "*" {
+		for _, child := range node.Children {
+			if child.Type == types.ElementNode {
+				return true
+			}
+		}
+		return false
+	}
+	
+	// Handle specific element name
 	for _, child := range node.Children {
 		if child.Name == elementName {
 			return true

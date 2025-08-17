@@ -11,8 +11,7 @@ type PredicateType int
 
 const (
 	// Boolean expressions (highest precedence)
-	ComplexBooleanType PredicateType = iota // Contains parentheses or functions with boolean operators
-	SimpleBooleanType                       // Simple AND/OR without functions or parentheses
+	BooleanType PredicateType = iota // AND/OR expressions with any complexity
 
 	// Single expressions
 	AttributeType     // @attr or @attr='value'
@@ -39,17 +38,11 @@ func ClassifyPredicate(expr string) (PredicateType, map[string]interface{}) {
 
 	// Check for boolean expressions first (highest precedence)
 	if classifier.hasBooleanOperators() {
-		// If it has boolean operators, check if it should be complex or simple
-		if classifier.hasParentheses() || classifier.hasFunctionCalls() || classifier.hasNestedPredicates() {
-			metadata["subexpressions"] = classifier.splitBooleanExpression()
-			return ComplexBooleanType, metadata
-		} else {
-			// Simple boolean without functions/parentheses/nested predicates
-			parts := classifier.splitBooleanExpression()
-			metadata["operator"] = classifier.getBooleanOperator()
-			metadata["parts"] = parts
-			return SimpleBooleanType, metadata
-		}
+		// All boolean expressions use the unified BooleanType
+		parts := classifier.splitBooleanExpression()
+		metadata["operator"] = classifier.getBooleanOperator()
+		metadata["parts"] = parts
+		return BooleanType, metadata
 	}
 
 	// Single expression types
@@ -234,11 +227,9 @@ func (c *PredicateClassifier) parseNestedElement() (string, string) {
 func (e *Evaluator) RoutePredicateExpression(nodes []*types.Node, expr string) []*types.Node {
 	predicateType, metadata := ClassifyPredicate(expr)
 
-	switch predicateType {
-	case ComplexBooleanType:
-		return e.applyComplexBooleanPredicate(nodes, expr)
 
-	case SimpleBooleanType:
+	switch predicateType {
+	case BooleanType:
 		operator := metadata["operator"].(string)
 		if operator == "and" {
 			return e.applyAndPredicate(nodes, expr)
@@ -296,6 +287,10 @@ func (e *Evaluator) routeFunctionCall(nodes []*types.Node, expr string) []*types
 	case strings.HasPrefix(expr, "not(") || strings.HasPrefix(expr, "not ("):
 		return e.applyNotPredicate(nodes, expr)
 	case strings.Contains(expr, "position()"):
+		// Check for modulo operations first
+		if strings.Contains(expr, "mod") {
+			return e.applyPositionModPredicate(nodes, expr)
+		}
 		return e.applyPositionPredicate(nodes, expr)
 	case strings.Contains(expr, "contains("):
 		return e.applyContainsPredicate(nodes, expr)

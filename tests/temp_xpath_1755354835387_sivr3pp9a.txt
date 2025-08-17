@@ -1,1 +1,0 @@
-//div[@class='widget'][span[@class='loading'] and div[@class='content']]

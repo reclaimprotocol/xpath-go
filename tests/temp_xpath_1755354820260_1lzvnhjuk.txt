@@ -1,1 +1,0 @@
-(//section/h1 | //section/p) | (//article/h2 | //article/div)

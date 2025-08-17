@@ -1,1 +1,0 @@
-//span[following-sibling::a and preceding-sibling::a]

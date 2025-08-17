@@ -1,1 +1,0 @@
-//p[starts-with(text(), 'Hello') and contains(text(), 'World')]

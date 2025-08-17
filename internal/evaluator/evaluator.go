@@ -192,6 +192,8 @@ func (e *Evaluator) applyNodeTest(nodes []*types.Node, nodeTest string) []*types
 func (e *Evaluator) applyPredicate(nodes []*types.Node, predicate types.XPathPredicate, contextNode *types.Node) []*types.Node {
 	expr := strings.TrimSpace(predicate.Expression)
 
+
+
 	// Handle positional predicates like [1], [2], [last()]
 	if pos, err := strconv.Atoi(expr); err == nil {
 		if pos > 0 && pos <= len(nodes) {

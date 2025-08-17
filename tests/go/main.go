@@ -15,13 +15,19 @@ type TestResult struct {
 }
 
 func main() {
-	if len(os.Args) != 3 {
-		fmt.Fprintf(os.Stderr, "Usage: %s <html_file> <xpath_file>\n", os.Args[0])
+	if len(os.Args) < 3 {
+		fmt.Fprintf(os.Stderr, "Usage: %s <html_file> <xpath_file> [--trace]\n", os.Args[0])
 		os.Exit(1)
 	}
 
 	htmlFile := os.Args[1]
 	xpathFile := os.Args[2]
+	
+	// Check for trace mode
+	if len(os.Args) > 3 && os.Args[3] == "--trace" {
+		xpath.EnableTrace()
+		defer xpath.DisableTrace()
+	}
 
 	// Read HTML content
 	htmlContent, err := os.ReadFile(htmlFile)

@@ -177,3 +177,13 @@ func hasSiblingsWithSameName(node *types.Node) bool {
 
 	return count > 1
 }
+
+// EnableTrace enables verbose trace logging for debugging XPath evaluation
+func EnableTrace() {
+	evaluator.EnableTrace()
+}
+
+// DisableTrace disables trace logging
+func DisableTrace() {
+	evaluator.DisableTrace()
+}

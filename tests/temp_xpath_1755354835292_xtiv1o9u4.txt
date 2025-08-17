@@ -1,1 +1,0 @@
-//section[@id='target']/ancestor::div//footer

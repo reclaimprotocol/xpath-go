@@ -1,8 +1,8 @@
 {
   "total": 73,
-  "passed": 67,
-  "failed": 6,
-  "compatibility": "91.8",
+  "passed": 71,
+  "failed": 2,
+  "compatibility": "97.3",
   "details": [
     {
       "name": "Basic element selection",
@@ -5063,7 +5063,7 @@
       "xpath": "//div[normalize-space(text())='' and not(*)]",
       "suite": "extended",
       "category": "edge-cases",
-      "passed": false,
+      "passed": true,
       "jsResult": {
         "success": true,
         "results": [
@@ -5104,21 +5104,21 @@
             "textContent": ""
           },
           {
-            "value": "",
+            "value": " ",
             "nodeName": "div",
             "nodeType": 1,
-            "startLocation": 35,
-            "endLocation": 59,
+            "startLocation": 23,
+            "endLocation": 35,
             "path": "/#document/html/body/div[5]",
-            "textContent": ""
+            "textContent": " "
           }
         ],
         "count": 2,
         "error": null
       },
       "comparison": {
-        "match": false,
-        "reason": "Text content mismatch at index 1: JS=\" \", Go=\"\"",
+        "match": true,
+        "reason": "Perfect match",
         "jsResults": [
           {
             "value": "",
@@ -5152,13 +5152,13 @@
             "textContent": ""
           },
           {
-            "value": "",
+            "value": " ",
             "nodeName": "div",
             "nodeType": 1,
-            "startLocation": 35,
-            "endLocation": 59,
+            "startLocation": 23,
+            "endLocation": 35,
             "path": "/#document/html/body/div[5]",
-            "textContent": ""
+            "textContent": " "
           }
         ]
       }
@@ -5312,7 +5312,7 @@
       "xpath": "//span[@class='item'][position() mod 2 = 0]",
       "suite": "extended",
       "category": "position",
-      "passed": false,
+      "passed": true,
       "jsResult": {
         "success": true,
         "results": [
@@ -5346,13 +5346,38 @@
       },
       "goResult": {
         "success": true,
-        "results": [],
-        "count": 0,
+        "results": [
+          {
+            "value": "B",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {
+              "class": "item"
+            },
+            "startLocation": 52,
+            "endLocation": 79,
+            "path": "/#document/html/body/div/span[5]",
+            "textContent": "B"
+          },
+          {
+            "value": "D",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {
+              "class": "item"
+            },
+            "startLocation": 118,
+            "endLocation": 145,
+            "path": "/#document/html/body/div/span[5]",
+            "textContent": "D"
+          }
+        ],
+        "count": 2,
         "error": null
       },
       "comparison": {
-        "match": false,
-        "reason": "Count mismatch: JS=2, Go=0",
+        "match": true,
+        "reason": "Perfect match",
         "jsResults": [
           {
             "value": "B",
@@ -5379,7 +5404,32 @@
             "path": "/html/body/div/span[4]"
           }
         ],
-        "goResults": []
+        "goResults": [
+          {
+            "value": "B",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {
+              "class": "item"
+            },
+            "startLocation": 52,
+            "endLocation": 79,
+            "path": "/#document/html/body/div/span[5]",
+            "textContent": "B"
+          },
+          {
+            "value": "D",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {
+              "class": "item"
+            },
+            "startLocation": 118,
+            "endLocation": 145,
+            "path": "/#document/html/body/div/span[5]",
+            "textContent": "D"
+          }
+        ]
       }
     },
     {
@@ -5838,26 +5888,13 @@
       },
       "goResult": {
         "success": true,
-        "results": [
-          {
-            "value": "Item 3",
-            "nodeName": "div",
-            "nodeType": 1,
-            "attributes": {
-              "class": "primary inactive"
-            },
-            "startLocation": 100,
-            "endLocation": 142,
-            "path": "/#document/html/body/div[4]",
-            "textContent": "Item 3"
-          }
-        ],
-        "count": 1,
+        "results": [],
+        "count": 0,
         "error": null
       },
       "comparison": {
         "match": false,
-        "reason": "Text content mismatch at index 0: JS=\"Item 1\", Go=\"Item 3\"",
+        "reason": "Count mismatch: JS=1, Go=0",
         "jsResults": [
           {
             "value": "Item 1",
@@ -5872,20 +5909,7 @@
             "path": "/html/body/div[1]"
           }
         ],
-        "goResults": [
-          {
-            "value": "Item 3",
-            "nodeName": "div",
-            "nodeType": 1,
-            "attributes": {
-              "class": "primary inactive"
-            },
-            "startLocation": 100,
-            "endLocation": 142,
-            "path": "/#document/html/body/div[4]",
-            "textContent": "Item 3"
-          }
-        ]
+        "goResults": []
       }
     },
     {
@@ -6161,7 +6185,7 @@
       "xpath": "//span[substring(text(), 1, 3) = 'Fir' or substring(text(), 1, 3) = 'Thi']",
       "suite": "extended",
       "category": "string-index",
-      "passed": false,
+      "passed": true,
       "jsResult": {
         "success": true,
         "results": [
@@ -6191,13 +6215,32 @@
       },
       "goResult": {
         "success": true,
-        "results": [],
-        "count": 0,
+        "results": [
+          {
+            "value": "First",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 30,
+            "path": "/#document/html/body/span[4]",
+            "textContent": "First"
+          },
+          {
+            "value": "Third",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 49,
+            "endLocation": 67,
+            "path": "/#document/html/body/span[4]",
+            "textContent": "Third"
+          }
+        ],
+        "count": 2,
         "error": null
       },
       "comparison": {
-        "match": false,
-        "reason": "Count mismatch: JS=2, Go=0",
+        "match": true,
+        "reason": "Perfect match",
         "jsResults": [
           {
             "value": "First",
@@ -6220,7 +6263,26 @@
             "path": "/html/body/span[3]"
           }
         ],
-        "goResults": []
+        "goResults": [
+          {
+            "value": "First",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 30,
+            "path": "/#document/html/body/span[4]",
+            "textContent": "First"
+          },
+          {
+            "value": "Third",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 49,
+            "endLocation": 67,
+            "path": "/#document/html/body/span[4]",
+            "textContent": "Third"
+          }
+        ]
       }
     },
     {
@@ -6295,7 +6357,7 @@
       "xpath": "//div[string-length(text()) > 0 and substring(text(), 1, 1) = 'C']",
       "suite": "extended",
       "category": "string-index",
-      "passed": false,
+      "passed": true,
       "jsResult": {
         "success": true,
         "results": [
@@ -6315,13 +6377,23 @@
       },
       "goResult": {
         "success": true,
-        "results": [],
-        "count": 0,
+        "results": [
+          {
+            "value": "Complete",
+            "nodeName": "div",
+            "nodeType": 1,
+            "startLocation": 35,
+            "endLocation": 54,
+            "path": "/#document/html/body/div[4]",
+            "textContent": "Complete"
+          }
+        ],
+        "count": 1,
         "error": null
       },
       "comparison": {
-        "match": false,
-        "reason": "Count mismatch: JS=1, Go=0",
+        "match": true,
+        "reason": "Perfect match",
         "jsResults": [
           {
             "value": "Complete",
@@ -6334,7 +6406,17 @@
             "path": "/html/body/div[3]"
           }
         ],
-        "goResults": []
+        "goResults": [
+          {
+            "value": "Complete",
+            "nodeName": "div",
+            "nodeType": 1,
+            "startLocation": 35,
+            "endLocation": 54,
+            "path": "/#document/html/body/div[4]",
+            "textContent": "Complete"
+          }
+        ]
       }
     }
   ]

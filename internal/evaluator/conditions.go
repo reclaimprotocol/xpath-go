@@ -14,6 +14,7 @@ import (
 func (e *Evaluator) evaluateComplexBooleanExpression(expr string, node *types.Node) bool {
 	expr = strings.TrimSpace(expr)
 
+
 	// Find the main boolean operator outside parentheses
 	mainOperator, leftExpr, rightExpr := e.findMainBooleanOperator(expr)
 
@@ -98,6 +99,24 @@ func (e *Evaluator) findMainBooleanOperator(expr string) (string, string, string
 
 // evaluateSimpleCondition evaluates a simple condition against a single node
 func (e *Evaluator) evaluateSimpleCondition(node *types.Node, condition string) bool {
+	condition = strings.TrimSpace(condition)
+
+	// Handle boolean expressions directly to avoid context issues
+	if strings.Contains(condition, " and ") {
+		result := e.evaluateAndExpression(condition, node)
+		return result
+	}
+	if strings.Contains(condition, " or ") {
+		result := e.evaluateOrExpression(condition, node)
+		return result
+	}
+
+	// For simple atomic conditions, use atomic evaluation
+	return e.evaluateAtomicCondition(node, condition)
+}
+
+// Legacy simple condition evaluation - kept for compatibility
+func (e *Evaluator) evaluateSimpleConditionLegacy(node *types.Node, condition string) bool {
 	condition = strings.TrimSpace(condition)
 
 	// Simple condition evaluation
@@ -690,11 +709,11 @@ func (e *Evaluator) evaluateNotExpression(expr string, node *types.Node) bool {
 	// Extract inner condition
 	innerCondition := strings.TrimSpace(expr[start:end])
 
-	// Evaluate inner condition and return negation
-	return !e.evaluateSimpleCondition(node, innerCondition)
+	// Evaluate inner condition atomically and return negation
+	return !e.evaluateAtomicCondition(node, innerCondition)
 }
 
-// evaluateAndExpression evaluates expressions with 'and' operator
+// evaluateAndExpression evaluates expressions with 'and' operator  
 func (e *Evaluator) evaluateAndExpression(expr string, node *types.Node) bool {
 	parts := strings.Split(expr, " and ")
 	if len(parts) != 2 {
@@ -704,7 +723,283 @@ func (e *Evaluator) evaluateAndExpression(expr string, node *types.Node) bool {
 	left := strings.TrimSpace(parts[0])
 	right := strings.TrimSpace(parts[1])
 
-	return e.evaluateSimpleCondition(node, left) && e.evaluateSimpleCondition(node, right)
+	// Evaluate conditions in isolation to avoid context pollution
+	leftResult := e.evaluateAtomicCondition(node, left)
+	rightResult := e.evaluateAtomicCondition(node, right)
+	finalResult := leftResult && rightResult
+
+	TraceBooleanOp("and", left, right, leftResult, rightResult, finalResult)
+
+	return finalResult
+}
+
+// evaluateAtomicCondition evaluates a single atomic condition without recursive boolean evaluation
+func (e *Evaluator) evaluateAtomicCondition(node *types.Node, condition string) bool {
+	condition = strings.TrimSpace(condition)
+	
+	Trace("Evaluating atomic condition: '%s' on node '%s'", condition, node.TextContent)
+
+	// Handle parenthesized expressions first
+	if strings.HasPrefix(condition, "(") && strings.HasSuffix(condition, ")") {
+		innerExpr := condition[1 : len(condition)-1]
+		return e.evaluateAtomicCondition(node, innerExpr)
+	}
+
+	// Handle boolean expressions within parentheses
+	if strings.Contains(condition, " and ") || strings.Contains(condition, " or ") {
+		if strings.Contains(condition, " and ") {
+			return e.evaluateAndExpression(condition, node)
+		} else {
+			return e.evaluateOrExpression(condition, node)
+		}
+	}
+
+	// Simple condition evaluation - no boolean operators allowed here
+
+	// Attribute existence: @id (handle spaced tokens like "@ id")
+	if strings.HasPrefix(condition, "@") && !strings.Contains(condition, "=") {
+		attrName := strings.TrimPrefix(condition, "@")
+		attrName = strings.TrimSpace(attrName) // Handle "@ id" -> "id"
+		_, exists := node.Attributes[attrName]
+		Trace("Attribute existence check: @%s -> %v", attrName, exists)
+		return exists
+	}
+
+	// Attribute value comparison: @id='value' or @id = 'value'
+	if strings.HasPrefix(condition, "@") && (strings.Contains(condition, "=") || strings.Contains(condition, "!=")) {
+		if strings.Contains(condition, "!=") {
+			parts := strings.SplitN(condition, "!=", 2)
+			if len(parts) == 2 {
+				attrName := strings.TrimSpace(strings.TrimPrefix(parts[0], "@"))
+				expectedValue := strings.Trim(strings.TrimSpace(parts[1]), "'\"")
+
+				if actualValue, exists := node.Attributes[attrName]; exists {
+					result := actualValue != expectedValue
+					Trace("Attribute != check: @%s ('%s' != '%s') -> %v", attrName, actualValue, expectedValue, result)
+					return result
+				}
+				Trace("Attribute != check: @%s (not exists != '%s') -> true", attrName, expectedValue)
+				return true // Attribute doesn't exist, so it's != any value
+			}
+		} else {
+			parts := strings.SplitN(condition, "=", 2)
+			if len(parts) == 2 {
+				attrName := strings.TrimSpace(strings.TrimPrefix(parts[0], "@"))
+				expectedValue := strings.Trim(strings.TrimSpace(parts[1]), "'\"")
+
+				if actualValue, exists := node.Attributes[attrName]; exists {
+					result := actualValue == expectedValue
+					Trace("Attribute = check: @%s ('%s' == '%s') -> %v", attrName, actualValue, expectedValue, result)
+					return result
+				}
+				Trace("Attribute = check: @%s (not exists == '%s') -> false", attrName, expectedValue)
+				return false
+			}
+		}
+	}
+
+	// Node test: node() - returns true if there are any child nodes
+	if condition == "node()" {
+		// node() matches any child node (element, text, comment, etc.)
+		// Check if node has any children or any non-empty text content
+		if len(node.Children) > 0 {
+			Trace("node() check: has %d children -> true", len(node.Children))
+			return true
+		}
+		// Also check for text content (text nodes)
+		if strings.TrimSpace(node.TextContent) != "" {
+			Trace("node() check: has text content '%s' -> true", node.TextContent)
+			return true
+		}
+		Trace("node() check: no children, no text -> false")
+		return false
+	}
+
+	// Text content existence: text()
+	if condition == "text()" {
+		result := strings.TrimSpace(node.TextContent) != ""
+		Trace("text() check: '%s' -> %v", node.TextContent, result)
+		return result
+	}
+
+	// Text content comparison: text()='value' (but NOT normalize-space or substring patterns)
+	if strings.Contains(condition, "text()") && strings.Contains(condition, "=") && !strings.Contains(condition, "normalize-space") && !strings.Contains(condition, "substring(") {
+		if strings.Contains(condition, "!=") {
+			parts := strings.SplitN(condition, "!=", 2)
+			if len(parts) == 2 {
+				expectedValue := strings.Trim(strings.TrimSpace(parts[1]), "'\"")
+				result := node.TextContent != expectedValue
+				Trace("text() != check: '%s' != '%s' -> %v", node.TextContent, expectedValue, result)
+				return result
+			}
+		} else {
+			parts := strings.SplitN(condition, "=", 2)
+			if len(parts) == 2 {
+				expectedValue := strings.Trim(strings.TrimSpace(parts[1]), "'\"")
+				result := node.TextContent == expectedValue
+				Trace("text() = check: '%s' == '%s' -> %v", node.TextContent, expectedValue, result)
+				return result
+			}
+		}
+	}
+
+	// Position function: position()=2
+	if strings.Contains(condition, "position()") && strings.Contains(condition, "=") {
+		Trace("position() check: context-dependent, returning false")
+		// Position evaluation is context-dependent and should be handled by caller
+		return false
+	}
+
+	// Last function: last()
+	if condition == "last()" {
+		Trace("last() check: context-dependent, returning false")
+		// Last evaluation is context-dependent and should be handled by caller
+		return false
+	}
+
+	// Contains function: contains(text(), 'value') or contains(@attr, 'value')
+	if strings.Contains(condition, "contains(") {
+		result := e.evaluateContainsExpression(condition, node)
+		Trace("contains() check: '%s' -> %v", condition, result)
+		return result
+	}
+
+	// Starts-with function: starts-with(text(), 'value')
+	if strings.Contains(condition, "starts-with(") {
+		result := e.evaluateStartsWithExpression(condition, node)
+		Trace("starts-with() check: '%s' -> %v", condition, result)
+		return result
+	}
+
+	// String-length function: string-length(text())>10
+	if strings.Contains(condition, "string-length(") {
+		result := e.evaluateStringLengthExpression(condition, node)
+		Trace("string-length() check: '%s' -> %v", condition, result)
+		return result
+	}
+
+	// Count function: count(li)=3
+	if strings.Contains(condition, "count(") {
+		result := e.evaluateCountExpression(condition, node)
+		Trace("count() check: '%s' -> %v", condition, result)
+		return result
+	}
+
+	// Number function: number(.)>25, number(@value)<10
+	if strings.Contains(condition, "number(") {
+		result := e.evaluateNumberExpression(condition, node)
+		Trace("number() check: '%s' -> %v", condition, result)
+		return result
+	}
+
+	// Normalize-space function: normalize-space(text()) = 'value'
+	if strings.Contains(condition, "normalize-space(") {
+		result := e.evaluateNormalizeSpaceExpression(condition, node)
+		Trace("normalize-space() check: '%s' -> %v", condition, result)
+		return result
+	}
+
+	// Substring function: substring(text(), 1, 3) = 'Fir'
+	if strings.Contains(condition, "substring(") {
+		result := e.evaluateSubstringExpression(condition, node)
+		Trace("substring() check: '%s' -> %v", condition, result)
+		return result
+	}
+
+	// Substring-after function: substring-after(@value, 'prefix_')
+	if strings.Contains(condition, "substring-after(") {
+		result := e.evaluateSubstringAfterExpression(condition, node)
+		Trace("substring-after() check: '%s' -> %v", condition, result)
+		return result
+	}
+
+	// Substring-before function: substring-before(@value, '_suffix')
+	if strings.Contains(condition, "substring-before(") {
+		result := e.evaluateSubstringBeforeExpression(condition, node)
+		Trace("substring-before() check: '%s' -> %v", condition, result)
+		return result
+	}
+
+	// Not function: not(condition)
+	if strings.HasPrefix(condition, "not(") || strings.HasPrefix(condition, "not (") {
+		result := e.evaluateNotExpression(condition, node)
+		Trace("not() check: '%s' -> %v", condition, result)
+		return result
+	}
+
+	// Axis expressions: parent::div, ancestor::table, etc.
+	if strings.Contains(condition, "::") {
+		result := e.evaluateAxisExpression(node, condition)
+		Trace("axis check: '%s' -> %v", condition, result)
+		return result
+	}
+
+	// Node test with predicate: span[@class='loading']
+	if strings.Contains(condition, "[") && strings.Contains(condition, "]") {
+		result := e.evaluateNestedElementCondition(node, condition)
+		Trace("nested element check: '%s' -> %v", condition, result)
+		return result
+	}
+
+	// Child path expressions: head/title, head/meta[@charset]
+	if e.isChildPathExpression(condition) {
+		result := e.evaluateChildPath(node, condition)
+		Trace("child path check: '%s' -> %v", condition, result)
+		return result
+	}
+
+	// Simple element existence
+	if e.isSimpleElementName(condition) {
+		result := e.hasChildElement(node, condition)
+		Trace("simple element check: '%s' -> %v", condition, result)
+		return result
+	}
+
+	// Default: try to match as element name
+	result := node.Name == condition
+	Trace("element name check: '%s' == '%s' -> %v", node.Name, condition, result)
+	return result
+}
+
+// splitBooleanExpression splits a boolean expression on an operator while respecting quotes
+func (e *Evaluator) splitBooleanExpression(expr string, operator string) (string, string, bool) {
+	inQuote := false
+	var quoteChar byte
+	parenDepth := 0
+	
+	for i := 0; i <= len(expr)-len(operator); i++ {
+		char := expr[i]
+		
+		// Handle quote state
+		if (char == '\'' || char == '"') && (i == 0 || expr[i-1] != '\\') {
+			if !inQuote {
+				inQuote = true
+				quoteChar = char
+			} else if char == quoteChar {
+				inQuote = false
+			}
+		}
+		
+		// Handle parentheses depth (when not in quotes)
+		if !inQuote {
+			if char == '(' {
+				parenDepth++
+			} else if char == ')' {
+				parenDepth--
+			}
+			
+			// Check for operator at this position (when not in quotes and at paren depth 0)
+			if parenDepth == 0 && i+len(operator) <= len(expr) {
+				if expr[i:i+len(operator)] == operator {
+					left := strings.TrimSpace(expr[:i])
+					right := strings.TrimSpace(expr[i+len(operator):])
+					return left, right, true
+				}
+			}
+		}
+	}
+	
+	return "", "", false
 }
 
 // evaluateOrExpression evaluates expressions with 'or' operator
@@ -717,7 +1012,14 @@ func (e *Evaluator) evaluateOrExpression(expr string, node *types.Node) bool {
 	left := strings.TrimSpace(parts[0])
 	right := strings.TrimSpace(parts[1])
 
-	return e.evaluateSimpleCondition(node, left) || e.evaluateSimpleCondition(node, right)
+	// Evaluate conditions in isolation to avoid context pollution
+	leftResult := e.evaluateAtomicCondition(node, left)
+	rightResult := e.evaluateAtomicCondition(node, right)
+	finalResult := leftResult || rightResult
+
+	TraceBooleanOp("or", left, right, leftResult, rightResult, finalResult)
+
+	return finalResult
 }
 
 // evaluatePositionExpression evaluates position-based expressions
@@ -844,6 +1146,250 @@ func (e *Evaluator) evaluatePositionComparison(expr string, position int) bool {
 			}
 		}
 		// Add more comparison operators as needed
+	}
+
+	return false
+}
+
+// evaluateSubstringAfterExpression evaluates substring-after() function expressions
+func (e *Evaluator) evaluateSubstringAfterExpression(expr string, node *types.Node) bool {
+	// Parse substring-after(@attr, 'delimiter') or substring-after(text(), 'delimiter')
+	start := strings.Index(expr, "substring-after(")
+	if start == -1 {
+		return false
+	}
+
+	// Find matching closing parenthesis
+	depth := 0
+	var end int
+	for i := start + 16; i < len(expr); i++ {
+		if expr[i] == '(' {
+			depth++
+		} else if expr[i] == ')' {
+			if depth == 0 {
+				end = i
+				break
+			}
+			depth--
+		}
+	}
+
+	if end == 0 {
+		return false
+	}
+
+	// Extract arguments
+	args := expr[start+16 : end]
+	parts := strings.Split(args, ",")
+	if len(parts) != 2 {
+		return false
+	}
+
+	source := strings.TrimSpace(parts[0])
+	delimiter := strings.Trim(strings.TrimSpace(parts[1]), "\"'")
+
+	var textToProcess string
+	if source == "text()" {
+		textToProcess = node.TextContent
+	} else if strings.HasPrefix(source, "@") {
+		attrName := strings.TrimPrefix(source, "@")
+		if value, exists := node.Attributes[attrName]; exists {
+			textToProcess = value
+		}
+	}
+
+	// Get the part after the delimiter
+	if idx := strings.Index(textToProcess, delimiter); idx != -1 {
+		result := textToProcess[idx+len(delimiter):]
+		// Check if there's a comparison or if it's used in a boolean context
+		comparison := strings.TrimSpace(expr[end+1:])
+		if comparison == "" {
+			// In boolean context, return true if result is non-empty
+			return result != ""
+		}
+		
+		// Handle comparison
+		if strings.HasPrefix(comparison, " = ") || strings.HasPrefix(comparison, "=") {
+			var expectedValue string
+			if strings.HasPrefix(comparison, " = ") {
+				expectedValue = strings.Trim(strings.TrimSpace(comparison[3:]), "'\"")
+			} else {
+				expectedValue = strings.Trim(strings.TrimSpace(comparison[1:]), "'\"")
+			}
+			return result == expectedValue
+		}
+	}
+
+	return false
+}
+
+// evaluateSubstringBeforeExpression evaluates substring-before() function expressions
+func (e *Evaluator) evaluateSubstringBeforeExpression(expr string, node *types.Node) bool {
+	// Parse substring-before(@attr, 'delimiter') or substring-before(text(), 'delimiter')
+	start := strings.Index(expr, "substring-before(")
+	if start == -1 {
+		return false
+	}
+
+	// Find matching closing parenthesis
+	depth := 0
+	var end int
+	for i := start + 17; i < len(expr); i++ {
+		if expr[i] == '(' {
+			depth++
+		} else if expr[i] == ')' {
+			if depth == 0 {
+				end = i
+				break
+			}
+			depth--
+		}
+	}
+
+	if end == 0 {
+		return false
+	}
+
+	// Extract arguments
+	args := expr[start+17 : end]
+	parts := strings.Split(args, ",")
+	if len(parts) != 2 {
+		return false
+	}
+
+	source := strings.TrimSpace(parts[0])
+	delimiter := strings.Trim(strings.TrimSpace(parts[1]), "\"'")
+
+	var textToProcess string
+	if source == "text()" {
+		textToProcess = node.TextContent
+	} else if strings.HasPrefix(source, "@") {
+		attrName := strings.TrimPrefix(source, "@")
+		if value, exists := node.Attributes[attrName]; exists {
+			textToProcess = value
+		}
+	}
+
+	// Get the part before the delimiter
+	if idx := strings.Index(textToProcess, delimiter); idx != -1 {
+		result := textToProcess[:idx]
+		// Check if there's a comparison or if it's used in a boolean context
+		comparison := strings.TrimSpace(expr[end+1:])
+		if comparison == "" {
+			// In boolean context, return true if result is non-empty
+			return result != ""
+		}
+		
+		// Handle comparison
+		if strings.HasPrefix(comparison, " = ") || strings.HasPrefix(comparison, "=") {
+			var expectedValue string
+			if strings.HasPrefix(comparison, " = ") {
+				expectedValue = strings.Trim(strings.TrimSpace(comparison[3:]), "'\"")
+			} else {
+				expectedValue = strings.Trim(strings.TrimSpace(comparison[1:]), "'\"")
+			}
+			return result == expectedValue
+		}
+	}
+
+	return false
+}
+
+// evaluateNumberExpression evaluates number() function expressions
+func (e *Evaluator) evaluateNumberExpression(expr string, node *types.Node) bool {
+	// Parse number(.) > 25, number(@attr) < 10, etc.
+	start := strings.Index(expr, "number(")
+	if start == -1 {
+		return false
+	}
+
+	// Find matching closing parenthesis
+	depth := 0
+	var end int
+	for i := start + 7; i < len(expr); i++ {
+		if expr[i] == '(' {
+			depth++
+		} else if expr[i] == ')' {
+			if depth == 0 {
+				end = i
+				break
+			}
+			depth--
+		}
+	}
+
+	if end == 0 {
+		return false
+	}
+
+	// Get the source and comparison part
+	source := strings.TrimSpace(expr[start+7 : end])
+	comparison := strings.TrimSpace(expr[end+1:])
+
+	if comparison == "" {
+		return false
+	}
+
+	// Get the text to convert to number
+	var textToConvert string
+	if source == "." {
+		textToConvert = strings.TrimSpace(node.TextContent)
+	} else if source == "text()" {
+		textToConvert = strings.TrimSpace(node.TextContent)
+	} else if strings.HasPrefix(source, "@") {
+		attrName := strings.TrimPrefix(source, "@")
+		if value, exists := node.Attributes[attrName]; exists {
+			textToConvert = strings.TrimSpace(value)
+		}
+	}
+
+	// Convert to number (following XPath rules: invalid -> NaN, NaN comparisons -> false)
+	var numberValue float64
+	var isValidNumber bool
+	
+	if textToConvert == "" {
+		numberValue = 0 // Empty string converts to 0 in XPath
+		isValidNumber = true
+	} else {
+		// Try to parse as float
+		if val, err := strconv.ParseFloat(textToConvert, 64); err == nil {
+			numberValue = val
+			isValidNumber = true
+		} else {
+			// Invalid number - in XPath this becomes NaN, comparisons with NaN are always false
+			isValidNumber = false
+		}
+	}
+
+	if !isValidNumber {
+		return false // NaN comparisons are always false
+	}
+
+	// Parse comparison operators
+	if strings.HasPrefix(comparison, ">=") {
+		if targetValue, err := strconv.ParseFloat(strings.TrimSpace(comparison[2:]), 64); err == nil {
+			return numberValue >= targetValue
+		}
+	} else if strings.HasPrefix(comparison, "<=") {
+		if targetValue, err := strconv.ParseFloat(strings.TrimSpace(comparison[2:]), 64); err == nil {
+			return numberValue <= targetValue
+		}
+	} else if strings.HasPrefix(comparison, ">") {
+		if targetValue, err := strconv.ParseFloat(strings.TrimSpace(comparison[1:]), 64); err == nil {
+			return numberValue > targetValue
+		}
+	} else if strings.HasPrefix(comparison, "<") {
+		if targetValue, err := strconv.ParseFloat(strings.TrimSpace(comparison[1:]), 64); err == nil {
+			return numberValue < targetValue
+		}
+	} else if strings.HasPrefix(comparison, "!=") {
+		if targetValue, err := strconv.ParseFloat(strings.TrimSpace(comparison[2:]), 64); err == nil {
+			return numberValue != targetValue
+		}
+	} else if strings.HasPrefix(comparison, "=") {
+		if targetValue, err := strconv.ParseFloat(strings.TrimSpace(comparison[1:]), 64); err == nil {
+			return numberValue == targetValue
+		}
 	}
 
 	return false

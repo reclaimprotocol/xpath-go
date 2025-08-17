@@ -1,1 +1,0 @@
-/html[head/title and head/meta[@charset] and body/main]
