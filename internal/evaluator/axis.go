@@ -1,6 +1,10 @@
 package evaluator
 
-import "github.com/reclaimprotocol/xpath-go/pkg/types"
+import (
+	"sort"
+	
+	"github.com/reclaimprotocol/xpath-go/pkg/types"
+)
 
 // axis.go - XPath axis navigation functions
 // Functions for traversing the document tree along different axes
@@ -92,14 +96,39 @@ func (e *Evaluator) getPrecedingSiblings(node *types.Node) []*types.Node {
 func (e *Evaluator) getAttributeNodes(node *types.Node) []*types.Node {
 	var attrNodes []*types.Node
 
-	for attrName, attrValue := range node.Attributes {
-		attrNode := &types.Node{
-			Name:        attrName,
-			Type:        types.AttributeNode,
-			TextContent: attrValue,
-			Parent:      node,
+	// Use AttributeOrder if available (preserves document order)
+	if len(node.AttributeOrder) > 0 {
+		// Create attribute nodes in document order
+		for _, attrName := range node.AttributeOrder {
+			if attrValue, exists := node.Attributes[attrName]; exists {
+				attrNode := &types.Node{
+					Name:        attrName,
+					Type:        types.AttributeNode,
+					TextContent: attrValue,
+					Parent:      node,
+				}
+				attrNodes = append(attrNodes, attrNode)
+			}
 		}
-		attrNodes = append(attrNodes, attrNode)
+	} else {
+		// Fallback to sorted order for consistency when AttributeOrder is not available
+		var attrNames []string
+		for attrName := range node.Attributes {
+			attrNames = append(attrNames, attrName)
+		}
+		sort.Strings(attrNames)
+
+		// Create attribute nodes in sorted order
+		for _, attrName := range attrNames {
+			attrValue := node.Attributes[attrName]
+			attrNode := &types.Node{
+				Name:        attrName,
+				Type:        types.AttributeNode,
+				TextContent: attrValue,
+				Parent:      node,
+			}
+			attrNodes = append(attrNodes, attrNode)
+		}
 	}
 
 	return attrNodes
