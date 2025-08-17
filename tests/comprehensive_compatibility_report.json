@@ -1,8 +1,8 @@
 {
   "total": 117,
-  "passed": 107,
-  "failed": 10,
-  "compatibility": "91.5",
+  "passed": 109,
+  "failed": 8,
+  "compatibility": "93.2",
   "details": [
     {
       "name": "Basic element selection",
@@ -8045,7 +8045,7 @@
       "xpath": "//div[@data-index = (2 * 2)]",
       "suite": "extended",
       "category": "arithmetic",
-      "passed": false,
+      "passed": true,
       "jsResult": {
         "success": true,
         "results": [
@@ -8067,13 +8067,26 @@
       },
       "goResult": {
         "success": true,
-        "results": [],
-        "count": 0,
+        "results": [
+          {
+            "value": "D",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-index": "4"
+            },
+            "startLocation": 93,
+            "endLocation": 120,
+            "path": "/#document/html/body/div[5]",
+            "textContent": "D"
+          }
+        ],
+        "count": 1,
         "error": null
       },
       "comparison": {
-        "match": false,
-        "reason": "Count mismatch: JS=1, Go=0",
+        "match": true,
+        "reason": "Perfect match",
         "jsResults": [
           {
             "value": "D",
@@ -8088,7 +8101,20 @@
             "path": "/html/body/div[4]"
           }
         ],
-        "goResults": []
+        "goResults": [
+          {
+            "value": "D",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-index": "4"
+            },
+            "startLocation": 93,
+            "endLocation": 120,
+            "path": "/#document/html/body/div[5]",
+            "textContent": "D"
+          }
+        ]
       }
     },
     {
@@ -9847,7 +9873,7 @@
       "xpath": "//div[true()]",
       "suite": "extended",
       "category": "boolean-functions",
-      "passed": false,
+      "passed": true,
       "jsResult": {
         "success": true,
         "results": [
@@ -9877,13 +9903,32 @@
       },
       "goResult": {
         "success": true,
-        "results": [],
-        "count": 0,
+        "results": [
+          {
+            "value": "First",
+            "nodeName": "div",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 28,
+            "path": "/#document/html/body/div[3]",
+            "textContent": "First"
+          },
+          {
+            "value": "Second",
+            "nodeName": "div",
+            "nodeType": 1,
+            "startLocation": 28,
+            "endLocation": 45,
+            "path": "/#document/html/body/div[3]",
+            "textContent": "Second"
+          }
+        ],
+        "count": 2,
         "error": null
       },
       "comparison": {
-        "match": false,
-        "reason": "Count mismatch: JS=2, Go=0",
+        "match": true,
+        "reason": "Perfect match",
         "jsResults": [
           {
             "value": "First",
@@ -9906,7 +9951,26 @@
             "path": "/html/body/div[2]"
           }
         ],
-        "goResults": []
+        "goResults": [
+          {
+            "value": "First",
+            "nodeName": "div",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 28,
+            "path": "/#document/html/body/div[3]",
+            "textContent": "First"
+          },
+          {
+            "value": "Second",
+            "nodeName": "div",
+            "nodeType": 1,
+            "startLocation": 28,
+            "endLocation": 45,
+            "path": "/#document/html/body/div[3]",
+            "textContent": "Second"
+          }
+        ]
       }
     },
     {
