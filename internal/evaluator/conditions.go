@@ -532,6 +532,9 @@ func (e *Evaluator) evaluateStringLengthExpression(expr string, node *types.Node
 		if value, exists := node.Attributes[attrName]; exists {
 			textToMeasure = value
 		}
+	} else if strings.HasPrefix(source, "normalize-space(") {
+		// Handle nested normalize-space function call
+		textToMeasure = e.evaluateNormalizeSpaceFunction(source, node)
 	}
 
 	actualLength := len(textToMeasure)

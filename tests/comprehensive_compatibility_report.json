@@ -1,8 +1,8 @@
 {
   "total": 73,
-  "passed": 64,
-  "failed": 9,
-  "compatibility": "87.7",
+  "passed": 65,
+  "failed": 8,
+  "compatibility": "89.0",
   "details": [
     {
       "name": "Basic element selection",
@@ -4158,7 +4158,7 @@
       "xpath": "//p[string-length(normalize-space(text())) > 10]",
       "suite": "extended",
       "category": "functions",
-      "passed": false,
+      "passed": true,
       "jsResult": {
         "success": true,
         "results": [
@@ -4188,13 +4188,32 @@
       },
       "goResult": {
         "success": true,
-        "results": [],
-        "count": 0,
+        "results": [
+          {
+            "value": "  Hello World  ",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 34,
+            "path": "/#document/html/body/p[4]",
+            "textContent": "  Hello World  "
+          },
+          {
+            "value": "  Very long content here  ",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 46,
+            "endLocation": 79,
+            "path": "/#document/html/body/p[4]",
+            "textContent": "  Very long content here  "
+          }
+        ],
+        "count": 2,
         "error": null
       },
       "comparison": {
-        "match": false,
-        "reason": "Count mismatch: JS=2, Go=0",
+        "match": true,
+        "reason": "Perfect match",
         "jsResults": [
           {
             "value": "  Hello World  ",
@@ -4217,7 +4236,26 @@
             "path": "/html/body/p[3]"
           }
         ],
-        "goResults": []
+        "goResults": [
+          {
+            "value": "  Hello World  ",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 34,
+            "path": "/#document/html/body/p[4]",
+            "textContent": "  Hello World  "
+          },
+          {
+            "value": "  Very long content here  ",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 46,
+            "endLocation": 79,
+            "path": "/#document/html/body/p[4]",
+            "textContent": "  Very long content here  "
+          }
+        ]
       }
     },
     {
