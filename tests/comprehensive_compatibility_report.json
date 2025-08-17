@@ -1,8 +1,8 @@
 {
   "total": 73,
-  "passed": 68,
-  "failed": 5,
-  "compatibility": "93.2",
+  "passed": 63,
+  "failed": 10,
+  "compatibility": "86.3",
   "details": [
     {
       "name": "Basic element selection",
@@ -2904,7 +2904,7 @@
       "xpath": "//div[not(node())]",
       "suite": "original",
       "category": "edge-cases",
-      "passed": true,
+      "passed": false,
       "jsResult": {
         "success": true,
         "results": [
@@ -2933,14 +2933,32 @@
             "endLocation": 23,
             "path": "/#document/html/body/div[4]",
             "textContent": ""
+          },
+          {
+            "value": "Content",
+            "nodeName": "div",
+            "nodeType": 1,
+            "startLocation": 23,
+            "endLocation": 41,
+            "path": "/#document/html/body/div[4]",
+            "textContent": "Content"
+          },
+          {
+            "value": "",
+            "nodeName": "div",
+            "nodeType": 1,
+            "startLocation": 41,
+            "endLocation": 65,
+            "path": "/#document/html/body/div[4]",
+            "textContent": ""
           }
         ],
-        "count": 1,
+        "count": 3,
         "error": null
       },
       "comparison": {
-        "match": true,
-        "reason": "Perfect match",
+        "match": false,
+        "reason": "Count mismatch: JS=1, Go=3",
         "jsResults": [
           {
             "value": "",
@@ -2960,6 +2978,24 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 23,
+            "path": "/#document/html/body/div[4]",
+            "textContent": ""
+          },
+          {
+            "value": "Content",
+            "nodeName": "div",
+            "nodeType": 1,
+            "startLocation": 23,
+            "endLocation": 41,
+            "path": "/#document/html/body/div[4]",
+            "textContent": "Content"
+          },
+          {
+            "value": "",
+            "nodeName": "div",
+            "nodeType": 1,
+            "startLocation": 41,
+            "endLocation": 65,
             "path": "/#document/html/body/div[4]",
             "textContent": ""
           }
@@ -3153,7 +3189,7 @@
       "xpath": "//p[@id='target']/ancestor-or-self::*",
       "suite": "extended",
       "category": "axes",
-      "passed": true,
+      "passed": false,
       "jsResult": {
         "success": true,
         "results": [
@@ -3218,29 +3254,14 @@
         "results": [
           {
             "value": "Content",
-            "nodeName": "html",
+            "nodeName": "p",
             "nodeType": 1,
-            "startLocation": 0,
-            "endLocation": 90,
-            "path": "/#document/html[2]",
-            "textContent": "Content"
-          },
-          {
-            "value": "Content",
-            "nodeName": "body",
-            "nodeType": 1,
-            "startLocation": 6,
-            "endLocation": 83,
-            "path": "/#document/html/body[2]",
-            "textContent": "Content"
-          },
-          {
-            "value": "Content",
-            "nodeName": "article",
-            "nodeType": 1,
-            "startLocation": 12,
-            "endLocation": 76,
-            "path": "/#document/html/body/article[2]",
+            "attributes": {
+              "id": "target"
+            },
+            "startLocation": 30,
+            "endLocation": 56,
+            "path": "/#document/html/body/article/section/p[2]",
             "textContent": "Content"
           },
           {
@@ -3254,14 +3275,29 @@
           },
           {
             "value": "Content",
-            "nodeName": "p",
+            "nodeName": "article",
             "nodeType": 1,
-            "attributes": {
-              "id": "target"
-            },
-            "startLocation": 30,
-            "endLocation": 56,
-            "path": "/#document/html/body/article/section/p[2]",
+            "startLocation": 12,
+            "endLocation": 76,
+            "path": "/#document/html/body/article[2]",
+            "textContent": "Content"
+          },
+          {
+            "value": "Content",
+            "nodeName": "body",
+            "nodeType": 1,
+            "startLocation": 6,
+            "endLocation": 83,
+            "path": "/#document/html/body[2]",
+            "textContent": "Content"
+          },
+          {
+            "value": "Content",
+            "nodeName": "html",
+            "nodeType": 1,
+            "startLocation": 0,
+            "endLocation": 90,
+            "path": "/#document/html[2]",
             "textContent": "Content"
           }
         ],
@@ -3269,8 +3305,8 @@
         "error": null
       },
       "comparison": {
-        "match": true,
-        "reason": "Perfect match",
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"html\", Go=\"p\"",
         "jsResults": [
           {
             "value": "Content",
@@ -3328,29 +3364,14 @@
         "goResults": [
           {
             "value": "Content",
-            "nodeName": "html",
+            "nodeName": "p",
             "nodeType": 1,
-            "startLocation": 0,
-            "endLocation": 90,
-            "path": "/#document/html[2]",
-            "textContent": "Content"
-          },
-          {
-            "value": "Content",
-            "nodeName": "body",
-            "nodeType": 1,
-            "startLocation": 6,
-            "endLocation": 83,
-            "path": "/#document/html/body[2]",
-            "textContent": "Content"
-          },
-          {
-            "value": "Content",
-            "nodeName": "article",
-            "nodeType": 1,
-            "startLocation": 12,
-            "endLocation": 76,
-            "path": "/#document/html/body/article[2]",
+            "attributes": {
+              "id": "target"
+            },
+            "startLocation": 30,
+            "endLocation": 56,
+            "path": "/#document/html/body/article/section/p[2]",
             "textContent": "Content"
           },
           {
@@ -3364,14 +3385,29 @@
           },
           {
             "value": "Content",
-            "nodeName": "p",
+            "nodeName": "article",
             "nodeType": 1,
-            "attributes": {
-              "id": "target"
-            },
-            "startLocation": 30,
-            "endLocation": 56,
-            "path": "/#document/html/body/article/section/p[2]",
+            "startLocation": 12,
+            "endLocation": 76,
+            "path": "/#document/html/body/article[2]",
+            "textContent": "Content"
+          },
+          {
+            "value": "Content",
+            "nodeName": "body",
+            "nodeType": 1,
+            "startLocation": 6,
+            "endLocation": 83,
+            "path": "/#document/html/body[2]",
+            "textContent": "Content"
+          },
+          {
+            "value": "Content",
+            "nodeName": "html",
+            "nodeType": 1,
+            "startLocation": 0,
+            "endLocation": 90,
+            "path": "/#document/html[2]",
             "textContent": "Content"
           }
         ]
@@ -4158,7 +4194,7 @@
       "xpath": "//p[string-length(normalize-space(text())) > 10]",
       "suite": "extended",
       "category": "functions",
-      "passed": true,
+      "passed": false,
       "jsResult": {
         "success": true,
         "results": [
@@ -4188,32 +4224,13 @@
       },
       "goResult": {
         "success": true,
-        "results": [
-          {
-            "value": "  Hello World  ",
-            "nodeName": "p",
-            "nodeType": 1,
-            "startLocation": 12,
-            "endLocation": 34,
-            "path": "/#document/html/body/p[4]",
-            "textContent": "  Hello World  "
-          },
-          {
-            "value": "  Very long content here  ",
-            "nodeName": "p",
-            "nodeType": 1,
-            "startLocation": 46,
-            "endLocation": 79,
-            "path": "/#document/html/body/p[4]",
-            "textContent": "  Very long content here  "
-          }
-        ],
-        "count": 2,
+        "results": [],
+        "count": 0,
         "error": null
       },
       "comparison": {
-        "match": true,
-        "reason": "Perfect match",
+        "match": false,
+        "reason": "Count mismatch: JS=2, Go=0",
         "jsResults": [
           {
             "value": "  Hello World  ",
@@ -4236,26 +4253,7 @@
             "path": "/html/body/p[3]"
           }
         ],
-        "goResults": [
-          {
-            "value": "  Hello World  ",
-            "nodeName": "p",
-            "nodeType": 1,
-            "startLocation": 12,
-            "endLocation": 34,
-            "path": "/#document/html/body/p[4]",
-            "textContent": "  Hello World  "
-          },
-          {
-            "value": "  Very long content here  ",
-            "nodeName": "p",
-            "nodeType": 1,
-            "startLocation": 46,
-            "endLocation": 79,
-            "path": "/#document/html/body/p[4]",
-            "textContent": "  Very long content here  "
-          }
-        ]
+        "goResults": []
       }
     },
     {
@@ -4700,7 +4698,7 @@
       "xpath": "//tbody/tr[position()>1]/td[position()=1]",
       "suite": "extended",
       "category": "tables",
-      "passed": true,
+      "passed": false,
       "jsResult": {
         "success": true,
         "results": [
@@ -4720,23 +4718,13 @@
       },
       "goResult": {
         "success": true,
-        "results": [
-          {
-            "value": "Jane",
-            "nodeName": "td",
-            "nodeType": 1,
-            "startLocation": 112,
-            "endLocation": 125,
-            "path": "/#document/html/body/table/tbody/tr[2]/td[3]",
-            "textContent": "Jane"
-          }
-        ],
-        "count": 1,
+        "results": [],
+        "count": 0,
         "error": null
       },
       "comparison": {
-        "match": true,
-        "reason": "Perfect match",
+        "match": false,
+        "reason": "Count mismatch: JS=1, Go=0",
         "jsResults": [
           {
             "value": "Jane",
@@ -4749,17 +4737,7 @@
             "path": "/html/body/table/tbody/tr[2]/td[1]"
           }
         ],
-        "goResults": [
-          {
-            "value": "Jane",
-            "nodeName": "td",
-            "nodeType": 1,
-            "startLocation": 112,
-            "endLocation": 125,
-            "path": "/#document/html/body/table/tbody/tr[2]/td[3]",
-            "textContent": "Jane"
-          }
-        ]
+        "goResults": []
       }
     },
     {
@@ -5102,14 +5080,23 @@
             "endLocation": 23,
             "path": "/#document/html/body/div[5]",
             "textContent": ""
+          },
+          {
+            "value": "",
+            "nodeName": "div",
+            "nodeType": 1,
+            "startLocation": 35,
+            "endLocation": 59,
+            "path": "/#document/html/body/div[5]",
+            "textContent": ""
           }
         ],
-        "count": 1,
+        "count": 2,
         "error": null
       },
       "comparison": {
         "match": false,
-        "reason": "Count mismatch: JS=2, Go=1",
+        "reason": "Text content mismatch at index 1: JS=\" \", Go=\"\"",
         "jsResults": [
           {
             "value": "",
@@ -5139,6 +5126,15 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 23,
+            "path": "/#document/html/body/div[5]",
+            "textContent": ""
+          },
+          {
+            "value": "",
+            "nodeName": "div",
+            "nodeType": 1,
+            "startLocation": 35,
+            "endLocation": 59,
             "path": "/#document/html/body/div[5]",
             "textContent": ""
           }
@@ -5294,7 +5290,7 @@
       "xpath": "//span[@class='item'][position() mod 2 = 0]",
       "suite": "extended",
       "category": "position",
-      "passed": true,
+      "passed": false,
       "jsResult": {
         "success": true,
         "results": [
@@ -5328,38 +5324,13 @@
       },
       "goResult": {
         "success": true,
-        "results": [
-          {
-            "value": "B",
-            "nodeName": "span",
-            "nodeType": 1,
-            "attributes": {
-              "class": "item"
-            },
-            "startLocation": 52,
-            "endLocation": 79,
-            "path": "/#document/html/body/div/span[5]",
-            "textContent": "B"
-          },
-          {
-            "value": "D",
-            "nodeName": "span",
-            "nodeType": 1,
-            "attributes": {
-              "class": "item"
-            },
-            "startLocation": 118,
-            "endLocation": 145,
-            "path": "/#document/html/body/div/span[5]",
-            "textContent": "D"
-          }
-        ],
-        "count": 2,
+        "results": [],
+        "count": 0,
         "error": null
       },
       "comparison": {
-        "match": true,
-        "reason": "Perfect match",
+        "match": false,
+        "reason": "Count mismatch: JS=2, Go=0",
         "jsResults": [
           {
             "value": "B",
@@ -5386,32 +5357,7 @@
             "path": "/html/body/div/span[4]"
           }
         ],
-        "goResults": [
-          {
-            "value": "B",
-            "nodeName": "span",
-            "nodeType": 1,
-            "attributes": {
-              "class": "item"
-            },
-            "startLocation": 52,
-            "endLocation": 79,
-            "path": "/#document/html/body/div/span[5]",
-            "textContent": "B"
-          },
-          {
-            "value": "D",
-            "nodeName": "span",
-            "nodeType": 1,
-            "attributes": {
-              "class": "item"
-            },
-            "startLocation": 118,
-            "endLocation": 145,
-            "path": "/#document/html/body/div/span[5]",
-            "textContent": "D"
-          }
-        ]
+        "goResults": []
       }
     },
     {
