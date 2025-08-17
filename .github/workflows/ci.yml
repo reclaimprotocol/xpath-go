@@ -123,7 +123,7 @@ jobs:
     - name: Run compatibility tests
       run: |
         cd tests
-        node compare.js
+        node comprehensive_compare.js
     
     - name: Upload compatibility report
       uses: actions/upload-artifact@v3

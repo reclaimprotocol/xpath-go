@@ -161,7 +161,7 @@ func (e *Evaluator) hasChildElement(node *types.Node, elementName string) bool {
 		}
 		return false
 	}
-	
+
 	// Handle specific element name
 	for _, child := range node.Children {
 		if child.Name == elementName {

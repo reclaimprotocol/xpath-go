@@ -45,7 +45,7 @@ func Trace(format string, args ...interface{}) {
 // TraceEvaluation logs evaluation details
 func TraceEvaluation(stage, expr, nodeInfo string, result interface{}) {
 	if IsTraceEnabled() {
-		fmt.Fprintf(os.Stderr, "[XPATH-TRACE] %s: expr='%s', node='%s', result=%v\n", 
+		fmt.Fprintf(os.Stderr, "[XPATH-TRACE] %s: expr='%s', node='%s', result=%v\n",
 			stage, expr, nodeInfo, result)
 	}
 }
@@ -53,7 +53,7 @@ func TraceEvaluation(stage, expr, nodeInfo string, result interface{}) {
 // TraceCondition logs condition evaluation details
 func TraceCondition(condition, nodeText string, result bool) {
 	if IsTraceEnabled() {
-		fmt.Fprintf(os.Stderr, "[XPATH-TRACE] CONDITION: '%s' on node='%s' -> %v\n", 
+		fmt.Fprintf(os.Stderr, "[XPATH-TRACE] CONDITION: '%s' on node='%s' -> %v\n",
 			condition, nodeText, result)
 	}
 }
@@ -61,7 +61,7 @@ func TraceCondition(condition, nodeText string, result bool) {
 // TraceBooleanOp logs boolean operation details
 func TraceBooleanOp(op, left, right string, leftResult, rightResult, finalResult bool) {
 	if IsTraceEnabled() {
-		fmt.Fprintf(os.Stderr, "[XPATH-TRACE] BOOLEAN: '%s' %s '%s' -> %v %s %v = %v\n", 
+		fmt.Fprintf(os.Stderr, "[XPATH-TRACE] BOOLEAN: '%s' %s '%s' -> %v %s %v = %v\n",
 			left, op, right, leftResult, op, rightResult, finalResult)
 	}
 }

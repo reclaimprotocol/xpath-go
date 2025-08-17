@@ -227,7 +227,6 @@ func (c *PredicateClassifier) parseNestedElement() (string, string) {
 func (e *Evaluator) RoutePredicateExpression(nodes []*types.Node, expr string) []*types.Node {
 	predicateType, metadata := ClassifyPredicate(expr)
 
-
 	switch predicateType {
 	case BooleanType:
 		operator := metadata["operator"].(string)

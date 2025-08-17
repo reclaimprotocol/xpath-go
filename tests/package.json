@@ -2,9 +2,9 @@
   "name": "xpath-go-tests",
   "version": "1.0.0",
   "description": "XPath Go library compatibility tests with jsdom",
-  "main": "compare.js",
+  "main": "comprehensive_compare.js",
   "scripts": {
-    "test": "node compare.js",
+    "test": "node comprehensive_compare.js",
     "install-deps": "npm install"
   },
   "dependencies": {

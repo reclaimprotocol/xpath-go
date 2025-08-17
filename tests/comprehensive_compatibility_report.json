@@ -19,8 +19,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Hello",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 28,
             "path": "/html/body/div"
           }
         ],
@@ -53,8 +53,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Hello",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 28,
             "path": "/html/body/div"
           }
         ],
@@ -87,7 +87,7 @@
             "attributes": {},
             "textContent": "TestContent",
             "startLocation": 0,
-            "endLocation": 0,
+            "endLocation": 76,
             "path": "/html"
           }
         ],
@@ -121,7 +121,7 @@
             "attributes": {},
             "textContent": "TestContent",
             "startLocation": 0,
-            "endLocation": 0,
+            "endLocation": 76,
             "path": "/html"
           }
         ],
@@ -153,8 +153,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Top level",
-            "startLocation": 19,
-            "endLocation": 19,
+            "startLocation": 36,
+            "endLocation": 52,
             "path": "/html/body/p"
           }
         ],
@@ -187,8 +187,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Top level",
-            "startLocation": 19,
-            "endLocation": 19,
+            "startLocation": 36,
+            "endLocation": 52,
             "path": "/html/body/p"
           }
         ],
@@ -223,8 +223,8 @@
               "class": "highlight"
             },
             "textContent": "Content",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 58,
             "path": "/html/body/div[1]"
           }
         ],
@@ -264,8 +264,8 @@
               "class": "highlight"
             },
             "textContent": "Content",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 58,
             "path": "/html/body/div[1]"
           }
         ],
@@ -303,8 +303,8 @@
               "id": "test"
             },
             "textContent": "With ID",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 40,
             "path": "/html/body/div[1]"
           }
         ],
@@ -342,8 +342,8 @@
               "id": "test"
             },
             "textContent": "With ID",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 40,
             "path": "/html/body/div[1]"
           }
         ],
@@ -381,8 +381,8 @@
               "class": "highlight"
             },
             "textContent": "Both",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 55,
             "path": "/html/body/div[1]"
           }
         ],
@@ -422,8 +422,8 @@
               "class": "highlight"
             },
             "textContent": "Both",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 55,
             "path": "/html/body/div[1]"
           }
         ],
@@ -459,8 +459,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Second",
-            "startLocation": 18,
-            "endLocation": 18,
+            "startLocation": 24,
+            "endLocation": 37,
             "path": "/html/body/p[2]"
           }
         ],
@@ -493,8 +493,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Second",
-            "startLocation": 18,
-            "endLocation": 18,
+            "startLocation": 24,
+            "endLocation": 37,
             "path": "/html/body/p[2]"
           }
         ],
@@ -526,8 +526,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Has text",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 27,
             "path": "/html/body/p[1]"
           },
           {
@@ -536,8 +536,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Also has text",
-            "startLocation": 28,
-            "endLocation": 28,
+            "startLocation": 34,
+            "endLocation": 54,
             "path": "/html/body/p[3]"
           }
         ],
@@ -579,8 +579,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Has text",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 27,
             "path": "/html/body/p[1]"
           },
           {
@@ -589,8 +589,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Also has text",
-            "startLocation": 28,
-            "endLocation": 28,
+            "startLocation": 34,
+            "endLocation": 54,
             "path": "/html/body/p[3]"
           }
         ],
@@ -631,8 +631,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "The quick brown fox",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 38,
             "path": "/html/body/p[1]"
           }
         ],
@@ -665,8 +665,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "The quick brown fox",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 38,
             "path": "/html/body/p[1]"
           }
         ],
@@ -698,8 +698,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Item 2",
-            "startLocation": 19,
-            "endLocation": 19,
+            "startLocation": 31,
+            "endLocation": 46,
             "path": "/html/body/ul/li[2]"
           }
         ],
@@ -732,8 +732,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Item 2",
-            "startLocation": 19,
-            "endLocation": 19,
+            "startLocation": 31,
+            "endLocation": 46,
             "path": "/html/body/ul/li[2]"
           }
         ],
@@ -765,8 +765,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Last",
-            "startLocation": 24,
-            "endLocation": 24,
+            "startLocation": 45,
+            "endLocation": 58,
             "path": "/html/body/ul/li[3]"
           }
         ],
@@ -799,8 +799,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Last",
-            "startLocation": 24,
-            "endLocation": 24,
+            "startLocation": 45,
+            "endLocation": 58,
             "path": "/html/body/ul/li[3]"
           }
         ],
@@ -832,8 +832,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Three",
-            "startLocation": 19,
-            "endLocation": 19,
+            "startLocation": 40,
+            "endLocation": 54,
             "path": "/html/body/ol/li[3]"
           }
         ],
@@ -866,8 +866,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Three",
-            "startLocation": 19,
-            "endLocation": 19,
+            "startLocation": 40,
+            "endLocation": 54,
             "path": "/html/body/ol/li[3]"
           }
         ],
@@ -901,8 +901,8 @@
               "href": "#"
             },
             "textContent": "Link",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 23,
+            "endLocation": 43,
             "path": "/html/body/div/span/a"
           }
         ],
@@ -940,8 +940,8 @@
               "href": "#"
             },
             "textContent": "Link",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 23,
+            "endLocation": 43,
             "path": "/html/body/div/span/a"
           }
         ],
@@ -976,8 +976,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Child",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 46,
             "path": "/html/body/div"
           }
         ],
@@ -1010,8 +1010,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Child",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 46,
             "path": "/html/body/div"
           }
         ],
@@ -1043,8 +1043,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "First para",
-            "startLocation": 18,
-            "endLocation": 18,
+            "startLocation": 31,
+            "endLocation": 48,
             "path": "/html/body/div/p[1]"
           },
           {
@@ -1053,8 +1053,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Second para",
-            "startLocation": 28,
-            "endLocation": 28,
+            "startLocation": 48,
+            "endLocation": 66,
             "path": "/html/body/div/p[2]"
           }
         ],
@@ -1096,8 +1096,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "First para",
-            "startLocation": 18,
-            "endLocation": 18,
+            "startLocation": 31,
+            "endLocation": 48,
             "path": "/html/body/div/p[1]"
           },
           {
@@ -1106,8 +1106,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Second para",
-            "startLocation": 28,
-            "endLocation": 28,
+            "startLocation": 48,
+            "endLocation": 66,
             "path": "/html/body/div/p[2]"
           }
         ],
@@ -1148,8 +1148,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Before",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 17,
+            "endLocation": 30,
             "path": "/html/body/div/p[1]"
           }
         ],
@@ -1182,8 +1182,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Before",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 17,
+            "endLocation": 30,
             "path": "/html/body/div/p[1]"
           }
         ],
@@ -1217,8 +1217,8 @@
               "id": "target"
             },
             "textContent": "Self",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 39,
             "path": "/html/body/div"
           }
         ],
@@ -1256,8 +1256,8 @@
               "id": "target"
             },
             "textContent": "Self",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 39,
             "path": "/html/body/div"
           }
         ],
@@ -1294,8 +1294,8 @@
               "class": "red"
             },
             "textContent": "Red",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 38,
             "path": "/html/body/div[1]"
           },
           {
@@ -1306,8 +1306,8 @@
               "class": "blue"
             },
             "textContent": "Blue",
-            "startLocation": 16,
-            "endLocation": 16,
+            "startLocation": 38,
+            "endLocation": 66,
             "path": "/html/body/div[2]"
           }
         ],
@@ -1357,8 +1357,8 @@
               "class": "red"
             },
             "textContent": "Red",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 38,
             "path": "/html/body/div[1]"
           },
           {
@@ -1369,8 +1369,8 @@
               "class": "blue"
             },
             "textContent": "Blue",
-            "startLocation": 16,
-            "endLocation": 16,
+            "startLocation": 38,
+            "endLocation": 66,
             "path": "/html/body/div[2]"
           }
         ],
@@ -1420,8 +1420,8 @@
               "class": "active"
             },
             "textContent": "Target",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 54,
             "path": "/html/body/div[1]"
           }
         ],
@@ -1461,8 +1461,8 @@
               "class": "active"
             },
             "textContent": "Target",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 54,
             "path": "/html/body/div[1]"
           }
         ],
@@ -1498,8 +1498,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Second",
-            "startLocation": 18,
-            "endLocation": 18,
+            "startLocation": 43,
+            "endLocation": 71,
             "path": "/html/body/ul/li[2]"
           }
         ],
@@ -1532,8 +1532,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Second",
-            "startLocation": 18,
-            "endLocation": 18,
+            "startLocation": 43,
+            "endLocation": 71,
             "path": "/html/body/ul/li[2]"
           }
         ],
@@ -1567,8 +1567,8 @@
               "class": "highlight"
             },
             "textContent": "Div",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 44,
             "path": "/html/body/div"
           },
           {
@@ -1579,8 +1579,8 @@
               "class": "highlight"
             },
             "textContent": "Para",
-            "startLocation": 16,
-            "endLocation": 16,
+            "startLocation": 44,
+            "endLocation": 73,
             "path": "/html/body/p"
           }
         ],
@@ -1630,8 +1630,8 @@
               "class": "highlight"
             },
             "textContent": "Div",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 44,
             "path": "/html/body/div"
           },
           {
@@ -1642,8 +1642,8 @@
               "class": "highlight"
             },
             "textContent": "Para",
-            "startLocation": 16,
-            "endLocation": 16,
+            "startLocation": 44,
+            "endLocation": 73,
             "path": "/html/body/p"
           }
         ],
@@ -1690,8 +1690,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Header",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 27,
             "path": "/html/body/h1"
           },
           {
@@ -1700,8 +1700,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Subheader",
-            "startLocation": 23,
-            "endLocation": 23,
+            "startLocation": 38,
+            "endLocation": 56,
             "path": "/html/body/h2"
           }
         ],
@@ -1743,8 +1743,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Header",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 27,
             "path": "/html/body/h1"
           },
           {
@@ -1753,8 +1753,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Subheader",
-            "startLocation": 23,
-            "endLocation": 23,
+            "startLocation": 38,
+            "endLocation": 56,
             "path": "/html/body/h2"
           }
         ],
@@ -2005,8 +2005,8 @@
             "nodeType": 8,
             "attributes": {},
             "textContent": " Comment ",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 28,
             "path": "/html/body/#comment"
           },
           {
@@ -2015,8 +2015,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Element",
-            "startLocation": 22,
-            "endLocation": 22,
+            "startLocation": 28,
+            "endLocation": 46,
             "path": "/html/body/div"
           },
           {
@@ -2025,8 +2025,8 @@
             "nodeType": 3,
             "attributes": {},
             "textContent": "Text node",
-            "startLocation": 29,
-            "endLocation": 29,
+            "startLocation": 46,
+            "endLocation": 55,
             "path": "/html/body/#text"
           }
         ],
@@ -2077,8 +2077,8 @@
             "nodeType": 8,
             "attributes": {},
             "textContent": " Comment ",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 28,
             "path": "/html/body/#comment"
           },
           {
@@ -2087,8 +2087,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Element",
-            "startLocation": 22,
-            "endLocation": 22,
+            "startLocation": 28,
+            "endLocation": 46,
             "path": "/html/body/div"
           },
           {
@@ -2097,8 +2097,8 @@
             "nodeType": 3,
             "attributes": {},
             "textContent": "Text node",
-            "startLocation": 29,
-            "endLocation": 29,
+            "startLocation": 46,
+            "endLocation": 55,
             "path": "/html/body/#text"
           }
         ],
@@ -2148,8 +2148,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "ABC",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 51,
             "path": "/html/body/ul"
           }
         ],
@@ -2182,8 +2182,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "ABC",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 51,
             "path": "/html/body/ul"
           }
         ],
@@ -2215,8 +2215,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "This is a longer paragraph",
-            "startLocation": 18,
-            "endLocation": 18,
+            "startLocation": 24,
+            "endLocation": 57,
             "path": "/html/body/p[2]"
           }
         ],
@@ -2249,8 +2249,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "This is a longer paragraph",
-            "startLocation": 18,
-            "endLocation": 18,
+            "startLocation": 24,
+            "endLocation": 57,
             "path": "/html/body/p[2]"
           }
         ],
@@ -2284,8 +2284,8 @@
               "href": "https://example.com"
             },
             "textContent": "HTTPS",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 51,
             "path": "/html/body/a[1]"
           }
         ],
@@ -2323,8 +2323,8 @@
               "href": "https://example.com"
             },
             "textContent": "HTTPS",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 51,
             "path": "/html/body/a[1]"
           }
         ],
@@ -2359,8 +2359,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "  Lots   of    spaces  ",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 42,
             "path": "/html/body/p[1]"
           }
         ],
@@ -2393,8 +2393,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "  Lots   of    spaces  ",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 42,
             "path": "/html/body/p[1]"
           }
         ],
@@ -2426,8 +2426,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Content",
-            "startLocation": 18,
-            "endLocation": 18,
+            "startLocation": 61,
+            "endLocation": 75,
             "path": "/html/body/article/section/p"
           }
         ],
@@ -2460,8 +2460,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Content",
-            "startLocation": 18,
-            "endLocation": 18,
+            "startLocation": 61,
+            "endLocation": 75,
             "path": "/html/body/article/section/p"
           }
         ],
@@ -2493,8 +2493,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "A2",
-            "startLocation": 17,
-            "endLocation": 17,
+            "startLocation": 54,
+            "endLocation": 65,
             "path": "/html/body/table/tbody/tr[2]/td[1]"
           }
         ],
@@ -2527,8 +2527,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "A2",
-            "startLocation": 17,
-            "endLocation": 17,
+            "startLocation": 54,
+            "endLocation": 65,
             "path": "/html/body/table/tbody/tr[2]/td[1]"
           }
         ],
@@ -2563,8 +2563,8 @@
               "name": "user"
             },
             "textContent": "",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 18,
+            "endLocation": 50,
             "path": "/html/body/form/input[1]"
           }
         ],
@@ -2604,8 +2604,8 @@
               "name": "user"
             },
             "textContent": "",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 18,
+            "endLocation": 50,
             "path": "/html/body/form/input[1]"
           }
         ],
@@ -2643,8 +2643,8 @@
               "class": "active"
             },
             "textContent": "Home",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 29,
+            "endLocation": 57,
             "path": "/html/body/ul/li[1]"
           },
           {
@@ -2655,8 +2655,8 @@
               "class": "active"
             },
             "textContent": "Contact",
-            "startLocation": 22,
-            "endLocation": 22,
+            "startLocation": 71,
+            "endLocation": 102,
             "path": "/html/body/ul/li[3]"
           }
         ],
@@ -2706,8 +2706,8 @@
               "class": "active"
             },
             "textContent": "Home",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 29,
+            "endLocation": 57,
             "path": "/html/body/ul/li[1]"
           },
           {
@@ -2718,8 +2718,8 @@
               "class": "active"
             },
             "textContent": "Contact",
-            "startLocation": 22,
-            "endLocation": 22,
+            "startLocation": 71,
+            "endLocation": 102,
             "path": "/html/body/ul/li[3]"
           }
         ],
@@ -2766,8 +2766,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Current Page",
-            "startLocation": 25,
-            "endLocation": 25,
+            "startLocation": 91,
+            "endLocation": 112,
             "path": "/html/body/nav/ol/li[3]"
           }
         ],
@@ -2800,8 +2800,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Current Page",
-            "startLocation": 25,
-            "endLocation": 25,
+            "startLocation": 91,
+            "endLocation": 112,
             "path": "/html/body/nav/ol/li[3]"
           }
         ],
@@ -2836,8 +2836,8 @@
               "data-type": "product"
             },
             "textContent": "Product",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 64,
             "path": "/html/body/div[1]"
           }
         ],
@@ -2877,8 +2877,8 @@
               "data-type": "product"
             },
             "textContent": "Product",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 64,
             "path": "/html/body/div[1]"
           }
         ],
@@ -2914,8 +2914,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 23,
             "path": "/html/body/div[1]"
           }
         ],
@@ -2948,8 +2948,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 23,
             "path": "/html/body/div[1]"
           }
         ],
@@ -2983,8 +2983,8 @@
               "class": "btn btn-primary btn-large"
             },
             "textContent": "Button",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 63,
             "path": "/html/body/div[1]"
           }
         ],
@@ -3022,8 +3022,8 @@
               "class": "btn btn-primary btn-large"
             },
             "textContent": "Button",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 63,
             "path": "/html/body/div[1]"
           }
         ],
@@ -3058,8 +3058,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "First",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 17,
+            "endLocation": 29,
             "path": "/html/body/div/p"
           },
           {
@@ -3068,8 +3068,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Nested",
-            "startLocation": 18,
-            "endLocation": 18,
+            "startLocation": 34,
+            "endLocation": 47,
             "path": "/html/body/div/div/p"
           }
         ],
@@ -3111,8 +3111,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "First",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 17,
+            "endLocation": 29,
             "path": "/html/body/div/p"
           },
           {
@@ -3121,8 +3121,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Nested",
-            "startLocation": 18,
-            "endLocation": 18,
+            "startLocation": 34,
+            "endLocation": 47,
             "path": "/html/body/div/div/p"
           }
         ],
@@ -3164,7 +3164,7 @@
             "attributes": {},
             "textContent": "Content",
             "startLocation": 0,
-            "endLocation": 0,
+            "endLocation": 90,
             "path": "/html"
           },
           {
@@ -3173,8 +3173,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Content",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 6,
+            "endLocation": 83,
             "path": "/html/body"
           },
           {
@@ -3183,8 +3183,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Content",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 76,
             "path": "/html/body/article"
           },
           {
@@ -3193,8 +3193,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Content",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 21,
+            "endLocation": 66,
             "path": "/html/body/article/section"
           },
           {
@@ -3205,8 +3205,8 @@
               "id": "target"
             },
             "textContent": "Content",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 30,
+            "endLocation": 56,
             "path": "/html/body/article/section/p"
           }
         ],
@@ -3279,7 +3279,7 @@
             "attributes": {},
             "textContent": "Content",
             "startLocation": 0,
-            "endLocation": 0,
+            "endLocation": 90,
             "path": "/html"
           },
           {
@@ -3288,8 +3288,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Content",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 6,
+            "endLocation": 83,
             "path": "/html/body"
           },
           {
@@ -3298,8 +3298,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Content",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 76,
             "path": "/html/body/article"
           },
           {
@@ -3308,8 +3308,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Content",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 21,
+            "endLocation": 66,
             "path": "/html/body/article/section"
           },
           {
@@ -3320,8 +3320,8 @@
               "id": "target"
             },
             "textContent": "Content",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 30,
+            "endLocation": 56,
             "path": "/html/body/article/section/p"
           }
         ],
@@ -3394,8 +3394,8 @@
               "class": "title"
             },
             "textContent": "Header",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 41,
             "path": "/html/body/h1"
           },
           {
@@ -3406,8 +3406,8 @@
               "class": "title"
             },
             "textContent": "Subheader",
-            "startLocation": 19,
-            "endLocation": 19,
+            "startLocation": 41,
+            "endLocation": 73,
             "path": "/html/body/h2"
           },
           {
@@ -3418,8 +3418,8 @@
               "class": "title"
             },
             "textContent": "Para",
-            "startLocation": 33,
-            "endLocation": 33,
+            "startLocation": 87,
+            "endLocation": 112,
             "path": "/html/body/p"
           }
         ],
@@ -3481,8 +3481,8 @@
               "class": "title"
             },
             "textContent": "Header",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 41,
             "path": "/html/body/h1"
           },
           {
@@ -3493,8 +3493,8 @@
               "class": "title"
             },
             "textContent": "Subheader",
-            "startLocation": 19,
-            "endLocation": 19,
+            "startLocation": 41,
+            "endLocation": 73,
             "path": "/html/body/h2"
           },
           {
@@ -3505,8 +3505,8 @@
               "class": "title"
             },
             "textContent": "Para",
-            "startLocation": 33,
-            "endLocation": 33,
+            "startLocation": 87,
+            "endLocation": 112,
             "path": "/html/body/p"
           }
         ],
@@ -3565,8 +3565,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Target",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 65,
+            "endLocation": 78,
             "path": "/html/body/div/article/div/p"
           }
         ],
@@ -3599,8 +3599,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Target",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 65,
+            "endLocation": 78,
             "path": "/html/body/div/article/div/p"
           }
         ],
@@ -3634,8 +3634,8 @@
               "class": "btn btn-primary large"
             },
             "textContent": "Button 1",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 61,
             "path": "/html/body/div[1]"
           }
         ],
@@ -3673,8 +3673,8 @@
               "class": "btn btn-primary large"
             },
             "textContent": "Button 1",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 61,
             "path": "/html/body/div[1]"
           }
         ],
@@ -3711,8 +3711,8 @@
               "class": "item"
             },
             "textContent": "C",
-            "startLocation": 15,
-            "endLocation": 15,
+            "startLocation": 49,
+            "endLocation": 72,
             "path": "/html/body/ul/li[3]"
           }
         ],
@@ -3750,8 +3750,8 @@
               "class": "item"
             },
             "textContent": "C",
-            "startLocation": 15,
-            "endLocation": 15,
+            "startLocation": 49,
+            "endLocation": 72,
             "path": "/html/body/ul/li[3]"
           }
         ],
@@ -3788,8 +3788,8 @@
               "class": "para"
             },
             "textContent": "Last",
-            "startLocation": 24,
-            "endLocation": 24,
+            "startLocation": 61,
+            "endLocation": 85,
             "path": "/html/body/div/p[2]"
           }
         ],
@@ -3827,8 +3827,8 @@
               "class": "para"
             },
             "textContent": "Last",
-            "startLocation": 24,
-            "endLocation": 24,
+            "startLocation": 61,
+            "endLocation": 85,
             "path": "/html/body/div/p[2]"
           }
         ],
@@ -3863,8 +3863,8 @@
             "nodeType": 3,
             "attributes": {},
             "textContent": "Before",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 17,
+            "endLocation": 23,
             "path": "/html/body/div/#text[1]"
           },
           {
@@ -3873,8 +3873,8 @@
             "nodeType": 3,
             "attributes": {},
             "textContent": "After",
-            "startLocation": 25,
-            "endLocation": 25,
+            "startLocation": 42,
+            "endLocation": 47,
             "path": "/html/body/div/#text[2]"
           }
         ],
@@ -3916,8 +3916,8 @@
             "nodeType": 3,
             "attributes": {},
             "textContent": "Before",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 17,
+            "endLocation": 23,
             "path": "/html/body/div/#text[1]"
           },
           {
@@ -3926,8 +3926,8 @@
             "nodeType": 3,
             "attributes": {},
             "textContent": "After",
-            "startLocation": 25,
-            "endLocation": 25,
+            "startLocation": 42,
+            "endLocation": 47,
             "path": "/html/body/div/#text[2]"
           }
         ],
@@ -3968,8 +3968,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Element",
-            "startLocation": 22,
-            "endLocation": 22,
+            "startLocation": 28,
+            "endLocation": 46,
             "path": "/html/body/div"
           }
         ],
@@ -4002,8 +4002,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Element",
-            "startLocation": 22,
-            "endLocation": 22,
+            "startLocation": 28,
+            "endLocation": 46,
             "path": "/html/body/div"
           }
         ],
@@ -4038,8 +4038,8 @@
               "class": "x"
             },
             "textContent": "A",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 41,
             "path": "/html/body/div[1]"
           },
           {
@@ -4051,8 +4051,8 @@
               "class": "x y"
             },
             "textContent": "C",
-            "startLocation": 15,
-            "endLocation": 15,
+            "startLocation": 70,
+            "endLocation": 101,
             "path": "/html/body/div[3]"
           }
         ],
@@ -4105,8 +4105,8 @@
               "class": "x"
             },
             "textContent": "A",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 41,
             "path": "/html/body/div[1]"
           },
           {
@@ -4118,8 +4118,8 @@
               "class": "x y"
             },
             "textContent": "C",
-            "startLocation": 15,
-            "endLocation": 15,
+            "startLocation": 70,
+            "endLocation": 101,
             "path": "/html/body/div[3]"
           }
         ],
@@ -4168,8 +4168,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "  Hello World  ",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 34,
             "path": "/html/body/p[1]"
           },
           {
@@ -4178,8 +4178,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "  Very long content here  ",
-            "startLocation": 33,
-            "endLocation": 33,
+            "startLocation": 46,
+            "endLocation": 79,
             "path": "/html/body/p[3]"
           }
         ],
@@ -4221,8 +4221,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "  Hello World  ",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 34,
             "path": "/html/body/p[1]"
           },
           {
@@ -4231,8 +4231,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "  Very long content here  ",
-            "startLocation": 33,
-            "endLocation": 33,
+            "startLocation": 46,
+            "endLocation": 79,
             "path": "/html/body/p[3]"
           }
         ],
@@ -4276,8 +4276,8 @@
               "maxlength": "10"
             },
             "textContent": "",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 47,
             "path": "/html/body/input[1]"
           },
           {
@@ -4290,7 +4290,7 @@
             },
             "textContent": "",
             "startLocation": 47,
-            "endLocation": 47,
+            "endLocation": 86,
             "path": "/html/body/input[2]"
           }
         ],
@@ -4343,8 +4343,8 @@
               "maxlength": "10"
             },
             "textContent": "",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 47,
             "path": "/html/body/input[1]"
           },
           {
@@ -4357,7 +4357,7 @@
             },
             "textContent": "",
             "startLocation": 47,
-            "endLocation": 47,
+            "endLocation": 86,
             "path": "/html/body/input[2]"
           }
         ],
@@ -4406,8 +4406,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Separator",
-            "startLocation": 18,
-            "endLocation": 18,
+            "startLocation": 38,
+            "endLocation": 60,
             "path": "/html/body/nav/span"
           }
         ],
@@ -4440,8 +4440,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Separator",
-            "startLocation": 18,
-            "endLocation": 18,
+            "startLocation": 38,
+            "endLocation": 60,
             "path": "/html/body/nav/span"
           }
         ],
@@ -4473,8 +4473,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Deep",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 76,
+            "endLocation": 87,
             "path": "/html/body/div/div/div/div/p"
           }
         ],
@@ -4507,8 +4507,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Deep",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 76,
+            "endLocation": 87,
             "path": "/html/body/div/div/div/div/p"
           }
         ],
@@ -4544,8 +4544,8 @@
               "disabled": ""
             },
             "textContent": "Submit",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 70,
             "path": "/html/body/button[1]"
           }
         ],
@@ -4587,8 +4587,8 @@
               "disabled": ""
             },
             "textContent": "Submit",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 70,
             "path": "/html/body/button[1]"
           }
         ],
@@ -4629,8 +4629,8 @@
               "aria-label": "Product"
             },
             "textContent": "Content",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 85,
             "path": "/html/body/div[1]"
           }
         ],
@@ -4672,8 +4672,8 @@
               "aria-label": "Product"
             },
             "textContent": "Content",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 85,
             "path": "/html/body/div[1]"
           }
         ],
@@ -4710,8 +4710,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Jane",
-            "startLocation": 26,
-            "endLocation": 26,
+            "startLocation": 112,
+            "endLocation": 125,
             "path": "/html/body/table/tbody/tr[2]/td[1]"
           }
         ],
@@ -4744,8 +4744,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Jane",
-            "startLocation": 26,
-            "endLocation": 26,
+            "startLocation": 112,
+            "endLocation": 125,
             "path": "/html/body/table/tbody/tr[2]/td[1]"
           }
         ],
@@ -4781,8 +4781,8 @@
               "required": ""
             },
             "textContent": "",
-            "startLocation": 89,
-            "endLocation": 89,
+            "startLocation": 93,
+            "endLocation": 138,
             "path": "/html/body/form/input[3]"
           }
         ],
@@ -4824,8 +4824,8 @@
               "required": ""
             },
             "textContent": "",
-            "startLocation": 89,
-            "endLocation": 89,
+            "startLocation": 93,
+            "endLocation": 138,
             "path": "/html/body/form/input[3]"
           }
         ],
@@ -4862,8 +4862,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Item 1",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 16,
+            "endLocation": 60,
             "path": "/html/body/ul/li[1]"
           }
         ],
@@ -4896,8 +4896,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Item 1",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 16,
+            "endLocation": 60,
             "path": "/html/body/ul/li[1]"
           }
         ],
@@ -4929,8 +4929,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Paragraph 1",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 17,
+            "endLocation": 35,
             "path": "/html/body/div[1]/p"
           }
         ],
@@ -4963,8 +4963,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Paragraph 1",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 17,
+            "endLocation": 35,
             "path": "/html/body/div[1]/p"
           }
         ],
@@ -4998,8 +4998,8 @@
               "data-value": "hello-world_123"
             },
             "textContent": "Test",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 56,
             "path": "/html/body/div[1]"
           }
         ],
@@ -5037,8 +5037,8 @@
               "data-value": "hello-world_123"
             },
             "textContent": "Test",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 56,
             "path": "/html/body/div[1]"
           }
         ],
@@ -5073,8 +5073,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 23,
             "path": "/html/body/div[1]"
           },
           {
@@ -5083,8 +5083,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": " ",
-            "startLocation": 24,
-            "endLocation": 24,
+            "startLocation": 23,
+            "endLocation": 35,
             "path": "/html/body/div[2]"
           }
         ],
@@ -5126,8 +5126,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 23,
             "path": "/html/body/div[1]"
           },
           {
@@ -5136,8 +5136,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": " ",
-            "startLocation": 24,
-            "endLocation": 24,
+            "startLocation": 23,
+            "endLocation": 35,
             "path": "/html/body/div[2]"
           }
         ],
@@ -5180,8 +5180,8 @@
               "class": "text"
             },
             "textContent": "Target",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 57,
+            "endLocation": 83,
             "path": "/html/body/main/article/section/div/p"
           }
         ],
@@ -5219,8 +5219,8 @@
               "class": "text"
             },
             "textContent": "Target",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 57,
+            "endLocation": 83,
             "path": "/html/body/main/article/section/div/p"
           }
         ],
@@ -5255,8 +5255,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Hello World",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 30,
             "path": "/html/body/p[1]"
           }
         ],
@@ -5289,8 +5289,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Hello World",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 30,
             "path": "/html/body/p[1]"
           }
         ],
@@ -5324,8 +5324,8 @@
               "class": "item"
             },
             "textContent": "B",
-            "startLocation": 15,
-            "endLocation": 15,
+            "startLocation": 52,
+            "endLocation": 79,
             "path": "/html/body/div/span[2]"
           },
           {
@@ -5336,8 +5336,8 @@
               "class": "item"
             },
             "textContent": "D",
-            "startLocation": 18,
-            "endLocation": 18,
+            "startLocation": 118,
+            "endLocation": 145,
             "path": "/html/body/div/span[4]"
           }
         ],
@@ -5387,8 +5387,8 @@
               "class": "item"
             },
             "textContent": "B",
-            "startLocation": 15,
-            "endLocation": 15,
+            "startLocation": 52,
+            "endLocation": 79,
             "path": "/html/body/div/span[2]"
           },
           {
@@ -5399,8 +5399,8 @@
               "class": "item"
             },
             "textContent": "D",
-            "startLocation": 18,
-            "endLocation": 18,
+            "startLocation": 118,
+            "endLocation": 145,
             "path": "/html/body/div/span[4]"
           }
         ],
@@ -5447,8 +5447,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Footer",
-            "startLocation": 26,
-            "endLocation": 26,
+            "startLocation": 106,
+            "endLocation": 129,
             "path": "/html/body/div/footer"
           }
         ],
@@ -5481,8 +5481,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Footer",
-            "startLocation": 26,
-            "endLocation": 26,
+            "startLocation": 106,
+            "endLocation": 129,
             "path": "/html/body/div/footer"
           }
         ],
@@ -5517,8 +5517,8 @@
               "title": "Link 1"
             },
             "textContent": "Link",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 47,
             "path": "/html/body/a[1]"
           },
           {
@@ -5529,8 +5529,8 @@
               "href": "http://example.com"
             },
             "textContent": "External",
-            "startLocation": 17,
-            "endLocation": 17,
+            "startLocation": 47,
+            "endLocation": 88,
             "path": "/html/body/a[2]"
           },
           {
@@ -5542,8 +5542,8 @@
               "title": "Link 2"
             },
             "textContent": "Internal",
-            "startLocation": 25,
-            "endLocation": 25,
+            "startLocation": 88,
+            "endLocation": 135,
             "path": "/html/body/a[3]"
           }
         ],
@@ -5608,8 +5608,8 @@
               "title": "Link 1"
             },
             "textContent": "Link",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 47,
             "path": "/html/body/a[1]"
           },
           {
@@ -5620,8 +5620,8 @@
               "href": "http://example.com"
             },
             "textContent": "External",
-            "startLocation": 17,
-            "endLocation": 17,
+            "startLocation": 47,
+            "endLocation": 88,
             "path": "/html/body/a[2]"
           },
           {
@@ -5633,8 +5633,8 @@
               "title": "Link 2"
             },
             "textContent": "Internal",
-            "startLocation": 25,
-            "endLocation": 25,
+            "startLocation": 88,
+            "endLocation": 135,
             "path": "/html/body/a[3]"
           }
         ],
@@ -5695,8 +5695,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Title",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 21,
+            "endLocation": 35,
             "path": "/html/body/section/h1"
           },
           {
@@ -5705,8 +5705,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Para",
-            "startLocation": 18,
-            "endLocation": 18,
+            "startLocation": 35,
+            "endLocation": 46,
             "path": "/html/body/section/p"
           },
           {
@@ -5715,8 +5715,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Subtitle",
-            "startLocation": 22,
-            "endLocation": 22,
+            "startLocation": 65,
+            "endLocation": 82,
             "path": "/html/body/article/h2"
           },
           {
@@ -5725,8 +5725,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Content",
-            "startLocation": 30,
-            "endLocation": 30,
+            "startLocation": 82,
+            "endLocation": 100,
             "path": "/html/body/article/div"
           }
         ],
@@ -5786,8 +5786,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Title",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 21,
+            "endLocation": 35,
             "path": "/html/body/section/h1"
           },
           {
@@ -5796,8 +5796,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Para",
-            "startLocation": 18,
-            "endLocation": 18,
+            "startLocation": 35,
+            "endLocation": 46,
             "path": "/html/body/section/p"
           },
           {
@@ -5806,8 +5806,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Subtitle",
-            "startLocation": 22,
-            "endLocation": 22,
+            "startLocation": 65,
+            "endLocation": 82,
             "path": "/html/body/article/h2"
           },
           {
@@ -5816,8 +5816,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Content",
-            "startLocation": 30,
-            "endLocation": 30,
+            "startLocation": 82,
+            "endLocation": 100,
             "path": "/html/body/article/div"
           }
         ],
@@ -5878,8 +5878,8 @@
               "class": "primary active large"
             },
             "textContent": "Item 1",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 58,
             "path": "/html/body/div[1]"
           }
         ],
@@ -5917,8 +5917,8 @@
               "class": "primary active large"
             },
             "textContent": "Item 1",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 58,
             "path": "/html/body/div[1]"
           }
         ],
@@ -5954,7 +5954,7 @@
             "attributes": {},
             "textContent": "TestTitleContent",
             "startLocation": 0,
-            "endLocation": 0,
+            "endLocation": 122,
             "path": "/html"
           }
         ],
@@ -5988,7 +5988,7 @@
             "attributes": {},
             "textContent": "TestTitleContent",
             "startLocation": 0,
-            "endLocation": 0,
+            "endLocation": 122,
             "path": "/html"
           }
         ],
@@ -6022,8 +6022,8 @@
               "class": "widget"
             },
             "textContent": "Loading...Loaded Content",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 139,
             "path": "/html/body/div"
           }
         ],
@@ -6061,8 +6061,8 @@
               "class": "widget"
             },
             "textContent": "Loading...Loaded Content",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 139,
             "path": "/html/body/div"
           }
         ],
@@ -6097,8 +6097,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Hello World",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 30,
             "path": "/html/body/p[1]"
           }
         ],
@@ -6131,8 +6131,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Hello World",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 30,
             "path": "/html/body/p[1]"
           }
         ],
@@ -6166,8 +6166,8 @@
               "data-text": "xyztesting"
             },
             "textContent": "Item 2",
-            "startLocation": 19,
-            "endLocation": 19,
+            "startLocation": 50,
+            "endLocation": 90,
             "path": "/html/body/div[2]"
           }
         ],
@@ -6205,8 +6205,8 @@
               "data-text": "xyztesting"
             },
             "textContent": "Item 2",
-            "startLocation": 19,
-            "endLocation": 19,
+            "startLocation": 50,
+            "endLocation": 90,
             "path": "/html/body/div[2]"
           }
         ],
@@ -6241,8 +6241,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "First",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 30,
             "path": "/html/body/span[1]"
           },
           {
@@ -6251,8 +6251,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Third",
-            "startLocation": 24,
-            "endLocation": 24,
+            "startLocation": 49,
+            "endLocation": 67,
             "path": "/html/body/span[3]"
           }
         ],
@@ -6294,8 +6294,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "First",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 30,
             "path": "/html/body/span[1]"
           },
           {
@@ -6304,8 +6304,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Third",
-            "startLocation": 24,
-            "endLocation": 24,
+            "startLocation": 49,
+            "endLocation": 67,
             "path": "/html/body/span[3]"
           }
         ],
@@ -6346,8 +6346,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "ShortText",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 28,
             "path": "/html/body/p[1]"
           }
         ],
@@ -6380,8 +6380,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "ShortText",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 12,
+            "endLocation": 28,
             "path": "/html/body/p[1]"
           }
         ],
@@ -6413,8 +6413,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Complete",
-            "startLocation": 25,
-            "endLocation": 25,
+            "startLocation": 35,
+            "endLocation": 54,
             "path": "/html/body/div[3]"
           }
         ],
@@ -6447,8 +6447,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Complete",
-            "startLocation": 25,
-            "endLocation": 25,
+            "startLocation": 35,
+            "endLocation": 54,
             "path": "/html/body/div[3]"
           }
         ],
@@ -6480,8 +6480,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Test",
-            "startLocation": 0,
-            "endLocation": 0,
+            "startLocation": 27,
+            "endLocation": 46,
             "path": "/html/head/title"
           }
         ],
@@ -6514,8 +6514,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Test",
-            "startLocation": 0,
-            "endLocation": 0,
+            "startLocation": 27,
+            "endLocation": 46,
             "path": "/html/head/title"
           }
         ],
@@ -6549,8 +6549,8 @@
               "class": "content"
             },
             "textContent": "Text",
-            "startLocation": 7,
-            "endLocation": 7,
+            "startLocation": 168,
+            "endLocation": 199,
             "path": "/html/body/div"
           }
         ],
@@ -6588,8 +6588,8 @@
               "class": "content"
             },
             "textContent": "Text",
-            "startLocation": 7,
-            "endLocation": 7,
+            "startLocation": 168,
+            "endLocation": 199,
             "path": "/html/body/div"
           }
         ],
@@ -6624,8 +6624,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Nested",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 32,
+            "endLocation": 45,
             "path": "/html/body/div/p"
           }
         ],
@@ -6658,8 +6658,8 @@
             "nodeType": 1,
             "attributes": {},
             "textContent": "Nested",
-            "startLocation": 13,
-            "endLocation": 13,
+            "startLocation": 32,
+            "endLocation": 45,
             "path": "/html/body/div/p"
           }
         ],

@@ -14,7 +14,6 @@ import (
 func (e *Evaluator) evaluateComplexBooleanExpression(expr string, node *types.Node) bool {
 	expr = strings.TrimSpace(expr)
 
-
 	// Find the main boolean operator outside parentheses
 	mainOperator, leftExpr, rightExpr := e.findMainBooleanOperator(expr)
 
@@ -713,7 +712,7 @@ func (e *Evaluator) evaluateNotExpression(expr string, node *types.Node) bool {
 	return !e.evaluateAtomicCondition(node, innerCondition)
 }
 
-// evaluateAndExpression evaluates expressions with 'and' operator  
+// evaluateAndExpression evaluates expressions with 'and' operator
 func (e *Evaluator) evaluateAndExpression(expr string, node *types.Node) bool {
 	parts := strings.Split(expr, " and ")
 	if len(parts) < 2 {
@@ -724,12 +723,12 @@ func (e *Evaluator) evaluateAndExpression(expr string, node *types.Node) bool {
 	for i, part := range parts {
 		condition := strings.TrimSpace(part)
 		result := e.evaluateAtomicCondition(node, condition)
-		
+
 		if !result {
 			// Short-circuit: if any part is false, the whole AND is false
 			return false
 		}
-		
+
 		// Log each step for debugging
 		if i < len(parts)-1 {
 			Trace("AND part %d/%d: '%s' -> %v", i+1, len(parts), condition, result)
@@ -744,7 +743,7 @@ func (e *Evaluator) evaluateAndExpression(expr string, node *types.Node) bool {
 // evaluateAtomicCondition evaluates a single atomic condition without recursive boolean evaluation
 func (e *Evaluator) evaluateAtomicCondition(node *types.Node, condition string) bool {
 	condition = strings.TrimSpace(condition)
-	
+
 	Trace("Evaluating atomic condition: '%s' on node '%s'", condition, node.TextContent)
 
 	// Handle parenthesized expressions first
@@ -974,10 +973,10 @@ func (e *Evaluator) splitBooleanExpression(expr string, operator string) (string
 	inQuote := false
 	var quoteChar byte
 	parenDepth := 0
-	
+
 	for i := 0; i <= len(expr)-len(operator); i++ {
 		char := expr[i]
-		
+
 		// Handle quote state
 		if (char == '\'' || char == '"') && (i == 0 || expr[i-1] != '\\') {
 			if !inQuote {
@@ -987,7 +986,7 @@ func (e *Evaluator) splitBooleanExpression(expr string, operator string) (string
 				inQuote = false
 			}
 		}
-		
+
 		// Handle parentheses depth (when not in quotes)
 		if !inQuote {
 			if char == '(' {
@@ -995,7 +994,7 @@ func (e *Evaluator) splitBooleanExpression(expr string, operator string) (string
 			} else if char == ')' {
 				parenDepth--
 			}
-			
+
 			// Check for operator at this position (when not in quotes and at paren depth 0)
 			if parenDepth == 0 && i+len(operator) <= len(expr) {
 				if expr[i:i+len(operator)] == operator {
@@ -1006,7 +1005,7 @@ func (e *Evaluator) splitBooleanExpression(expr string, operator string) (string
 			}
 		}
 	}
-	
+
 	return "", "", false
 }
 
@@ -1215,7 +1214,7 @@ func (e *Evaluator) evaluateSubstringAfterExpression(expr string, node *types.No
 			// In boolean context, return true if result is non-empty
 			return result != ""
 		}
-		
+
 		// Handle comparison
 		if strings.HasPrefix(comparison, " = ") || strings.HasPrefix(comparison, "=") {
 			var expectedValue string
@@ -1287,7 +1286,7 @@ func (e *Evaluator) evaluateSubstringBeforeExpression(expr string, node *types.N
 			// In boolean context, return true if result is non-empty
 			return result != ""
 		}
-		
+
 		// Handle comparison
 		if strings.HasPrefix(comparison, " = ") || strings.HasPrefix(comparison, "=") {
 			var expectedValue string
@@ -1354,7 +1353,7 @@ func (e *Evaluator) evaluateNumberExpression(expr string, node *types.Node) bool
 	// Convert to number (following XPath rules: invalid -> NaN, NaN comparisons -> false)
 	var numberValue float64
 	var isValidNumber bool
-	
+
 	if textToConvert == "" {
 		numberValue = 0 // Empty string converts to 0 in XPath
 		isValidNumber = true

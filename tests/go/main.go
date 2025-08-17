@@ -22,7 +22,7 @@ func main() {
 
 	htmlFile := os.Args[1]
 	xpathFile := os.Args[2]
-	
+
 	// Check for trace mode
 	if len(os.Args) > 3 && os.Args[3] == "--trace" {
 		xpath.EnableTrace()
@@ -59,7 +59,7 @@ func main() {
 	// Execute XPath query with panic recovery
 	var results []xpath.Result
 	var xpathErr error
-	
+
 	func() {
 		defer func() {
 			if r := recover(); r != nil {
@@ -68,11 +68,11 @@ func main() {
 		}()
 		results, xpathErr = xpath.Query(xpathExpr, html)
 	}()
-	
+
 	if xpathErr != nil {
 		err = xpathErr
 	}
-	
+
 	if err != nil {
 		result := TestResult{
 			Results: []xpath.Result{},

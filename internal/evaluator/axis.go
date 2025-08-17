@@ -2,7 +2,7 @@ package evaluator
 
 import (
 	"sort"
-	
+
 	"github.com/reclaimprotocol/xpath-go/pkg/types"
 )
 

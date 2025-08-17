@@ -145,7 +145,6 @@ func (e *Evaluator) evaluateStep(step types.XPathStep, contextNode *types.Node) 
 	return filtered
 }
 
-
 // applyNodeTest filters nodes based on node test
 func (e *Evaluator) applyNodeTest(nodes []*types.Node, nodeTest string) []*types.Node {
 	if nodeTest == "*" {
@@ -192,8 +191,6 @@ func (e *Evaluator) applyNodeTest(nodes []*types.Node, nodeTest string) []*types
 func (e *Evaluator) applyPredicate(nodes []*types.Node, predicate types.XPathPredicate, contextNode *types.Node) []*types.Node {
 	expr := strings.TrimSpace(predicate.Expression)
 
-
-
 	// Handle positional predicates like [1], [2], [last()]
 	if pos, err := strconv.Atoi(expr); err == nil {
 		if pos > 0 && pos <= len(nodes) {
@@ -213,37 +210,4 @@ func (e *Evaluator) applyPredicate(nodes []*types.Node, predicate types.XPathPre
 	return e.RoutePredicateExpression(nodes, expr)
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // isSimpleElementName checks if a condition is a simple element name (like span, a, div)
-
-
-
-
-
