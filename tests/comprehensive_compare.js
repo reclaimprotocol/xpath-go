@@ -106,7 +106,7 @@ class ComprehensiveXPathTester {
                 if (this.options.verbose && result.jsResult.count > 0) {
                     console.log(`   Results:`);
                     result.jsResult.results.slice(0, 3).forEach((res, idx) => {
-                        console.log(`     ${idx + 1}. <${res.nodeName}>${res.textContent ? `: '${res.textContent}'` : ''}`);
+                        console.log(`     ${idx + 1}. <${res.nodeName}>${res.textContent ? `: '${res.textContent}'` : ''} [pos: ${res.startLocation}-${res.endLocation}]`);
                     });
                     if (result.jsResult.count > 3) {
                         console.log(`     ... and ${result.jsResult.count - 3} more`);
@@ -121,12 +121,12 @@ class ComprehensiveXPathTester {
                 if (this.options.verbose || this.options.trace) {
                     console.log(`   JavaScript Results (${result.jsResult.count}):`);
                     result.jsResult.results.slice(0, 3).forEach((res, idx) => {
-                        console.log(`     ${idx + 1}. <${res.nodeName}>${res.textContent ? `: '${res.textContent}'` : ''}`);
+                        console.log(`     ${idx + 1}. <${res.nodeName}>${res.textContent ? `: '${res.textContent}'` : ''} [pos: ${res.startLocation}-${res.endLocation}]`);
                     });
                     
                     console.log(`   Go Results (${result.goResult.count}):`);
                     result.goResult.results.slice(0, 3).forEach((res, idx) => {
-                        console.log(`     ${idx + 1}. <${res.nodeName}>${res.textContent ? `: '${res.textContent}'` : ''}`);
+                        console.log(`     ${idx + 1}. <${res.nodeName}>${res.textContent ? `: '${res.textContent}'` : ''} [pos: ${res.startLocation}-${res.endLocation}]`);
                     });
                 }
                 console.log();
@@ -156,9 +156,15 @@ class ComprehensiveXPathTester {
 
     runJavaScriptTest(xpath, html) {
         try {
-            const dom = new JSDOM(html);
+            const dom = new JSDOM(html, {
+                contentType: 'text/html',
+                includeNodeLocations: true
+            });
             const document = dom.window.document;
             const window = dom.window;
+            
+            // Store reference to dom for position lookups
+            this.currentDom = dom;
             
             const xpathResult = document.evaluate(
                 xpath,
@@ -271,8 +277,17 @@ class ComprehensiveXPathTester {
     }
 
     nodeToResult(node) {
-        // Calculate approximate positions
-        const startLocation = this.getNodePosition(node);
+        // Get positions from JSDOM node locations
+        let startLocation = 0;
+        let endLocation = 0;
+        
+        if (this.currentDom && typeof this.currentDom.nodeLocation === 'function') {
+            const location = this.currentDom.nodeLocation(node);
+            if (location) {
+                startLocation = location.startOffset || 0;
+                endLocation = location.endOffset || startLocation;
+            }
+        }
         
         return {
             value: node.nodeValue || node.textContent || "",
@@ -281,7 +296,7 @@ class ComprehensiveXPathTester {
             attributes: this.getNodeAttributes(node),
             textContent: node.textContent || "",
             startLocation: startLocation,
-            endLocation: startLocation,
+            endLocation: endLocation,
             path: this.getNodePath(node)
         };
     }
@@ -295,21 +310,6 @@ class ComprehensiveXPathTester {
             }
         }
         return attrs;
-    }
-
-    getNodePosition(node) {
-        // Simple position calculation - could be enhanced
-        let pos = 0;
-        let current = node;
-        while (current && current.parentNode) {
-            let sibling = current.parentNode.firstChild;
-            while (sibling && sibling !== current) {
-                pos += (sibling.textContent || sibling.outerHTML || "").length;
-                sibling = sibling.nextSibling;
-            }
-            current = current.parentNode;
-        }
-        return pos;
     }
 
     getNodePath(node) {
@@ -413,6 +413,26 @@ class ComprehensiveXPathTester {
                 return {
                     match: false,
                     reason: `Node type mismatch at index ${i}: JS=${jsRes.nodeType}, Go=${goRes.nodeType}`,
+                    jsResults: jsResult.results,
+                    goResults: goResult.results
+                };
+            }
+
+            // Compare start positions
+            if (jsRes.startLocation !== goRes.startLocation) {
+                return {
+                    match: false,
+                    reason: `Start location mismatch at index ${i}: JS=${jsRes.startLocation}, Go=${goRes.startLocation}`,
+                    jsResults: jsResult.results,
+                    goResults: goResult.results
+                };
+            }
+
+            // Compare end positions
+            if (jsRes.endLocation !== goRes.endLocation) {
+                return {
+                    match: false,
+                    reason: `End location mismatch at index ${i}: JS=${jsRes.endLocation}, Go=${goRes.endLocation}`,
                     jsResults: jsResult.results,
                     goResults: goResult.results
                 };
