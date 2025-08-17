@@ -250,5 +250,26 @@
     "xpath": "//div[string-length(text()) > 0 and substring(text(), 1, 1) = 'C']",
     "description": "Substring with edge cases and length checks",
     "category": "string-index"
+  },
+  {
+    "name": "DOCTYPE declaration parsing",
+    "html": "<!DOCTYPE html><html><head><title>Test</title></head><body><p>Content</p></body></html>",
+    "xpath": "//title",
+    "description": "HTML with DOCTYPE declaration should parse correctly",
+    "category": "doctype"
+  },
+  {
+    "name": "Complex DOCTYPE parsing",
+    "html": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html><head><title>Complex</title></head><body><div class='content'>Text</div></body></html>",
+    "xpath": "//div[@class='content']",
+    "description": "Complex DOCTYPE with public ID should parse correctly",
+    "category": "doctype"
+  },
+  {
+    "name": "DOCTYPE with descendant query",
+    "html": "<!DOCTYPE html><html><body><div><p>Nested</p><span>Text</span></div></body></html>",
+    "xpath": "//div//p",
+    "description": "DOCTYPE with descendant axis navigation",
+    "category": "doctype"
   }
 ]

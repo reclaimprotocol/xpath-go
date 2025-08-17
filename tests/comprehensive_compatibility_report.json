@@ -1,8 +1,8 @@
 {
-  "total": 73,
-  "passed": 71,
-  "failed": 2,
-  "compatibility": "97.3",
+  "total": 76,
+  "passed": 76,
+  "failed": 0,
+  "compatibility": "100.0",
   "details": [
     {
       "name": "Basic element selection",
@@ -5866,7 +5866,7 @@
       "xpath": "//div[contains(@class, 'primary') and contains(@class, 'active') and not(contains(@class, 'inactive'))]",
       "suite": "extended",
       "category": "attributes",
-      "passed": false,
+      "passed": true,
       "jsResult": {
         "success": true,
         "results": [
@@ -5888,13 +5888,26 @@
       },
       "goResult": {
         "success": true,
-        "results": [],
-        "count": 0,
+        "results": [
+          {
+            "value": "Item 1",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "primary active large"
+            },
+            "startLocation": 12,
+            "endLocation": 58,
+            "path": "/#document/html/body/div[4]",
+            "textContent": "Item 1"
+          }
+        ],
+        "count": 1,
         "error": null
       },
       "comparison": {
-        "match": false,
-        "reason": "Count mismatch: JS=1, Go=0",
+        "match": true,
+        "reason": "Perfect match",
         "jsResults": [
           {
             "value": "Item 1",
@@ -5909,7 +5922,20 @@
             "path": "/html/body/div[1]"
           }
         ],
-        "goResults": []
+        "goResults": [
+          {
+            "value": "Item 1",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "primary active large"
+            },
+            "startLocation": 12,
+            "endLocation": 58,
+            "path": "/#document/html/body/div[4]",
+            "textContent": "Item 1"
+          }
+        ]
       }
     },
     {
@@ -5917,7 +5943,7 @@
       "xpath": "/html[head/title and head/meta[@charset] and body/main]",
       "suite": "extended",
       "category": "structure",
-      "passed": false,
+      "passed": true,
       "jsResult": {
         "success": true,
         "results": [
@@ -5937,13 +5963,23 @@
       },
       "goResult": {
         "success": true,
-        "results": [],
-        "count": 0,
+        "results": [
+          {
+            "value": "TestTitleContent",
+            "nodeName": "html",
+            "nodeType": 1,
+            "startLocation": 0,
+            "endLocation": 122,
+            "path": "/#document/html[2]",
+            "textContent": "TestTitleContent"
+          }
+        ],
+        "count": 1,
         "error": null
       },
       "comparison": {
-        "match": false,
-        "reason": "Count mismatch: JS=1, Go=0",
+        "match": true,
+        "reason": "Perfect match",
         "jsResults": [
           {
             "value": "TestTitleContent",
@@ -5956,7 +5992,17 @@
             "path": "/html"
           }
         ],
-        "goResults": []
+        "goResults": [
+          {
+            "value": "TestTitleContent",
+            "nodeName": "html",
+            "nodeType": 1,
+            "startLocation": 0,
+            "endLocation": 122,
+            "path": "/#document/html[2]",
+            "textContent": "TestTitleContent"
+          }
+        ]
       }
     },
     {
@@ -6415,6 +6461,217 @@
             "endLocation": 54,
             "path": "/#document/html/body/div[4]",
             "textContent": "Complete"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DOCTYPE declaration parsing",
+      "xpath": "//title",
+      "suite": "extended",
+      "category": "doctype",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Test",
+            "nodeName": "title",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Test",
+            "startLocation": 0,
+            "endLocation": 0,
+            "path": "/html/head/title"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Test",
+            "nodeName": "title",
+            "nodeType": 1,
+            "startLocation": 27,
+            "endLocation": 46,
+            "path": "/#document/html/head/title[2]",
+            "textContent": "Test"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Test",
+            "nodeName": "title",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Test",
+            "startLocation": 0,
+            "endLocation": 0,
+            "path": "/html/head/title"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Test",
+            "nodeName": "title",
+            "nodeType": 1,
+            "startLocation": 27,
+            "endLocation": 46,
+            "path": "/#document/html/head/title[2]",
+            "textContent": "Test"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Complex DOCTYPE parsing",
+      "xpath": "//div[@class='content']",
+      "suite": "extended",
+      "category": "doctype",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Text",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "content"
+            },
+            "textContent": "Text",
+            "startLocation": 7,
+            "endLocation": 7,
+            "path": "/html/body/div"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Text",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "content"
+            },
+            "startLocation": 168,
+            "endLocation": 199,
+            "path": "/#document/html/body/div[2]",
+            "textContent": "Text"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Text",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "content"
+            },
+            "textContent": "Text",
+            "startLocation": 7,
+            "endLocation": 7,
+            "path": "/html/body/div"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Text",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "content"
+            },
+            "startLocation": 168,
+            "endLocation": 199,
+            "path": "/#document/html/body/div[2]",
+            "textContent": "Text"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DOCTYPE with descendant query",
+      "xpath": "//div//p",
+      "suite": "extended",
+      "category": "doctype",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Nested",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Nested",
+            "startLocation": 13,
+            "endLocation": 13,
+            "path": "/html/body/div/p"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Nested",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 32,
+            "endLocation": 45,
+            "path": "/#document/html/body/div/p[2]",
+            "textContent": "Nested"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Nested",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Nested",
+            "startLocation": 13,
+            "endLocation": 13,
+            "path": "/html/body/div/p"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Nested",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 32,
+            "endLocation": 45,
+            "path": "/#document/html/body/div/p[2]",
+            "textContent": "Nested"
           }
         ]
       }
