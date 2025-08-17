@@ -1,6 +1,7 @@
 package evaluator
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/reclaimprotocol/xpath-go/pkg/types"
@@ -18,6 +19,7 @@ const (
 	TextType          // text() or text()='value'
 	AxisType          // ancestor::div, following-sibling::p
 	FunctionType      // contains(), position(), count(), etc.
+	PositionalType    // [1], [2], [10], numeric position predicates
 	NestedElementType // span[text()='value'], div[@class]
 	SimpleElementType // span, div, a (simple element existence)
 
@@ -62,6 +64,10 @@ func ClassifyPredicate(expr string) (PredicateType, map[string]interface{}) {
 	case classifier.isFunctionCall():
 		metadata["function"], metadata["args"] = classifier.parseFunctionCall()
 		return FunctionType, metadata
+
+	case classifier.isPositionalExpression():
+		metadata["position"] = classifier.parsePositionalExpression()
+		return PositionalType, metadata
 
 	case classifier.hasNestedPredicates():
 		metadata["element"], metadata["predicate"] = classifier.parseNestedElement()
@@ -133,11 +139,31 @@ func (c *PredicateClassifier) isFunctionCall() bool {
 	return false
 }
 
+func (c *PredicateClassifier) isPositionalExpression() bool {
+	// Check if the expression is a pure numeric value (position predicate)
+	expr := strings.TrimSpace(c.expr)
+	if expr == "" {
+		return false
+	}
+
+	// Check if it's a positive integer
+	if num, err := strconv.Atoi(expr); err == nil && num > 0 {
+		return true
+	}
+
+	// Check for last() function
+	if expr == "last()" {
+		return true
+	}
+
+	return false
+}
+
 func (c *PredicateClassifier) isSimpleElement() bool {
 	// Simple element name without attributes, functions, or operators
 	if c.hasBooleanOperators() || c.hasParentheses() || c.hasFunctionCalls() ||
 		c.hasNestedPredicates() || c.isAttributeExpression() || c.isTextExpression() ||
-		c.isAxisExpression() {
+		c.isAxisExpression() || c.isPositionalExpression() {
 		return false
 	}
 
@@ -211,6 +237,22 @@ func (c *PredicateClassifier) parseFunctionCall() (string, []string) {
 	return c.expr, []string{}
 }
 
+func (c *PredicateClassifier) parsePositionalExpression() interface{} {
+	expr := strings.TrimSpace(c.expr)
+	
+	// Check for last() function
+	if expr == "last()" {
+		return "last()"
+	}
+	
+	// Parse numeric position
+	if num, err := strconv.Atoi(expr); err == nil && num > 0 {
+		return num
+	}
+	
+	return expr
+}
+
 func (c *PredicateClassifier) parseNestedElement() (string, string) {
 	if idx := strings.Index(c.expr, "["); idx != -1 {
 		element := strings.TrimSpace(c.expr[:idx])
@@ -253,6 +295,9 @@ func (e *Evaluator) RoutePredicateExpression(nodes []*types.Node, expr string) [
 
 	case FunctionType:
 		return e.routeFunctionCall(nodes, expr)
+
+	case PositionalType:
+		return e.applyPositionalPredicate(nodes, expr)
 
 	case NestedElementType:
 		return e.applyNestedPredicate(nodes, expr)

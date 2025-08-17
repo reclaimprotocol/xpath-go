@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/reclaimprotocol/xpath-go/pkg/types"
 )
@@ -212,8 +213,13 @@ func (p *HTMLParser) parseTextNode(parent *types.Node, startPos, startLine, star
 	text := ""
 
 	for p.pos < len(p.content) && p.peek() != '<' {
-		text += string(p.peek())
-		p.advance()
+		// Handle UTF-8 correctly by reading the full character
+		r, size := p.peekRune()
+		if r == 0 {
+			break
+		}
+		text += string(r)
+		p.advanceRune(size)
 	}
 
 	if text == "" {
@@ -412,6 +418,27 @@ func (p *HTMLParser) peek() byte {
 
 func (p *HTMLParser) advance() {
 	if p.pos < len(p.content) {
+		if p.content[p.pos] == '\n' {
+			p.line++
+			p.col = 1
+		} else {
+			p.col++
+		}
+		p.pos++
+	}
+}
+
+// peekRune returns the UTF-8 rune at the current position and its byte size
+func (p *HTMLParser) peekRune() (rune, int) {
+	if p.pos >= len(p.content) {
+		return 0, 0
+	}
+	return utf8.DecodeRuneInString(p.content[p.pos:])
+}
+
+// advanceRune advances the position by the given number of bytes (for a UTF-8 rune)
+func (p *HTMLParser) advanceRune(size int) {
+	for i := 0; i < size && p.pos < len(p.content); i++ {
 		if p.content[p.pos] == '\n' {
 			p.line++
 			p.col = 1

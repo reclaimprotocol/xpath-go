@@ -210,4 +210,28 @@ func (e *Evaluator) applyPredicate(nodes []*types.Node, predicate types.XPathPre
 	return e.RoutePredicateExpression(nodes, expr)
 }
 
+// applyPositionalPredicate handles numeric position predicates like [1], [2], [last()]
+func (e *Evaluator) applyPositionalPredicate(nodes []*types.Node, expr string) []*types.Node {
+	expr = strings.TrimSpace(expr)
+	
+	// Handle numeric positions like [1], [2], [10]
+	if pos, err := strconv.Atoi(expr); err == nil {
+		if pos > 0 && pos <= len(nodes) {
+			return []*types.Node{nodes[pos-1]}
+		}
+		return []*types.Node{}
+	}
+	
+	// Handle last() function
+	if expr == "last()" {
+		if len(nodes) > 0 {
+			return []*types.Node{nodes[len(nodes)-1]}
+		}
+		return []*types.Node{}
+	}
+	
+	// Fallback
+	return []*types.Node{}
+}
+
 // isSimpleElementName checks if a condition is a simple element name (like span, a, div)

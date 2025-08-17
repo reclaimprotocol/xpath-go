@@ -1,8 +1,8 @@
 {
-  "total": 76,
-  "passed": 76,
-  "failed": 0,
-  "compatibility": "100.0",
+  "total": 117,
+  "passed": 107,
+  "failed": 10,
+  "compatibility": "91.5",
   "details": [
     {
       "name": "Basic element selection",
@@ -6672,6 +6672,3525 @@
             "endLocation": 45,
             "path": "/#document/html/body/div/p[2]",
             "textContent": "Nested"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Empty string text comparison",
+      "xpath": "//p[text()='']",
+      "suite": "extended",
+      "category": "edge-cases",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "",
+            "startLocation": 12,
+            "endLocation": 19,
+            "path": "/html/body/p[1]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 19,
+            "path": "/#document/html/body/p[4]",
+            "textContent": ""
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "",
+            "startLocation": 12,
+            "endLocation": 19,
+            "path": "/html/body/p[1]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 19,
+            "path": "/#document/html/body/p[4]",
+            "textContent": ""
+          }
+        ]
+      }
+    },
+    {
+      "name": "Zero-based vs one-based indexing",
+      "xpath": "//li[1]",
+      "suite": "extended",
+      "category": "edge-cases",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "First",
+            "nodeName": "li",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "First",
+            "startLocation": 16,
+            "endLocation": 30,
+            "path": "/html/body/ul/li[1]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "First",
+            "nodeName": "li",
+            "nodeType": 1,
+            "startLocation": 16,
+            "endLocation": 30,
+            "path": "/#document/html/body/ul/li[4]",
+            "textContent": "First"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "First",
+            "nodeName": "li",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "First",
+            "startLocation": 16,
+            "endLocation": 30,
+            "path": "/html/body/ul/li[1]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "First",
+            "nodeName": "li",
+            "nodeType": 1,
+            "startLocation": 16,
+            "endLocation": 30,
+            "path": "/#document/html/body/ul/li[4]",
+            "textContent": "First"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Very deep nesting performance",
+      "xpath": "//p[ancestor::div[10]]",
+      "suite": "extended",
+      "category": "edge-cases",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Deep",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Deep",
+            "startLocation": 62,
+            "endLocation": 73,
+            "path": "/html/body/div/div/div/div/div/div/div/div/div/div/p"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Deep",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 62,
+            "endLocation": 73,
+            "path": "/#document/html/body/div/div/div/div/div/div/div/div/div/div/p[2]",
+            "textContent": "Deep"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Deep",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Deep",
+            "startLocation": 62,
+            "endLocation": 73,
+            "path": "/html/body/div/div/div/div/div/div/div/div/div/div/p"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Deep",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 62,
+            "endLocation": 73,
+            "path": "/#document/html/body/div/div/div/div/div/div/div/div/div/div/p[2]",
+            "textContent": "Deep"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Large attribute values",
+      "xpath": "//div[contains(@data-large, 'consectetur')]",
+      "suite": "extended",
+      "category": "edge-cases",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Content",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-large": "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
+            },
+            "textContent": "Content",
+            "startLocation": 12,
+            "endLocation": 164,
+            "path": "/html/body/div"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Content",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-large": "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
+            },
+            "startLocation": 12,
+            "endLocation": 164,
+            "path": "/#document/html/body/div[2]",
+            "textContent": "Content"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Content",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-large": "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
+            },
+            "textContent": "Content",
+            "startLocation": 12,
+            "endLocation": 164,
+            "path": "/html/body/div"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Content",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-large": "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
+            },
+            "startLocation": 12,
+            "endLocation": 164,
+            "path": "/#document/html/body/div[2]",
+            "textContent": "Content"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Unicode characters",
+      "xpath": "//p[contains(text(), '世界')]",
+      "suite": "extended",
+      "category": "edge-cases",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Hello 世界",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Hello 世界",
+            "startLocation": 12,
+            "endLocation": 27,
+            "path": "/html/body/p[1]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Hello 世界",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 31,
+            "path": "/#document/html/body/p[4]",
+            "textContent": "Hello 世界"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "End location mismatch at index 0: JS=27, Go=31",
+        "jsResults": [
+          {
+            "value": "Hello 世界",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Hello 世界",
+            "startLocation": 12,
+            "endLocation": 27,
+            "path": "/html/body/p[1]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Hello 世界",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 31,
+            "path": "/#document/html/body/p[4]",
+            "textContent": "Hello 世界"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Case sensitivity in attributes",
+      "xpath": "//div[@class='Test']",
+      "suite": "extended",
+      "category": "edge-cases",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Uppercase",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "Test"
+            },
+            "textContent": "Uppercase",
+            "startLocation": 12,
+            "endLocation": 45,
+            "path": "/html/body/div[1]"
+          },
+          {
+            "value": "Mixed",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "Test"
+            },
+            "textContent": "Mixed",
+            "startLocation": 78,
+            "endLocation": 107,
+            "path": "/html/body/div[3]"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Uppercase",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "Test"
+            },
+            "startLocation": 12,
+            "endLocation": 45,
+            "path": "/#document/html/body/div[4]",
+            "textContent": "Uppercase"
+          },
+          {
+            "value": "Mixed",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "Test"
+            },
+            "startLocation": 78,
+            "endLocation": 107,
+            "path": "/#document/html/body/div[4]",
+            "textContent": "Mixed"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Uppercase",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "Test"
+            },
+            "textContent": "Uppercase",
+            "startLocation": 12,
+            "endLocation": 45,
+            "path": "/html/body/div[1]"
+          },
+          {
+            "value": "Mixed",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "Test"
+            },
+            "textContent": "Mixed",
+            "startLocation": 78,
+            "endLocation": 107,
+            "path": "/html/body/div[3]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Uppercase",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "Test"
+            },
+            "startLocation": 12,
+            "endLocation": 45,
+            "path": "/#document/html/body/div[4]",
+            "textContent": "Uppercase"
+          },
+          {
+            "value": "Mixed",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "Test"
+            },
+            "startLocation": 78,
+            "endLocation": 107,
+            "path": "/#document/html/body/div[4]",
+            "textContent": "Mixed"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Whitespace normalization edge cases",
+      "xpath": "//p[normalize-space(text())='multiple spaces']",
+      "suite": "extended",
+      "category": "edge-cases",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "  multiple   spaces  ",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "  multiple   spaces  ",
+            "startLocation": 12,
+            "endLocation": 40,
+            "path": "/html/body/p[1]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "  multiple   spaces  ",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 40,
+            "path": "/#document/html/body/p[3]",
+            "textContent": "  multiple   spaces  "
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "  multiple   spaces  ",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "  multiple   spaces  ",
+            "startLocation": 12,
+            "endLocation": 40,
+            "path": "/html/body/p[1]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "  multiple   spaces  ",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 40,
+            "path": "/#document/html/body/p[3]",
+            "textContent": "  multiple   spaces  "
+          }
+        ]
+      }
+    },
+    {
+      "name": "Boolean attribute handling",
+      "xpath": "//input[@checked]",
+      "suite": "extended",
+      "category": "edge-cases",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "nodeName": "input",
+            "nodeType": 1,
+            "attributes": {
+              "type": "checkbox",
+              "checked": ""
+            },
+            "textContent": "",
+            "startLocation": 12,
+            "endLocation": 44,
+            "path": "/html/body/input[1]"
+          },
+          {
+            "value": "",
+            "nodeName": "input",
+            "nodeType": 1,
+            "attributes": {
+              "type": "radio",
+              "checked": "checked"
+            },
+            "textContent": "",
+            "startLocation": 68,
+            "endLocation": 107,
+            "path": "/html/body/input[3]"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "nodeName": "input",
+            "nodeType": 1,
+            "attributes": {
+              "checked": "",
+              "type": "checkbox"
+            },
+            "startLocation": 12,
+            "endLocation": 44,
+            "path": "/#document/html/body/input[4]",
+            "textContent": ""
+          },
+          {
+            "value": "",
+            "nodeName": "input",
+            "nodeType": 1,
+            "attributes": {
+              "checked": "checked",
+              "type": "radio"
+            },
+            "startLocation": 68,
+            "endLocation": 107,
+            "path": "/#document/html/body/input[4]",
+            "textContent": ""
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "",
+            "nodeName": "input",
+            "nodeType": 1,
+            "attributes": {
+              "type": "checkbox",
+              "checked": ""
+            },
+            "textContent": "",
+            "startLocation": 12,
+            "endLocation": 44,
+            "path": "/html/body/input[1]"
+          },
+          {
+            "value": "",
+            "nodeName": "input",
+            "nodeType": 1,
+            "attributes": {
+              "type": "radio",
+              "checked": "checked"
+            },
+            "textContent": "",
+            "startLocation": 68,
+            "endLocation": 107,
+            "path": "/html/body/input[3]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "",
+            "nodeName": "input",
+            "nodeType": 1,
+            "attributes": {
+              "checked": "",
+              "type": "checkbox"
+            },
+            "startLocation": 12,
+            "endLocation": 44,
+            "path": "/#document/html/body/input[4]",
+            "textContent": ""
+          },
+          {
+            "value": "",
+            "nodeName": "input",
+            "nodeType": 1,
+            "attributes": {
+              "checked": "checked",
+              "type": "radio"
+            },
+            "startLocation": 68,
+            "endLocation": 107,
+            "path": "/#document/html/body/input[4]",
+            "textContent": ""
+          }
+        ]
+      }
+    },
+    {
+      "name": "Numeric string comparisons",
+      "xpath": "//div[@data-num='10']",
+      "suite": "extended",
+      "category": "edge-cases",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Ten",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-num": "10"
+            },
+            "textContent": "Ten",
+            "startLocation": 12,
+            "endLocation": 40,
+            "path": "/html/body/div[1]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Ten",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-num": "10"
+            },
+            "startLocation": 12,
+            "endLocation": 40,
+            "path": "/#document/html/body/div[4]",
+            "textContent": "Ten"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Ten",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-num": "10"
+            },
+            "textContent": "Ten",
+            "startLocation": 12,
+            "endLocation": 40,
+            "path": "/html/body/div[1]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Ten",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-num": "10"
+            },
+            "startLocation": 12,
+            "endLocation": 40,
+            "path": "/#document/html/body/div[4]",
+            "textContent": "Ten"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Self-closing tags",
+      "xpath": "//img[@alt='Test']",
+      "suite": "extended",
+      "category": "edge-cases",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "nodeName": "img",
+            "nodeType": 1,
+            "attributes": {
+              "src": "test.jpg",
+              "alt": "Test"
+            },
+            "textContent": "",
+            "startLocation": 12,
+            "endLocation": 44,
+            "path": "/html/body/img"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "nodeName": "img",
+            "nodeType": 1,
+            "attributes": {
+              "alt": "Test",
+              "src": "test.jpg"
+            },
+            "startLocation": 12,
+            "endLocation": 44,
+            "path": "/#document/html/body/img[2]",
+            "textContent": ""
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "",
+            "nodeName": "img",
+            "nodeType": 1,
+            "attributes": {
+              "src": "test.jpg",
+              "alt": "Test"
+            },
+            "textContent": "",
+            "startLocation": 12,
+            "endLocation": 44,
+            "path": "/html/body/img"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "",
+            "nodeName": "img",
+            "nodeType": 1,
+            "attributes": {
+              "alt": "Test",
+              "src": "test.jpg"
+            },
+            "startLocation": 12,
+            "endLocation": 44,
+            "path": "/#document/html/body/img[2]",
+            "textContent": ""
+          }
+        ]
+      }
+    },
+    {
+      "name": "Comment nodes in navigation",
+      "xpath": "//div/node()[2]",
+      "suite": "extended",
+      "category": "edge-cases",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Text",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Text",
+            "startLocation": 35,
+            "endLocation": 46,
+            "path": "/html/body/div/p"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Text",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 35,
+            "endLocation": 46,
+            "path": "/#document/html/body/div/p[2]",
+            "textContent": "Text"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Text",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Text",
+            "startLocation": 35,
+            "endLocation": 46,
+            "path": "/html/body/div/p"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Text",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 35,
+            "endLocation": 46,
+            "path": "/#document/html/body/div/p[2]",
+            "textContent": "Text"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Processing instructions",
+      "xpath": "//div",
+      "suite": "extended",
+      "category": "edge-cases",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Content",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Content",
+            "startLocation": 63,
+            "endLocation": 81,
+            "path": "/html/body/div"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Content",
+            "nodeName": "div",
+            "nodeType": 1,
+            "startLocation": 63,
+            "endLocation": 81,
+            "path": "/#document/html/body/div[2]",
+            "textContent": "Content"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Content",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Content",
+            "startLocation": 63,
+            "endLocation": 81,
+            "path": "/html/body/div"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Content",
+            "nodeName": "div",
+            "nodeType": 1,
+            "startLocation": 63,
+            "endLocation": 81,
+            "path": "/#document/html/body/div[2]",
+            "textContent": "Content"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Malformed HTML recovery",
+      "xpath": "//span",
+      "suite": "extended",
+      "category": "edge-cases",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Text",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Text",
+            "startLocation": 67,
+            "endLocation": 84,
+            "path": "/html/body/div/span"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Text",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 67,
+            "endLocation": 84,
+            "path": "/#document/html/body/div/p/span[2]",
+            "textContent": "Text"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Text",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Text",
+            "startLocation": 67,
+            "endLocation": 84,
+            "path": "/html/body/div/span"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Text",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 67,
+            "endLocation": 84,
+            "path": "/#document/html/body/div/p/span[2]",
+            "textContent": "Text"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Mixed quotes in attributes",
+      "xpath": "//div[contains(@title, 'quotes')]",
+      "suite": "extended",
+      "category": "edge-cases",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "First",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "title": "Double 'quotes'"
+            },
+            "textContent": "First",
+            "startLocation": 12,
+            "endLocation": 52,
+            "path": "/html/body/div[1]"
+          },
+          {
+            "value": "Second",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "title": "Single \"quotes\""
+            },
+            "textContent": "Second",
+            "startLocation": 52,
+            "endLocation": 93,
+            "path": "/html/body/div[2]"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "First",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "title": "Double 'quotes'"
+            },
+            "startLocation": 12,
+            "endLocation": 52,
+            "path": "/#document/html/body/div[3]",
+            "textContent": "First"
+          },
+          {
+            "value": "Second",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "title": "Single \"quotes\""
+            },
+            "startLocation": 52,
+            "endLocation": 93,
+            "path": "/#document/html/body/div[3]",
+            "textContent": "Second"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "First",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "title": "Double 'quotes'"
+            },
+            "textContent": "First",
+            "startLocation": 12,
+            "endLocation": 52,
+            "path": "/html/body/div[1]"
+          },
+          {
+            "value": "Second",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "title": "Single \"quotes\""
+            },
+            "textContent": "Second",
+            "startLocation": 52,
+            "endLocation": 93,
+            "path": "/html/body/div[2]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "First",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "title": "Double 'quotes'"
+            },
+            "startLocation": 12,
+            "endLocation": 52,
+            "path": "/#document/html/body/div[3]",
+            "textContent": "First"
+          },
+          {
+            "value": "Second",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "title": "Single \"quotes\""
+            },
+            "startLocation": 52,
+            "endLocation": 93,
+            "path": "/#document/html/body/div[3]",
+            "textContent": "Second"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Leading/trailing whitespace in XPath",
+      "xpath": "  //p[@class='test']  ",
+      "suite": "extended",
+      "category": "edge-cases",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Content",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "test"
+            },
+            "textContent": "Content",
+            "startLocation": 12,
+            "endLocation": 39,
+            "path": "/html/body/p"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Content",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "test"
+            },
+            "startLocation": 12,
+            "endLocation": 39,
+            "path": "/#document/html/body/p[2]",
+            "textContent": "Content"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Content",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "test"
+            },
+            "textContent": "Content",
+            "startLocation": 12,
+            "endLocation": 39,
+            "path": "/html/body/p"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Content",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "test"
+            },
+            "startLocation": 12,
+            "endLocation": 39,
+            "path": "/#document/html/body/p[2]",
+            "textContent": "Content"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Complex boolean expressions with precedence",
+      "xpath": "//div[@id and (@class='x y' or @id='b') and contains(@class, 'x')]",
+      "suite": "extended",
+      "category": "boolean-precedence",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "A",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "id": "a",
+              "class": "x y"
+            },
+            "textContent": "A",
+            "startLocation": 12,
+            "endLocation": 43,
+            "path": "/html/body/div[1]"
+          },
+          {
+            "value": "B",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "id": "b",
+              "class": "x"
+            },
+            "textContent": "B",
+            "startLocation": 43,
+            "endLocation": 72,
+            "path": "/html/body/div[2]"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "A",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "x y",
+              "id": "a"
+            },
+            "startLocation": 12,
+            "endLocation": 43,
+            "path": "/#document/html/body/div[5]",
+            "textContent": "A"
+          },
+          {
+            "value": "B",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "x",
+              "id": "b"
+            },
+            "startLocation": 43,
+            "endLocation": 72,
+            "path": "/#document/html/body/div[5]",
+            "textContent": "B"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "A",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "id": "a",
+              "class": "x y"
+            },
+            "textContent": "A",
+            "startLocation": 12,
+            "endLocation": 43,
+            "path": "/html/body/div[1]"
+          },
+          {
+            "value": "B",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "id": "b",
+              "class": "x"
+            },
+            "textContent": "B",
+            "startLocation": 43,
+            "endLocation": 72,
+            "path": "/html/body/div[2]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "A",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "x y",
+              "id": "a"
+            },
+            "startLocation": 12,
+            "endLocation": 43,
+            "path": "/#document/html/body/div[5]",
+            "textContent": "A"
+          },
+          {
+            "value": "B",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "x",
+              "id": "b"
+            },
+            "startLocation": 43,
+            "endLocation": 72,
+            "path": "/#document/html/body/div[5]",
+            "textContent": "B"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Arithmetic operations in predicates",
+      "xpath": "//div[@data-index = (2 * 2)]",
+      "suite": "extended",
+      "category": "arithmetic",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "D",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-index": "4"
+            },
+            "textContent": "D",
+            "startLocation": 93,
+            "endLocation": 120,
+            "path": "/html/body/div[4]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [],
+        "count": 0,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Count mismatch: JS=1, Go=0",
+        "jsResults": [
+          {
+            "value": "D",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-index": "4"
+            },
+            "textContent": "D",
+            "startLocation": 93,
+            "endLocation": 120,
+            "path": "/html/body/div[4]"
+          }
+        ],
+        "goResults": []
+      }
+    },
+    {
+      "name": "Division and modulo operations",
+      "xpath": "//span[position() mod 3 = 1]",
+      "suite": "extended",
+      "category": "arithmetic",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "1",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "1",
+            "startLocation": 12,
+            "endLocation": 26,
+            "path": "/html/body/span[1]"
+          },
+          {
+            "value": "4",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "4",
+            "startLocation": 54,
+            "endLocation": 68,
+            "path": "/html/body/span[4]"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "1",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 26,
+            "path": "/#document/html/body/span[7]",
+            "textContent": "1"
+          },
+          {
+            "value": "4",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 54,
+            "endLocation": 68,
+            "path": "/#document/html/body/span[7]",
+            "textContent": "4"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "1",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "1",
+            "startLocation": 12,
+            "endLocation": 26,
+            "path": "/html/body/span[1]"
+          },
+          {
+            "value": "4",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "4",
+            "startLocation": 54,
+            "endLocation": 68,
+            "path": "/html/body/span[4]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "1",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 26,
+            "path": "/#document/html/body/span[7]",
+            "textContent": "1"
+          },
+          {
+            "value": "4",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 54,
+            "endLocation": 68,
+            "path": "/#document/html/body/span[7]",
+            "textContent": "4"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Multiple level union operations",
+      "xpath": "//header//h1 | //main//h2 | //footer//p",
+      "suite": "extended",
+      "category": "union-complex",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Title",
+            "nodeName": "h1",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Title",
+            "startLocation": 20,
+            "endLocation": 34,
+            "path": "/html/body/header/h1"
+          },
+          {
+            "value": "Subtitle",
+            "nodeName": "h2",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Subtitle",
+            "startLocation": 80,
+            "endLocation": 97,
+            "path": "/html/body/main/section/h2"
+          },
+          {
+            "value": "Footer",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Footer",
+            "startLocation": 133,
+            "endLocation": 146,
+            "path": "/html/body/footer/p"
+          }
+        ],
+        "count": 3,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Title",
+            "nodeName": "h1",
+            "nodeType": 1,
+            "startLocation": 20,
+            "endLocation": 34,
+            "path": "/#document/html/body/header/h1[2]",
+            "textContent": "Title"
+          },
+          {
+            "value": "Subtitle",
+            "nodeName": "h2",
+            "nodeType": 1,
+            "startLocation": 80,
+            "endLocation": 97,
+            "path": "/#document/html/body/main/section/h2[2]",
+            "textContent": "Subtitle"
+          },
+          {
+            "value": "Footer",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 133,
+            "endLocation": 146,
+            "path": "/#document/html/body/footer/p[2]",
+            "textContent": "Footer"
+          }
+        ],
+        "count": 3,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Title",
+            "nodeName": "h1",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Title",
+            "startLocation": 20,
+            "endLocation": 34,
+            "path": "/html/body/header/h1"
+          },
+          {
+            "value": "Subtitle",
+            "nodeName": "h2",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Subtitle",
+            "startLocation": 80,
+            "endLocation": 97,
+            "path": "/html/body/main/section/h2"
+          },
+          {
+            "value": "Footer",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Footer",
+            "startLocation": 133,
+            "endLocation": 146,
+            "path": "/html/body/footer/p"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Title",
+            "nodeName": "h1",
+            "nodeType": 1,
+            "startLocation": 20,
+            "endLocation": 34,
+            "path": "/#document/html/body/header/h1[2]",
+            "textContent": "Title"
+          },
+          {
+            "value": "Subtitle",
+            "nodeName": "h2",
+            "nodeType": 1,
+            "startLocation": 80,
+            "endLocation": 97,
+            "path": "/#document/html/body/main/section/h2[2]",
+            "textContent": "Subtitle"
+          },
+          {
+            "value": "Footer",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 133,
+            "endLocation": 146,
+            "path": "/#document/html/body/footer/p[2]",
+            "textContent": "Footer"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Nested union with predicates",
+      "xpath": "(//div[@class='a'] | //p[@class='a']) | (//div[@class='b'] | //p[@class='b'])",
+      "suite": "extended",
+      "category": "union-complex",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "A1",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "a"
+            },
+            "textContent": "A1",
+            "startLocation": 12,
+            "endLocation": 35,
+            "path": "/html/body/div[1]"
+          },
+          {
+            "value": "B1",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "b"
+            },
+            "textContent": "B1",
+            "startLocation": 35,
+            "endLocation": 58,
+            "path": "/html/body/div[2]"
+          },
+          {
+            "value": "A2",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "a"
+            },
+            "textContent": "A2",
+            "startLocation": 58,
+            "endLocation": 77,
+            "path": "/html/body/p[1]"
+          },
+          {
+            "value": "B2",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "b"
+            },
+            "textContent": "B2",
+            "startLocation": 77,
+            "endLocation": 96,
+            "path": "/html/body/p[2]"
+          }
+        ],
+        "count": 4,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "A1",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "a"
+            },
+            "startLocation": 12,
+            "endLocation": 35,
+            "path": "/#document/html/body/div[3]",
+            "textContent": "A1"
+          },
+          {
+            "value": "A2",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "a"
+            },
+            "startLocation": 58,
+            "endLocation": 77,
+            "path": "/#document/html/body/p[3]",
+            "textContent": "A2"
+          },
+          {
+            "value": "B1",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "b"
+            },
+            "startLocation": 35,
+            "endLocation": 58,
+            "path": "/#document/html/body/div[3]",
+            "textContent": "B1"
+          },
+          {
+            "value": "B2",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "b"
+            },
+            "startLocation": 77,
+            "endLocation": 96,
+            "path": "/#document/html/body/p[3]",
+            "textContent": "B2"
+          }
+        ],
+        "count": 4,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 1: JS=\"div\", Go=\"p\"",
+        "jsResults": [
+          {
+            "value": "A1",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "a"
+            },
+            "textContent": "A1",
+            "startLocation": 12,
+            "endLocation": 35,
+            "path": "/html/body/div[1]"
+          },
+          {
+            "value": "B1",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "b"
+            },
+            "textContent": "B1",
+            "startLocation": 35,
+            "endLocation": 58,
+            "path": "/html/body/div[2]"
+          },
+          {
+            "value": "A2",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "a"
+            },
+            "textContent": "A2",
+            "startLocation": 58,
+            "endLocation": 77,
+            "path": "/html/body/p[1]"
+          },
+          {
+            "value": "B2",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "b"
+            },
+            "textContent": "B2",
+            "startLocation": 77,
+            "endLocation": 96,
+            "path": "/html/body/p[2]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "A1",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "a"
+            },
+            "startLocation": 12,
+            "endLocation": 35,
+            "path": "/#document/html/body/div[3]",
+            "textContent": "A1"
+          },
+          {
+            "value": "A2",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "a"
+            },
+            "startLocation": 58,
+            "endLocation": 77,
+            "path": "/#document/html/body/p[3]",
+            "textContent": "A2"
+          },
+          {
+            "value": "B1",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "class": "b"
+            },
+            "startLocation": 35,
+            "endLocation": 58,
+            "path": "/#document/html/body/div[3]",
+            "textContent": "B1"
+          },
+          {
+            "value": "B2",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "b"
+            },
+            "startLocation": 77,
+            "endLocation": 96,
+            "path": "/#document/html/body/p[3]",
+            "textContent": "B2"
+          }
+        ]
+      }
+    },
+    {
+      "name": "String concatenation simulation",
+      "xpath": "//div[@data-value = concat(//div[@data-prefix][1]/@data-prefix, //div[@data-suffix][1]/@data-suffix)]",
+      "suite": "extended",
+      "category": "string-functions",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Target",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-value": "test123"
+            },
+            "textContent": "Target",
+            "startLocation": 64,
+            "endLocation": 102,
+            "path": "/html/body/div[2]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [],
+        "count": 0,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Count mismatch: JS=1, Go=0",
+        "jsResults": [
+          {
+            "value": "Target",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-value": "test123"
+            },
+            "textContent": "Target",
+            "startLocation": 64,
+            "endLocation": 102,
+            "path": "/html/body/div[2]"
+          }
+        ],
+        "goResults": []
+      }
+    },
+    {
+      "name": "Multiple starts-with conditions",
+      "xpath": "//a[starts-with(@href, 'http') and not(starts-with(@href, 'https'))]",
+      "suite": "extended",
+      "category": "string-functions",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "HTTP",
+            "nodeName": "a",
+            "nodeType": 1,
+            "attributes": {
+              "href": "http://example.com"
+            },
+            "textContent": "HTTP",
+            "startLocation": 58,
+            "endLocation": 95,
+            "path": "/html/body/a[2]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "HTTP",
+            "nodeName": "a",
+            "nodeType": 1,
+            "attributes": {
+              "href": "http://example.com"
+            },
+            "startLocation": 58,
+            "endLocation": 95,
+            "path": "/#document/html/body/a[4]",
+            "textContent": "HTTP"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "HTTP",
+            "nodeName": "a",
+            "nodeType": 1,
+            "attributes": {
+              "href": "http://example.com"
+            },
+            "textContent": "HTTP",
+            "startLocation": 58,
+            "endLocation": 95,
+            "path": "/html/body/a[2]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "HTTP",
+            "nodeName": "a",
+            "nodeType": 1,
+            "attributes": {
+              "href": "http://example.com"
+            },
+            "startLocation": 58,
+            "endLocation": 95,
+            "path": "/#document/html/body/a[4]",
+            "textContent": "HTTP"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Edge case position calculations",
+      "xpath": "//li[@class='item'][position() = last()]",
+      "suite": "extended",
+      "category": "position-edge",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "C",
+            "nodeName": "li",
+            "nodeType": 1,
+            "attributes": {
+              "class": "item"
+            },
+            "textContent": "C",
+            "startLocation": 82,
+            "endLocation": 105,
+            "path": "/html/body/ul/li[5]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [],
+        "count": 0,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Count mismatch: JS=1, Go=0",
+        "jsResults": [
+          {
+            "value": "C",
+            "nodeName": "li",
+            "nodeType": 1,
+            "attributes": {
+              "class": "item"
+            },
+            "textContent": "C",
+            "startLocation": 82,
+            "endLocation": 105,
+            "path": "/html/body/ul/li[5]"
+          }
+        ],
+        "goResults": []
+      }
+    },
+    {
+      "name": "Zero and negative position handling",
+      "xpath": "//div[position() = 0]",
+      "suite": "extended",
+      "category": "position-edge",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [],
+        "count": 0,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [],
+        "count": 0,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [],
+        "goResults": []
+      }
+    },
+    {
+      "name": "Position beyond available elements",
+      "xpath": "//p[position() = 10]",
+      "suite": "extended",
+      "category": "position-edge",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [],
+        "count": 0,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [],
+        "count": 0,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [],
+        "goResults": []
+      }
+    },
+    {
+      "name": "Axis navigation with empty results",
+      "xpath": "//p/following-sibling::*",
+      "suite": "extended",
+      "category": "axis-edge",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [],
+        "count": 0,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [],
+        "count": 0,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [],
+        "goResults": []
+      }
+    },
+    {
+      "name": "Complex ancestor navigation",
+      "xpath": "//p[@id='target']/ancestor::*[position() = 2]",
+      "suite": "extended",
+      "category": "axis-edge",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Deep",
+            "nodeName": "section",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Deep",
+            "startLocation": 27,
+            "endLocation": 80,
+            "path": "/html/body/main/article/section"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Deep",
+            "nodeName": "body",
+            "nodeType": 1,
+            "startLocation": 6,
+            "endLocation": 104,
+            "path": "/#document/html/body[2]",
+            "textContent": "Deep"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"section\", Go=\"body\"",
+        "jsResults": [
+          {
+            "value": "Deep",
+            "nodeName": "section",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Deep",
+            "startLocation": 27,
+            "endLocation": 80,
+            "path": "/html/body/main/article/section"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Deep",
+            "nodeName": "body",
+            "nodeType": 1,
+            "startLocation": 6,
+            "endLocation": 104,
+            "path": "/#document/html/body[2]",
+            "textContent": "Deep"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Descendant with mixed content types",
+      "xpath": "//div/descendant::text()[position() = 2]",
+      "suite": "extended",
+      "category": "text-nodes",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Span",
+            "nodeName": "#text",
+            "nodeType": 3,
+            "attributes": {},
+            "textContent": "Span",
+            "startLocation": 27,
+            "endLocation": 31,
+            "path": "/html/body/div/span/#text"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Span",
+            "nodeName": "#text",
+            "nodeType": 3,
+            "startLocation": 27,
+            "endLocation": 31,
+            "path": "/#document/html/body/div/span/#text[2]",
+            "textContent": "Span"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Span",
+            "nodeName": "#text",
+            "nodeType": 3,
+            "attributes": {},
+            "textContent": "Span",
+            "startLocation": 27,
+            "endLocation": 31,
+            "path": "/html/body/div/span/#text"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Span",
+            "nodeName": "#text",
+            "nodeType": 3,
+            "startLocation": 27,
+            "endLocation": 31,
+            "path": "/#document/html/body/div/span/#text[2]",
+            "textContent": "Span"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Function chaining complexity",
+      "xpath": "//p[string-length(normalize-space(substring(text(), 2, 10))) > 5]",
+      "suite": "extended",
+      "category": "function-chaining",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "   Hello World   ",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "   Hello World   ",
+            "startLocation": 12,
+            "endLocation": 36,
+            "path": "/html/body/p[1]"
+          },
+          {
+            "value": "   Another Long Text   ",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "   Another Long Text   ",
+            "startLocation": 48,
+            "endLocation": 78,
+            "path": "/html/body/p[3]"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "   Hello World   ",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 36,
+            "path": "/#document/html/body/p[4]",
+            "textContent": "   Hello World   "
+          },
+          {
+            "value": "short",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 36,
+            "endLocation": 48,
+            "path": "/#document/html/body/p[4]",
+            "textContent": "short"
+          },
+          {
+            "value": "   Another Long Text   ",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 48,
+            "endLocation": 78,
+            "path": "/#document/html/body/p[4]",
+            "textContent": "   Another Long Text   "
+          }
+        ],
+        "count": 3,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Count mismatch: JS=2, Go=3",
+        "jsResults": [
+          {
+            "value": "   Hello World   ",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "   Hello World   ",
+            "startLocation": 12,
+            "endLocation": 36,
+            "path": "/html/body/p[1]"
+          },
+          {
+            "value": "   Another Long Text   ",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "   Another Long Text   ",
+            "startLocation": 48,
+            "endLocation": 78,
+            "path": "/html/body/p[3]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "   Hello World   ",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 36,
+            "path": "/#document/html/body/p[4]",
+            "textContent": "   Hello World   "
+          },
+          {
+            "value": "short",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 36,
+            "endLocation": 48,
+            "path": "/#document/html/body/p[4]",
+            "textContent": "short"
+          },
+          {
+            "value": "   Another Long Text   ",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 48,
+            "endLocation": 78,
+            "path": "/#document/html/body/p[4]",
+            "textContent": "   Another Long Text   "
+          }
+        ]
+      }
+    },
+    {
+      "name": "Conditional expressions with functions",
+      "xpath": "//div[string-length(@data-count) = 2 and contains(@data-count, '1')]",
+      "suite": "extended",
+      "category": "function-chaining",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Ten",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-count": "10"
+            },
+            "textContent": "Ten",
+            "startLocation": 42,
+            "endLocation": 72,
+            "path": "/html/body/div[2]"
+          },
+          {
+            "value": "Fifteen",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-count": "15"
+            },
+            "textContent": "Fifteen",
+            "startLocation": 72,
+            "endLocation": 106,
+            "path": "/html/body/div[3]"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Ten",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-count": "10"
+            },
+            "startLocation": 42,
+            "endLocation": 72,
+            "path": "/#document/html/body/div[4]",
+            "textContent": "Ten"
+          },
+          {
+            "value": "Fifteen",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-count": "15"
+            },
+            "startLocation": 72,
+            "endLocation": 106,
+            "path": "/#document/html/body/div[4]",
+            "textContent": "Fifteen"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Ten",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-count": "10"
+            },
+            "textContent": "Ten",
+            "startLocation": 42,
+            "endLocation": 72,
+            "path": "/html/body/div[2]"
+          },
+          {
+            "value": "Fifteen",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-count": "15"
+            },
+            "textContent": "Fifteen",
+            "startLocation": 72,
+            "endLocation": 106,
+            "path": "/html/body/div[3]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Ten",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-count": "10"
+            },
+            "startLocation": 42,
+            "endLocation": 72,
+            "path": "/#document/html/body/div[4]",
+            "textContent": "Ten"
+          },
+          {
+            "value": "Fifteen",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-count": "15"
+            },
+            "startLocation": 72,
+            "endLocation": 106,
+            "path": "/#document/html/body/div[4]",
+            "textContent": "Fifteen"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Dynamic attribute selection",
+      "xpath": "//input[@value and string-length(@value) > 0]",
+      "suite": "extended",
+      "category": "dynamic-attributes",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "nodeName": "input",
+            "nodeType": 1,
+            "attributes": {
+              "name": "field1",
+              "value": "test"
+            },
+            "textContent": "",
+            "startLocation": 12,
+            "endLocation": 47,
+            "path": "/html/body/input[1]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "nodeName": "input",
+            "nodeType": 1,
+            "attributes": {
+              "name": "field1",
+              "value": "test"
+            },
+            "startLocation": 12,
+            "endLocation": 47,
+            "path": "/#document/html/body/input[4]",
+            "textContent": ""
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "",
+            "nodeName": "input",
+            "nodeType": 1,
+            "attributes": {
+              "name": "field1",
+              "value": "test"
+            },
+            "textContent": "",
+            "startLocation": 12,
+            "endLocation": 47,
+            "path": "/html/body/input[1]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "",
+            "nodeName": "input",
+            "nodeType": 1,
+            "attributes": {
+              "name": "field1",
+              "value": "test"
+            },
+            "startLocation": 12,
+            "endLocation": 47,
+            "path": "/#document/html/body/input[4]",
+            "textContent": ""
+          }
+        ]
+      }
+    },
+    {
+      "name": "Multiple wildcard combinations",
+      "xpath": "//*[*/span]",
+      "suite": "extended",
+      "category": "wildcard-complex",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "ABCD",
+            "nodeName": "body",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "ABCD",
+            "startLocation": 6,
+            "endLocation": 93,
+            "path": "/html/body"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [],
+        "count": 0,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Count mismatch: JS=1, Go=0",
+        "jsResults": [
+          {
+            "value": "ABCD",
+            "nodeName": "body",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "ABCD",
+            "startLocation": 6,
+            "endLocation": 93,
+            "path": "/html/body"
+          }
+        ],
+        "goResults": []
+      }
+    },
+    {
+      "name": "Attribute vs text content priority",
+      "xpath": "//*[text()='test' or @title='test']",
+      "suite": "extended",
+      "category": "priority-tests",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "different",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "title": "test"
+            },
+            "textContent": "different",
+            "startLocation": 12,
+            "endLocation": 45,
+            "path": "/html/body/div[1]"
+          },
+          {
+            "value": "test",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "test",
+            "startLocation": 45,
+            "endLocation": 60,
+            "path": "/html/body/div[2]"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "different",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "title": "test"
+            },
+            "startLocation": 12,
+            "endLocation": 45,
+            "path": "/#document/html/body/div[3]",
+            "textContent": "different"
+          },
+          {
+            "value": "test",
+            "nodeName": "div",
+            "nodeType": 1,
+            "startLocation": 45,
+            "endLocation": 60,
+            "path": "/#document/html/body/div[3]",
+            "textContent": "test"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "different",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "title": "test"
+            },
+            "textContent": "different",
+            "startLocation": 12,
+            "endLocation": 45,
+            "path": "/html/body/div[1]"
+          },
+          {
+            "value": "test",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "test",
+            "startLocation": 45,
+            "endLocation": 60,
+            "path": "/html/body/div[2]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "different",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "title": "test"
+            },
+            "startLocation": 12,
+            "endLocation": 45,
+            "path": "/#document/html/body/div[3]",
+            "textContent": "different"
+          },
+          {
+            "value": "test",
+            "nodeName": "div",
+            "nodeType": 1,
+            "startLocation": 45,
+            "endLocation": 60,
+            "path": "/#document/html/body/div[3]",
+            "textContent": "test"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Case sensitivity in text content",
+      "xpath": "//p[text()='test']",
+      "suite": "extended",
+      "category": "case-sensitivity",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "test",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "test",
+            "startLocation": 23,
+            "endLocation": 34,
+            "path": "/html/body/p[2]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "test",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 23,
+            "endLocation": 34,
+            "path": "/#document/html/body/p[4]",
+            "textContent": "test"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "test",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "test",
+            "startLocation": 23,
+            "endLocation": 34,
+            "path": "/html/body/p[2]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "test",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 23,
+            "endLocation": 34,
+            "path": "/#document/html/body/p[4]",
+            "textContent": "test"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Null and undefined handling",
+      "xpath": "//div[@data-null='null']",
+      "suite": "extended",
+      "category": "null-handling",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Null",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-null": "null"
+            },
+            "textContent": "Null",
+            "startLocation": 23,
+            "endLocation": 55,
+            "path": "/html/body/div[2]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Null",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-null": "null"
+            },
+            "startLocation": 23,
+            "endLocation": 55,
+            "path": "/#document/html/body/div[4]",
+            "textContent": "Null"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Null",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-null": "null"
+            },
+            "textContent": "Null",
+            "startLocation": 23,
+            "endLocation": 55,
+            "path": "/html/body/div[2]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Null",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-null": "null"
+            },
+            "startLocation": 23,
+            "endLocation": 55,
+            "path": "/#document/html/body/div[4]",
+            "textContent": "Null"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Recursive structure navigation",
+      "xpath": "//ul//ul//li[text()='Level 3']",
+      "suite": "extended",
+      "category": "recursive",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Level 3",
+            "nodeName": "li",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Level 3",
+            "startLocation": 46,
+            "endLocation": 62,
+            "path": "/html/body/ul/li/ul/li/ul/li"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Level 3",
+            "nodeName": "li",
+            "nodeType": 1,
+            "startLocation": 46,
+            "endLocation": 62,
+            "path": "/#document/html/body/ul/li/ul/li/ul/li[2]",
+            "textContent": "Level 3"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Level 3",
+            "nodeName": "li",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Level 3",
+            "startLocation": 46,
+            "endLocation": 62,
+            "path": "/html/body/ul/li/ul/li/ul/li"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Level 3",
+            "nodeName": "li",
+            "nodeType": 1,
+            "startLocation": 46,
+            "endLocation": 62,
+            "path": "/#document/html/body/ul/li/ul/li/ul/li[2]",
+            "textContent": "Level 3"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Mixed element and attribute selection",
+      "xpath": "//div[@id]/span[@class] | //div/@data-type",
+      "suite": "extended",
+      "category": "mixed-selection",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "widget",
+            "nodeName": "data-type",
+            "nodeType": 2,
+            "attributes": {},
+            "textContent": "widget",
+            "startLocation": 0,
+            "endLocation": 0,
+            "path": "/data-type"
+          },
+          {
+            "value": "Text",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {
+              "class": "content"
+            },
+            "textContent": "Text",
+            "startLocation": 51,
+            "endLocation": 84,
+            "path": "/html/body/div/span"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Text",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {
+              "class": "content"
+            },
+            "startLocation": 51,
+            "endLocation": 84,
+            "path": "/#document/html/body/div/span[2]",
+            "textContent": "Text"
+          },
+          {
+            "value": "widget",
+            "nodeName": "data-type",
+            "nodeType": 2,
+            "startLocation": 0,
+            "endLocation": 0,
+            "path": "/#document/html/body/div/data-type",
+            "textContent": "widget"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"data-type\", Go=\"span\"",
+        "jsResults": [
+          {
+            "value": "widget",
+            "nodeName": "data-type",
+            "nodeType": 2,
+            "attributes": {},
+            "textContent": "widget",
+            "startLocation": 0,
+            "endLocation": 0,
+            "path": "/data-type"
+          },
+          {
+            "value": "Text",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {
+              "class": "content"
+            },
+            "textContent": "Text",
+            "startLocation": 51,
+            "endLocation": 84,
+            "path": "/html/body/div/span"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Text",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {
+              "class": "content"
+            },
+            "startLocation": 51,
+            "endLocation": 84,
+            "path": "/#document/html/body/div/span[2]",
+            "textContent": "Text"
+          },
+          {
+            "value": "widget",
+            "nodeName": "data-type",
+            "nodeType": 2,
+            "startLocation": 0,
+            "endLocation": 0,
+            "path": "/#document/html/body/div/data-type",
+            "textContent": "widget"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Complex siblings with conditions",
+      "xpath": "//p[@class='intro']/following-sibling::p[@class='content']",
+      "suite": "extended",
+      "category": "sibling-conditions",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Main",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "content"
+            },
+            "textContent": "Main",
+            "startLocation": 57,
+            "endLocation": 84,
+            "path": "/html/body/div/p[2]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Main",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "content"
+            },
+            "startLocation": 57,
+            "endLocation": 84,
+            "path": "/#document/html/body/div/p[4]",
+            "textContent": "Main"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Main",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "content"
+            },
+            "textContent": "Main",
+            "startLocation": 57,
+            "endLocation": 84,
+            "path": "/html/body/div/p[2]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Main",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "content"
+            },
+            "startLocation": 57,
+            "endLocation": 84,
+            "path": "/#document/html/body/div/p[4]",
+            "textContent": "Main"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Empty predicate brackets",
+      "xpath": "//div[true()]",
+      "suite": "extended",
+      "category": "boolean-functions",
+      "passed": false,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "First",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "First",
+            "startLocation": 12,
+            "endLocation": 28,
+            "path": "/html/body/div[1]"
+          },
+          {
+            "value": "Second",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Second",
+            "startLocation": 28,
+            "endLocation": 45,
+            "path": "/html/body/div[2]"
+          }
+        ],
+        "count": 2,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [],
+        "count": 0,
+        "error": null
+      },
+      "comparison": {
+        "match": false,
+        "reason": "Count mismatch: JS=2, Go=0",
+        "jsResults": [
+          {
+            "value": "First",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "First",
+            "startLocation": 12,
+            "endLocation": 28,
+            "path": "/html/body/div[1]"
+          },
+          {
+            "value": "Second",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Second",
+            "startLocation": 28,
+            "endLocation": 45,
+            "path": "/html/body/div[2]"
+          }
+        ],
+        "goResults": []
+      }
+    },
+    {
+      "name": "Complex count operations",
+      "xpath": "//div[count(p) = 2]",
+      "suite": "extended",
+      "category": "count-operations",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "ABC",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "ABC",
+            "startLocation": 12,
+            "endLocation": 53,
+            "path": "/html/body/div[1]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "ABC",
+            "nodeName": "div",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 53,
+            "path": "/#document/html/body/div[3]",
+            "textContent": "ABC"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "ABC",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "ABC",
+            "startLocation": 12,
+            "endLocation": 53,
+            "path": "/html/body/div[1]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "ABC",
+            "nodeName": "div",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 53,
+            "path": "/#document/html/body/div[3]",
+            "textContent": "ABC"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Stress test with many elements",
+      "xpath": "//span[position() > 15]",
+      "suite": "extended",
+      "category": "performance",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "16",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "16",
+            "startLocation": 233,
+            "endLocation": 248,
+            "path": "/html/body/div/span[16]"
+          },
+          {
+            "value": "17",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "17",
+            "startLocation": 248,
+            "endLocation": 263,
+            "path": "/html/body/div/span[17]"
+          },
+          {
+            "value": "18",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "18",
+            "startLocation": 263,
+            "endLocation": 278,
+            "path": "/html/body/div/span[18]"
+          },
+          {
+            "value": "19",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "19",
+            "startLocation": 278,
+            "endLocation": 293,
+            "path": "/html/body/div/span[19]"
+          },
+          {
+            "value": "20",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "20",
+            "startLocation": 293,
+            "endLocation": 308,
+            "path": "/html/body/div/span[20]"
+          }
+        ],
+        "count": 5,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "16",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 233,
+            "endLocation": 248,
+            "path": "/#document/html/body/div/span[21]",
+            "textContent": "16"
+          },
+          {
+            "value": "17",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 248,
+            "endLocation": 263,
+            "path": "/#document/html/body/div/span[21]",
+            "textContent": "17"
+          },
+          {
+            "value": "18",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 263,
+            "endLocation": 278,
+            "path": "/#document/html/body/div/span[21]",
+            "textContent": "18"
+          },
+          {
+            "value": "19",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 278,
+            "endLocation": 293,
+            "path": "/#document/html/body/div/span[21]",
+            "textContent": "19"
+          },
+          {
+            "value": "20",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 293,
+            "endLocation": 308,
+            "path": "/#document/html/body/div/span[21]",
+            "textContent": "20"
+          }
+        ],
+        "count": 5,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "16",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "16",
+            "startLocation": 233,
+            "endLocation": 248,
+            "path": "/html/body/div/span[16]"
+          },
+          {
+            "value": "17",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "17",
+            "startLocation": 248,
+            "endLocation": 263,
+            "path": "/html/body/div/span[17]"
+          },
+          {
+            "value": "18",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "18",
+            "startLocation": 263,
+            "endLocation": 278,
+            "path": "/html/body/div/span[18]"
+          },
+          {
+            "value": "19",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "19",
+            "startLocation": 278,
+            "endLocation": 293,
+            "path": "/html/body/div/span[19]"
+          },
+          {
+            "value": "20",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "20",
+            "startLocation": 293,
+            "endLocation": 308,
+            "path": "/html/body/div/span[20]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "16",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 233,
+            "endLocation": 248,
+            "path": "/#document/html/body/div/span[21]",
+            "textContent": "16"
+          },
+          {
+            "value": "17",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 248,
+            "endLocation": 263,
+            "path": "/#document/html/body/div/span[21]",
+            "textContent": "17"
+          },
+          {
+            "value": "18",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 263,
+            "endLocation": 278,
+            "path": "/#document/html/body/div/span[21]",
+            "textContent": "18"
+          },
+          {
+            "value": "19",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 278,
+            "endLocation": 293,
+            "path": "/#document/html/body/div/span[21]",
+            "textContent": "19"
+          },
+          {
+            "value": "20",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 293,
+            "endLocation": 308,
+            "path": "/#document/html/body/div/span[21]",
+            "textContent": "20"
           }
         ]
       }

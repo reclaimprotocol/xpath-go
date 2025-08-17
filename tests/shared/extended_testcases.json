@@ -271,5 +271,292 @@
     "xpath": "//div//p",
     "description": "DOCTYPE with descendant axis navigation",
     "category": "doctype"
+  },
+  {
+    "name": "Empty string text comparison",
+    "html": "<html><body><p></p><p> </p><p>text</p></body></html>",
+    "xpath": "//p[text()='']",
+    "description": "Match elements with empty text nodes",
+    "category": "edge-cases"
+  },
+  {
+    "name": "Zero-based vs one-based indexing",
+    "html": "<html><body><ul><li>First</li><li>Second</li><li>Third</li></ul></body></html>",
+    "xpath": "//li[1]",
+    "description": "Verify one-based indexing (should return 'First')",
+    "category": "edge-cases"
+  },
+  {
+    "name": "Very deep nesting performance",
+    "html": "<html><body><div><div><div><div><div><div><div><div><div><div><p>Deep</p></div></div></div></div></div></div></div></div></div></div></body></html>",
+    "xpath": "//p[ancestor::div[10]]",
+    "description": "Handle very deep DOM nesting",
+    "category": "edge-cases"
+  },
+  {
+    "name": "Large attribute values",
+    "html": "<html><body><div data-large='Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua'>Content</div></body></html>",
+    "xpath": "//div[contains(@data-large, 'consectetur')]",
+    "description": "Handle large attribute values",
+    "category": "edge-cases"
+  },
+  {
+    "name": "Unicode characters",
+    "html": "<html><body><p>Hello 世界</p><p>Emoji 🌍</p><p>Math ∑∆∇</p></body></html>",
+    "xpath": "//p[contains(text(), '世界')]",
+    "description": "Handle Unicode characters in XPath queries",
+    "category": "edge-cases"
+  },
+  {
+    "name": "Case sensitivity in attributes",
+    "html": "<html><body><div Class='Test'>Uppercase</div><div class='test'>Lowercase</div><div class='Test'>Mixed</div></body></html>",
+    "xpath": "//div[@class='Test']",
+    "description": "Verify case sensitivity in attribute matching",
+    "category": "edge-cases"
+  },
+  {
+    "name": "Whitespace normalization edge cases",
+    "html": "<html><body><p>  multiple   spaces  </p><p>\t\n\r mixed whitespace \t\n</p></body></html>",
+    "xpath": "//p[normalize-space(text())='multiple spaces']",
+    "description": "Normalize various whitespace characters",
+    "category": "edge-cases"
+  },
+  {
+    "name": "Boolean attribute handling",
+    "html": "<html><body><input type='checkbox' checked/><input type='checkbox'/><input type='radio' checked='checked'/></body></html>",
+    "xpath": "//input[@checked]",
+    "description": "Handle boolean attributes (present vs absent)",
+    "category": "edge-cases"
+  },
+  {
+    "name": "Numeric string comparisons",
+    "html": "<html><body><div data-num='10'>Ten</div><div data-num='2'>Two</div><div data-num='100'>Hundred</div></body></html>",
+    "xpath": "//div[@data-num='10']",
+    "description": "String comparison with numeric values",
+    "category": "edge-cases"
+  },
+  {
+    "name": "Self-closing tags",
+    "html": "<html><body><img src='test.jpg' alt='Test'/><br/><hr/><input type='text'/></body></html>",
+    "xpath": "//img[@alt='Test']",
+    "description": "Handle self-closing HTML tags",
+    "category": "edge-cases"
+  },
+  {
+    "name": "Comment nodes in navigation",
+    "html": "<html><body><div><!-- Comment 1 --><p>Text</p><!-- Comment 2 --></div></body></html>",
+    "xpath": "//div/node()[2]",
+    "description": "Navigate around comment nodes",
+    "category": "edge-cases"
+  },
+  {
+    "name": "Processing instructions",
+    "html": "<html><body><?xml-stylesheet type='text/css' href='style.css'?><div>Content</div></body></html>",
+    "xpath": "//div",
+    "description": "Handle processing instructions in document",
+    "category": "edge-cases"
+  },
+  {
+    "name": "Malformed HTML recovery",
+    "html": "<html><body><div><p>Unclosed paragraph<div>Nested incorrectly</div><span>Text</span></body></html>",
+    "xpath": "//span",
+    "description": "Handle malformed HTML structure",
+    "category": "edge-cases"
+  },
+  {
+    "name": "Mixed quotes in attributes",
+    "html": "<html><body><div title=\"Double 'quotes'\">First</div><div title='Single \"quotes\"'>Second</div></body></html>",
+    "xpath": "//div[contains(@title, 'quotes')]",
+    "description": "Handle mixed quote types in attributes",
+    "category": "edge-cases"
+  },
+  {
+    "name": "Leading/trailing whitespace in XPath",
+    "html": "<html><body><p class='test'>Content</p></body></html>",
+    "xpath": "  //p[@class='test']  ",
+    "description": "Handle whitespace around XPath expression",
+    "category": "edge-cases"
+  },
+  {
+    "name": "Complex boolean expressions with precedence",
+    "html": "<html><body><div id='a' class='x y'>A</div><div id='b' class='x'>B</div><div id='c' class='y'>C</div><div class='x y'>D</div></body></html>",
+    "xpath": "//div[@id and (@class='x y' or @id='b') and contains(@class, 'x')]",
+    "description": "Test operator precedence in complex boolean expressions",
+    "category": "boolean-precedence"
+  },
+  {
+    "name": "Arithmetic operations in predicates",
+    "html": "<html><body><div data-index='1'>A</div><div data-index='2'>B</div><div data-index='3'>C</div><div data-index='4'>D</div></body></html>",
+    "xpath": "//div[@data-index = (2 * 2)]",
+    "description": "Use arithmetic operations in predicate expressions",
+    "category": "arithmetic"
+  },
+  {
+    "name": "Division and modulo operations",
+    "html": "<html><body><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span></body></html>",
+    "xpath": "//span[position() mod 3 = 1]",
+    "description": "Use modulo operator for position-based selection",
+    "category": "arithmetic"
+  },
+  {
+    "name": "Multiple level union operations",
+    "html": "<html><body><header><h1>Title</h1><nav><a>Link</a></nav></header><main><section><h2>Subtitle</h2><p>Para</p></section></main><footer><p>Footer</p></footer></body></html>",
+    "xpath": "//header//h1 | //main//h2 | //footer//p",
+    "description": "Complex multi-level union operations",
+    "category": "union-complex"
+  },
+  {
+    "name": "Nested union with predicates",
+    "html": "<html><body><div class='a'>A1</div><div class='b'>B1</div><p class='a'>A2</p><p class='b'>B2</p><span>C</span></body></html>",
+    "xpath": "(//div[@class='a'] | //p[@class='a']) | (//div[@class='b'] | //p[@class='b'])",
+    "description": "Nested union expressions with attribute predicates",
+    "category": "union-complex"
+  },
+  {
+    "name": "String concatenation simulation",
+    "html": "<html><body><div data-prefix='test' data-suffix='123'>Item</div><div data-value='test123'>Target</div></body></html>",
+    "xpath": "//div[@data-value = concat(//div[@data-prefix][1]/@data-prefix, //div[@data-suffix][1]/@data-suffix)]",
+    "description": "Simulate string concatenation using concat function",
+    "category": "string-functions"
+  },
+  {
+    "name": "Multiple starts-with conditions",
+    "html": "<html><body><a href='https://secure.example.com'>HTTPS</a><a href='http://example.com'>HTTP</a><a href='ftp://files.com'>FTP</a></body></html>",
+    "xpath": "//a[starts-with(@href, 'http') and not(starts-with(@href, 'https'))]",
+    "description": "Multiple starts-with conditions with negation",
+    "category": "string-functions"
+  },
+  {
+    "name": "Edge case position calculations",
+    "html": "<html><body><ul><li class='item'>A</li><li>X</li><li class='item'>B</li><li>Y</li><li class='item'>C</li></ul></body></html>",
+    "xpath": "//li[@class='item'][position() = last()]",
+    "description": "Position calculation with last() in filtered context",
+    "category": "position-edge"
+  },
+  {
+    "name": "Zero and negative position handling",
+    "html": "<html><body><div>1</div><div>2</div><div>3</div></body></html>",
+    "xpath": "//div[position() = 0]",
+    "description": "Handle zero position (should return no results)",
+    "category": "position-edge"
+  },
+  {
+    "name": "Position beyond available elements",
+    "html": "<html><body><p>First</p><p>Second</p></body></html>",
+    "xpath": "//p[position() = 10]",
+    "description": "Position beyond available elements count",
+    "category": "position-edge"
+  },
+  {
+    "name": "Axis navigation with empty results",
+    "html": "<html><body><div><p>Only child</p></div></body></html>",
+    "xpath": "//p/following-sibling::*",
+    "description": "Following-sibling axis with no siblings",
+    "category": "axis-edge"
+  },
+  {
+    "name": "Complex ancestor navigation",
+    "html": "<html><body><main><article><section><div><p id='target'>Deep</p></div></section></article></main></body></html>",
+    "xpath": "//p[@id='target']/ancestor::*[position() = 2]",
+    "description": "Specific ancestor by position",
+    "category": "axis-edge"
+  },
+  {
+    "name": "Descendant with mixed content types",
+    "html": "<html><body><div>Text<span>Span</span>More text<p>Para</p>Final text</div></body></html>",
+    "xpath": "//div/descendant::text()[position() = 2]",
+    "description": "Select specific text node descendant",
+    "category": "text-nodes"
+  },
+  {
+    "name": "Function chaining complexity",
+    "html": "<html><body><p>   Hello World   </p><p>short</p><p>   Another Long Text   </p></body></html>",
+    "xpath": "//p[string-length(normalize-space(substring(text(), 2, 10))) > 5]",
+    "description": "Chain multiple string functions together",
+    "category": "function-chaining"
+  },
+  {
+    "name": "Conditional expressions with functions",
+    "html": "<html><body><div data-count='5'>Five</div><div data-count='10'>Ten</div><div data-count='15'>Fifteen</div></body></html>",
+    "xpath": "//div[string-length(@data-count) = 2 and contains(@data-count, '1')]",
+    "description": "Combine string-length with contains function",
+    "category": "function-chaining"
+  },
+  {
+    "name": "Dynamic attribute selection",
+    "html": "<html><body><input name='field1' value='test'/><input name='field2' value=''/><input name='field3'/></body></html>",
+    "xpath": "//input[@value and string-length(@value) > 0]",
+    "description": "Select elements with non-empty attribute values",
+    "category": "dynamic-attributes"
+  },
+  {
+    "name": "Multiple wildcard combinations",
+    "html": "<html><body><div><span>A</span><p>B</p></div><section><span>C</span><p>D</p></section></body></html>",
+    "xpath": "//*[*/span]",
+    "description": "Elements that have children containing span",
+    "category": "wildcard-complex"
+  },
+  {
+    "name": "Attribute vs text content priority",
+    "html": "<html><body><div title='test'>different</div><div>test</div></body></html>",
+    "xpath": "//*[text()='test' or @title='test']",
+    "description": "Union of text content and attribute matching",
+    "category": "priority-tests"
+  },
+  {
+    "name": "Case sensitivity in text content",
+    "html": "<html><body><p>Test</p><p>test</p><p>TEST</p></body></html>",
+    "xpath": "//p[text()='test']",
+    "description": "Verify case sensitivity in text matching",
+    "category": "case-sensitivity"
+  },
+  {
+    "name": "Null and undefined handling",
+    "html": "<html><body><div></div><div data-null='null'>Null</div><div data-undefined='undefined'>Undefined</div></body></html>",
+    "xpath": "//div[@data-null='null']",
+    "description": "Handle null-like string values in attributes",
+    "category": "null-handling"
+  },
+  {
+    "name": "Recursive structure navigation",
+    "html": "<html><body><ul><li>Level 1<ul><li>Level 2<ul><li>Level 3</li></ul></li></ul></li></ul></body></html>",
+    "xpath": "//ul//ul//li[text()='Level 3']",
+    "description": "Navigate deeply nested recursive structures",
+    "category": "recursive"
+  },
+  {
+    "name": "Mixed element and attribute selection",
+    "html": "<html><body><div id='container' data-type='widget'><span class='content'>Text</span></div></body></html>",
+    "xpath": "//div[@id]/span[@class] | //div/@data-type",
+    "description": "Union of element and attribute selections",
+    "category": "mixed-selection"
+  },
+  {
+    "name": "Complex siblings with conditions",
+    "html": "<html><body><div><h1>Title</h1><p class='intro'>Intro</p><p class='content'>Main</p><p class='footer'>End</p></div></body></html>",
+    "xpath": "//p[@class='intro']/following-sibling::p[@class='content']",
+    "description": "Specific sibling with attribute conditions",
+    "category": "sibling-conditions"
+  },
+  {
+    "name": "Empty predicate brackets",
+    "html": "<html><body><div>First</div><div>Second</div></body></html>",
+    "xpath": "//div[true()]",
+    "description": "Predicate with boolean true function",
+    "category": "boolean-functions"
+  },
+  {
+    "name": "Complex count operations",
+    "html": "<html><body><div><p>A</p><p>B</p><span>C</span></div><div><p>D</p></div></body></html>",
+    "xpath": "//div[count(p) = 2]",
+    "description": "Count specific child element types",
+    "category": "count-operations"
+  },
+  {
+    "name": "Stress test with many elements",
+    "html": "<html><body><div><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span></div></body></html>",
+    "xpath": "//span[position() > 15]",
+    "description": "Performance test with many similar elements",
+    "category": "performance"
   }
 ]
