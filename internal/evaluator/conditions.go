@@ -204,6 +204,11 @@ func (e *Evaluator) evaluateSimpleConditionLegacy(node *types.Node, condition st
 		return false
 	}
 
+	// Not function: not(condition) - CHECK FIRST to avoid conflicts with nested functions
+	if strings.HasPrefix(condition, "not(") || strings.HasPrefix(condition, "not (") {
+		return e.evaluateNotExpression(condition, node)
+	}
+
 	// Contains function: contains(text(), 'value') or contains(@attr, 'value')
 	if strings.Contains(condition, "contains(") {
 		return e.evaluateContainsExpression(condition, node)
@@ -234,24 +239,19 @@ func (e *Evaluator) evaluateSimpleConditionLegacy(node *types.Node, condition st
 		return e.evaluateSubstringExpression(condition, node)
 	}
 
-	// Not function: not(condition)
-	if strings.HasPrefix(condition, "not(") || strings.HasPrefix(condition, "not (") {
-		return e.evaluateNotExpression(condition, node)
-	}
-
 	// Axis expressions: parent::div, ancestor::table, etc.
 	if strings.Contains(condition, "::") {
 		return e.evaluateAxisExpression(node, condition)
 	}
 
+	// Child path expressions: head/title, head/meta[@charset] - CHECK FIRST before nested elements
+	if e.isChildPathExpression(condition) {
+		return e.evaluateChildPath(node, condition)
+	}
+
 	// Node test with predicate: span[@class='loading']
 	if strings.Contains(condition, "[") && strings.Contains(condition, "]") {
 		return e.evaluateNestedElementCondition(node, condition)
-	}
-
-	// Child path expressions: head/title, head/meta[@charset]
-	if e.isChildPathExpression(condition) {
-		return e.evaluateChildPath(node, condition)
 	}
 
 	// Simple element existence
@@ -716,21 +716,29 @@ func (e *Evaluator) evaluateNotExpression(expr string, node *types.Node) bool {
 // evaluateAndExpression evaluates expressions with 'and' operator  
 func (e *Evaluator) evaluateAndExpression(expr string, node *types.Node) bool {
 	parts := strings.Split(expr, " and ")
-	if len(parts) != 2 {
+	if len(parts) < 2 {
 		return false
 	}
 
-	left := strings.TrimSpace(parts[0])
-	right := strings.TrimSpace(parts[1])
+	// Evaluate all parts - ALL must be true for AND to succeed
+	for i, part := range parts {
+		condition := strings.TrimSpace(part)
+		result := e.evaluateAtomicCondition(node, condition)
+		
+		if !result {
+			// Short-circuit: if any part is false, the whole AND is false
+			return false
+		}
+		
+		// Log each step for debugging
+		if i < len(parts)-1 {
+			Trace("AND part %d/%d: '%s' -> %v", i+1, len(parts), condition, result)
+		} else {
+			Trace("AND part %d/%d (final): '%s' -> %v, overall result: true", i+1, len(parts), condition, result)
+		}
+	}
 
-	// Evaluate conditions in isolation to avoid context pollution
-	leftResult := e.evaluateAtomicCondition(node, left)
-	rightResult := e.evaluateAtomicCondition(node, right)
-	finalResult := leftResult && rightResult
-
-	TraceBooleanOp("and", left, right, leftResult, rightResult, finalResult)
-
-	return finalResult
+	return true
 }
 
 // evaluateAtomicCondition evaluates a single atomic condition without recursive boolean evaluation
@@ -857,6 +865,13 @@ func (e *Evaluator) evaluateAtomicCondition(node *types.Node, condition string) 
 		return false
 	}
 
+	// Not function: not(condition) - CHECK FIRST to avoid conflicts with nested functions
+	if strings.HasPrefix(condition, "not(") || strings.HasPrefix(condition, "not (") {
+		result := e.evaluateNotExpression(condition, node)
+		Trace("not() check: '%s' -> %v", condition, result)
+		return result
+	}
+
 	// Contains function: contains(text(), 'value') or contains(@attr, 'value')
 	if strings.Contains(condition, "contains(") {
 		result := e.evaluateContainsExpression(condition, node)
@@ -920,13 +935,6 @@ func (e *Evaluator) evaluateAtomicCondition(node *types.Node, condition string) 
 		return result
 	}
 
-	// Not function: not(condition)
-	if strings.HasPrefix(condition, "not(") || strings.HasPrefix(condition, "not (") {
-		result := e.evaluateNotExpression(condition, node)
-		Trace("not() check: '%s' -> %v", condition, result)
-		return result
-	}
-
 	// Axis expressions: parent::div, ancestor::table, etc.
 	if strings.Contains(condition, "::") {
 		result := e.evaluateAxisExpression(node, condition)
@@ -934,17 +942,17 @@ func (e *Evaluator) evaluateAtomicCondition(node *types.Node, condition string) 
 		return result
 	}
 
+	// Child path expressions: head/title, head/meta[@charset] - CHECK FIRST before nested elements
+	if e.isChildPathExpression(condition) {
+		result := e.evaluateChildPath(node, condition)
+		Trace("child path check: '%s' -> %v", condition, result)
+		return result
+	}
+
 	// Node test with predicate: span[@class='loading']
 	if strings.Contains(condition, "[") && strings.Contains(condition, "]") {
 		result := e.evaluateNestedElementCondition(node, condition)
 		Trace("nested element check: '%s' -> %v", condition, result)
-		return result
-	}
-
-	// Child path expressions: head/title, head/meta[@charset]
-	if e.isChildPathExpression(condition) {
-		result := e.evaluateChildPath(node, condition)
-		Trace("child path check: '%s' -> %v", condition, result)
 		return result
 	}
 
