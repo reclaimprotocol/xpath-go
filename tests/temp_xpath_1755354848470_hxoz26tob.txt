@@ -1,0 +1,1 @@
+//div[contains(@class, 'primary') and contains(@class, 'active') and not(contains(@class, 'inactive'))]

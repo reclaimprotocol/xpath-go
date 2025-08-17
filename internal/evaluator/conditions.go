@@ -137,6 +137,20 @@ func (e *Evaluator) evaluateSimpleCondition(node *types.Node, condition string) 
 		}
 	}
 
+	// Node test: node() - returns true if there are any child nodes
+	if condition == "node()" {
+		// node() matches any child node (element, text, comment, etc.)
+		// Check if node has any children or any non-empty text content
+		if len(node.Children) > 0 {
+			return true
+		}
+		// Also check for text content (text nodes)
+		if strings.TrimSpace(node.TextContent) != "" {
+			return true
+		}
+		return false
+	}
+
 	// Text content existence: text()
 	if condition == "text()" {
 		return strings.TrimSpace(node.TextContent) != ""

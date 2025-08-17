@@ -1,0 +1,1 @@
+//div[contains(@data-value, '-') and contains(@data-value, '_')]

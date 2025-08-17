@@ -30,14 +30,21 @@ func (e *Evaluator) getDescendantNodes(node *types.Node, includeSelf bool) []*ty
 func (e *Evaluator) getAncestorNodes(node *types.Node, includeSelf bool) []*types.Node {
 	var nodes []*types.Node
 
-	if includeSelf {
-		nodes = append(nodes, node)
-	}
-
+	// First collect ancestors (excluding self)
 	current := node.Parent
 	for current != nil {
 		nodes = append(nodes, current)
 		current = current.Parent
+	}
+
+	// Reverse to get document order (top-down)
+	for i, j := 0, len(nodes)-1; i < j; i, j = i+1, j-1 {
+		nodes[i], nodes[j] = nodes[j], nodes[i]
+	}
+
+	// Add self at the end if needed (document order)
+	if includeSelf {
+		nodes = append(nodes, node)
 	}
 
 	return nodes
