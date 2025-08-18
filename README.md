@@ -6,6 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Go Report Card](https://goreportcard.com/badge/github.com/reclaimprotocol/xpath-go)](https://goreportcard.com/report/github.com/reclaimprotocol/xpath-go)
 [![Coverage](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg)](https://github.com/reclaimprotocol/xpath-go)
+[![Release](https://img.shields.io/github/v/release/reclaimprotocol/xpath-go)](https://github.com/reclaimprotocol/xpath-go/releases)
 
 ## ✨ Features
 
@@ -162,31 +163,13 @@ func ByteToCharPos(s string, bytePos int) int {
 
 ### ⚠️ Compatibility Considerations
 
-While XPath-Go aims for high compatibility with web standards and reference implementations, there are some intentional differences and limitations:
+While XPath-Go aims for high compatibility with web standards, there are some intentional design choices:
 
-#### **Design Choices (Not Bugs)**
-- **HTML Entity Preservation**: Maintains original `&amp;` vs `&` (see above)
-- **Unicode Position Tracking**: Uses byte offsets instead of character offsets (see below)
-- **Whitespace Handling**: Preserves original document whitespace structure
+- **HTML Entity Preservation**: Maintains original `&amp;` vs `&` for security and consistency
+- **Unicode Position Tracking**: Uses byte offsets for Go ecosystem compatibility  
+- **Performance Optimizations**: Some complex expressions may have subtle evaluation differences
 
-#### **Complex XPath Features** 
-Some advanced XPath features have implementation differences:
-- **Complex Union Ordering**: Element vs attribute union results may have different ordering
-- **Advanced String Functions**: Complex function chaining may yield different intermediate results  
-- **Dynamic Expressions**: Some dynamic XPath expressions (like `concat()` with complex arguments) have limited support
-
-#### **Performance vs Compatibility Trade-offs**
-- **Position Calculations**: Some complex position predicates in filtered contexts are handled differently for performance
-- **Axis Navigation**: Very complex ancestor/descendant chains may have subtle differences
-- **Memory Efficiency**: Large document traversal optimized for Go's memory model
-
-#### **When Maximum Compatibility Matters**
-For use cases requiring specific compatibility behavior:
-- Test your XPath expressions with your actual use cases
-- XPath-Go prioritizes Go ecosystem integration and performance
-- Consider alternative approaches for very specific edge cases
-
-🎯 **Our goal**: Provide reliable, high-performance XPath functionality that works well in the Go ecosystem while maintaining strong compatibility with web standards.
+For complete compatibility details, see [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md).
 
 ## 🔍 Advanced Usage
 
@@ -244,16 +227,14 @@ results, err := xpath.QueryWithOptions("//div", html, xpath.Options{
 })
 ```
 
-### Debug Mode
-
-Enable detailed tracing for complex XPath debugging:
+### Debug Tracing
 
 ```go
 xpath.EnableTrace()
 defer xpath.DisableTrace()
 
 results, err := xpath.Query("//div[contains(@class, 'complex')]//p[last()]", html)
-// Will output detailed evaluation steps to stderr
+// Detailed evaluation steps logged to stderr
 ```
 
 ## 📚 Examples
@@ -334,8 +315,8 @@ results, _ := xpath.QueryWithOptions("//div", html, xpath.Options{
 })
 // StartLocation/EndLocation: Hello <span>World</span>!
 
-// Fine-grained control (both modes provide these)
-fmt.Printf("Full element: %s\n", html[result.ContentStart:result.ContentEnd])
+// Fine-grained control (always available)
+fmt.Printf("Full element: %s\n", html[result.StartLocation:result.EndLocation])
 fmt.Printf("Inner content: %s\n", html[result.ContentStart:result.ContentEnd])
 ```
 
@@ -343,33 +324,20 @@ fmt.Printf("Inner content: %s\n", html[result.ContentStart:result.ContentEnd])
 - **Full elements** (`ContentsOnly: false`): HTML processing, DOM manipulation, complete element extraction
 - **Content only** (`ContentsOnly: true`): Text processing, content analysis, clean text extraction without tags
 
-## 🧪 Testing
-
-Run the comprehensive test suite:
-
-```bash
-# Go tests
-go test ./...
-
-# Compatibility tests (requires Node.js)
-cd tests
-npm install
-npm test
-
-# Benchmarks
-go test -bench=. -benchmem ./...
-```
-
 ## 📈 Performance
 
-Optimized for real-world usage:
+Optimized for production use:
 
-- **Compilation**: Fast XPath parsing with caching support
-- **Evaluation**: Efficient tree traversal and predicate evaluation
-- **Memory**: Minimal allocations during evaluation
-- **Concurrency**: Thread-safe, supports parallel execution
+- **Fast parsing** with caching support
+- **Efficient evaluation** with minimal memory allocations  
+- **Thread-safe** design for concurrent usage
+- **Compiled expressions** for repeated queries
 
-Use compiled XPath expressions for best performance when running the same query multiple times.
+```go
+// Compile once, use many times
+compiled, _ := xpath.Compile("//div[@class='item'][position()>1]")
+results, _ := compiled.Evaluate(html)
+```
 
 ## 🛠️ API Reference
 
@@ -423,80 +391,32 @@ type Options struct {
 
 Both modes maintain precise position tracking. With `ContentsOnly: true`, `StartLocation`/`EndLocation` point to the content boundaries, while `ContentStart`/`ContentEnd` are always available for fine-grained control.
 
-## 🔧 Advanced Configuration
+## 🔧 Development
 
-### Debug Tracing
-
-Enable detailed trace logging programmatically:
-
-```go
-xpath.EnableTrace()  // Enable detailed logging to stderr
-defer xpath.DisableTrace()
-
-results, err := xpath.Query("//div", html)
-// Trace output will show evaluation steps
-```
-
-### Build Optimization
-
-For production builds, use standard Go optimization flags:
+### Testing
 
 ```bash
-# Optimized production build
-go build -ldflags "-s -w" ./cmd/examples/basic
+# Go tests
+go test ./...
+
+# Compatibility tests (requires Node.js)
+cd tests && npm install && npm test
+
+# Benchmarks
+go test -bench=. -benchmem ./...
 ```
-
-## ⚠️ Compatibility Notes
-
-This library works as expected for most scenarios with jsdom's XPath implementation. A few edge cases that behave differently are documented below:
-
-### Union Expression Ordering
-
-**Edge Case**: Mixed element and attribute selection unions may return results in different orders.
-
-```xpath
-// This expression may return results in different order
-//div[@id]/span[@class] | //div/@data-type
-```
-
-**Behavior**: 
-- **Go implementation**: Returns results in document order (elements first, then attributes)
-- **JavaScript/jsdom**: May prioritize attribute nodes in certain union expressions
-
-**Impact**: Minimal - the correct nodes are selected, only ordering differs.
-
-**Workaround**: If specific ordering is required, use separate queries and combine results manually.
-
-### Other Minor Differences
-
-The following edge cases are considered acceptable for production use:
-
-- **Unicode location tracking**: Position calculations use byte offsets rather than character offsets for Unicode content
-- **Complex union predicates**: Advanced union expressions with nested predicates may have slight ordering variations  
-- **String concatenation**: The `concat()` function with complex XPath arguments is not fully supported
-- **Function chaining edge cases**: Deeply nested function calls (3+ levels) may have minor evaluation differences
-
-For complete details, see [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md).
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md).
-
-### Development Setup
+We welcome contributions! 
 
 ```bash
-# Clone repository
+# Clone and setup
 git clone https://github.com/reclaimprotocol/xpath-go.git
-cd xpath-go
-
-# Install dependencies
-go mod download
+cd xpath-go && go mod download
 
 # Run tests
-go test ./...
-
-# Run compatibility tests
-cd tests && npm install && npm test
+go test ./... && cd tests && npm install && npm test
 ```
 
 ## 📄 License
