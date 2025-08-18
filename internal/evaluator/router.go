@@ -241,17 +241,17 @@ func (c *PredicateClassifier) parseFunctionCall() (string, []string) {
 
 func (c *PredicateClassifier) parsePositionalExpression() interface{} {
 	expr := strings.TrimSpace(c.expr)
-	
+
 	// Check for last() function
 	if expr == "last()" {
 		return "last()"
 	}
-	
+
 	// Parse numeric position
 	if num, err := strconv.Atoi(expr); err == nil && num > 0 {
 		return num
 	}
-	
+
 	return expr
 }
 
@@ -267,101 +267,8 @@ func (c *PredicateClassifier) parseNestedElement() (string, string) {
 
 // RoutePredicateExpression routes an expression to the appropriate handler
 func (e *Evaluator) RoutePredicateExpression(nodes []*types.Node, expr string) []*types.Node {
-	predicateType, metadata := ClassifyPredicate(expr)
+	Trace("RoutePredicateExpression: expr='%s'", expr)
 
-	switch predicateType {
-	case BooleanType:
-		operator := metadata["operator"].(string)
-		if operator == "and" {
-			return e.applyAndPredicate(nodes, expr)
-		} else if operator == "or" {
-			return e.applyOrPredicate(nodes, expr)
-		}
-		// Fallback if operator is neither and nor or
-		return nodes
-
-	case AttributeType:
-		return e.applyAttributePredicate(nodes, expr)
-
-	case TextType:
-		return e.applyTextPredicate(nodes, expr)
-
-	case AxisType:
-		var filtered []*types.Node
-		for _, node := range nodes {
-			if e.evaluateSimpleCondition(node, expr) {
-				filtered = append(filtered, node)
-			}
-		}
-		return filtered
-
-	case FunctionType:
-		return e.routeFunctionCall(nodes, expr)
-
-	case PositionalType:
-		return e.applyPositionalPredicate(nodes, expr)
-
-	case NestedElementType:
-		return e.applyNestedPredicate(nodes, expr)
-
-	case SimpleElementType:
-		var filtered []*types.Node
-		for _, node := range nodes {
-			if e.evaluateSimpleCondition(node, expr) {
-				filtered = append(filtered, node)
-			}
-		}
-		return filtered
-
-	default:
-		// Fallback to old logic
-		var filtered []*types.Node
-		for _, node := range nodes {
-			if e.evaluateSimpleCondition(node, expr) {
-				filtered = append(filtered, node)
-			}
-		}
-		return filtered
-	}
-}
-
-// routeFunctionCall routes function calls to appropriate handlers
-func (e *Evaluator) routeFunctionCall(nodes []*types.Node, expr string) []*types.Node {
-	switch {
-	case strings.HasPrefix(expr, "not(") || strings.HasPrefix(expr, "not ("):
-		return e.applyNotPredicate(nodes, expr)
-	case strings.Contains(expr, "position()"):
-		// Check for modulo operations first
-		if strings.Contains(expr, "mod") {
-			return e.applyPositionModPredicate(nodes, expr)
-		}
-		return e.applyPositionPredicate(nodes, expr)
-	case strings.Contains(expr, "contains("):
-		return e.applyContainsPredicate(nodes, expr)
-	case strings.Contains(expr, "starts-with("):
-		return e.applyStartsWithPredicate(nodes, expr)
-	case strings.Contains(expr, "substring("):
-		return e.applySubstringPredicate(nodes, expr)
-	case strings.Contains(expr, "string-length("):
-		return e.applyStringLengthPredicate(nodes, expr)
-	case strings.Contains(expr, "count("):
-		return e.applyCountPredicate(nodes, expr)
-	case strings.Contains(expr, "normalize-space("):
-		return e.applyNormalizeSpacePredicate(nodes, expr)
-	case strings.Contains(expr, "concat("):
-		return e.applyConcatPredicate(nodes, expr)
-	case expr == "true()":
-		return nodes  // true() always returns all nodes
-	case expr == "false()":
-		return []*types.Node{}  // false() always returns no nodes
-	default:
-		// Fallback
-		var filtered []*types.Node
-		for _, node := range nodes {
-			if e.evaluateSimpleCondition(node, expr) {
-				filtered = append(filtered, node)
-			}
-		}
-		return filtered
-	}
+	// Use unified expression evaluator for all expressions
+	return e.applyUnifiedPredicate(nodes, expr)
 }

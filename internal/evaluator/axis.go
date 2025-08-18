@@ -34,22 +34,22 @@ func (e *Evaluator) getDescendantNodes(node *types.Node, includeSelf bool) []*ty
 func (e *Evaluator) getAncestorNodes(node *types.Node, includeSelf bool) []*types.Node {
 	var nodes []*types.Node
 
-	// Collect ancestors in reverse order first (closest to farthest)
+	// Collect ancestors in closest-to-farthest order first
 	current := node.Parent
 	for current != nil {
 		nodes = append(nodes, current)
 		current = current.Parent
 	}
 
-	// Reverse the list to get document order (root to closest ancestor)
-	for i, j := 0, len(nodes)-1; i < j; i, j = i+1, j-1 {
-		nodes[i], nodes[j] = nodes[j], nodes[i]
-	}
-
-	// Add self at the end if needed (document order: ancestors then self)
 	if includeSelf {
+		// For ancestor-or-self, order should be document order (root to self)
+		// Reverse the ancestor list and add self at the end
+		for i, j := 0, len(nodes)-1; i < j; i, j = i+1, j-1 {
+			nodes[i], nodes[j] = nodes[j], nodes[i]
+		}
 		nodes = append(nodes, node)
 	}
+	// For ancestor axis (without self), keep closest-to-farthest order for position() predicates
 
 	return nodes
 }

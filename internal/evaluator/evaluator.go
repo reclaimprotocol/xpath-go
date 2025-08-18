@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -65,6 +66,9 @@ func (e *Evaluator) evaluateSteps(xpath *types.ParsedXPath, document *types.Node
 				}
 			}
 		}
+
+		// Sort results by document order (StartPos) for JavaScript compatibility
+		e.sortNodesByDocumentOrder(allResults)
 
 		return allResults, nil
 	}
@@ -190,6 +194,7 @@ func (e *Evaluator) applyNodeTest(nodes []*types.Node, nodeTest string) []*types
 // applyPredicate filters nodes based on predicate
 func (e *Evaluator) applyPredicate(nodes []*types.Node, predicate types.XPathPredicate, contextNode *types.Node) []*types.Node {
 	expr := strings.TrimSpace(predicate.Expression)
+	Trace("applyPredicate called with expr='%s', nodes=%d", expr, len(nodes))
 
 	// Handle positional predicates like [1], [2], [last()]
 	if pos, err := strconv.Atoi(expr); err == nil {
@@ -213,7 +218,7 @@ func (e *Evaluator) applyPredicate(nodes []*types.Node, predicate types.XPathPre
 // applyPositionalPredicate handles numeric position predicates like [1], [2], [last()]
 func (e *Evaluator) applyPositionalPredicate(nodes []*types.Node, expr string) []*types.Node {
 	expr = strings.TrimSpace(expr)
-	
+
 	// Handle numeric positions like [1], [2], [10]
 	if pos, err := strconv.Atoi(expr); err == nil {
 		if pos > 0 && pos <= len(nodes) {
@@ -221,7 +226,7 @@ func (e *Evaluator) applyPositionalPredicate(nodes []*types.Node, expr string) [
 		}
 		return []*types.Node{}
 	}
-	
+
 	// Handle last() function
 	if expr == "last()" {
 		if len(nodes) > 0 {
@@ -229,9 +234,21 @@ func (e *Evaluator) applyPositionalPredicate(nodes []*types.Node, expr string) [
 		}
 		return []*types.Node{}
 	}
-	
+
 	// Fallback
 	return []*types.Node{}
+}
+
+// sortNodesByDocumentOrder sorts nodes by their document position
+func (e *Evaluator) sortNodesByDocumentOrder(nodes []types.Node) {
+	sort.Slice(nodes, func(i, j int) bool {
+		// Sort by start position (document order)
+		if nodes[i].StartPos != nodes[j].StartPos {
+			return nodes[i].StartPos < nodes[j].StartPos
+		}
+		// If start positions are equal, sort by end position
+		return nodes[i].EndPos < nodes[j].EndPos
+	})
 }
 
 // isSimpleElementName checks if a condition is a simple element name (like span, a, div)

@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Unicode position tracking",
+    "html": "<html><body><p>Hello 世界</p><p>Emoji 🌍</p><p>Math ∑∆∇</p></body></html>",
+    "xpath": "//p[contains(text(), '世界')]",
+    "description": "Unicode characters with byte-based position tracking",
+    "category": "edge-cases",
+    "expected_difference": "Position tracking uses byte offsets instead of character offsets",
+    "go_behavior": "Uses byte-based position calculation (Go idiomatic)",
+    "js_behavior": "Uses character-based position calculation"
+  },
+  {
+    "name": "Complex ancestor with attributes",
+    "html": "<html><body><main><article><section class='content'><div><p class='text'>Target</p></div></section></article><aside><section class='sidebar'><div><p class='text'>Skip</p></div></section></aside></main></body></html>",
+    "xpath": "//p[@class='text'][ancestor::section[@class='content']]",
+    "description": "Ancestor checking with specific class attributes",
+    "category": "edge-cases",
+    "expected_difference": "Complex predicate parsing may handle attribute+axis combinations differently",
+    "go_behavior": "May match additional nodes due to predicate evaluation order",
+    "js_behavior": "Strict predicate evaluation"
+  }
+]

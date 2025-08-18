@@ -78,7 +78,7 @@ func (e *Evaluator) evaluateAxisExpression(node *types.Node, axisExpr string) bo
 		if strings.Contains(nodeTest, "[") && e.hasPositionalPredicate(nodeTest) {
 			return e.evaluateAncestorWithPosition(node, nodeTest)
 		}
-		
+
 		// Standard ancestor evaluation - any matching ancestor
 		current := node.Parent
 		for current != nil {
@@ -167,7 +167,7 @@ func (e *Evaluator) matchesNodeTestWithPredicate(node *types.Node, nodeTest stri
 	// Remove closing bracket
 	predicate = strings.TrimSuffix(predicate, "]")
 
-	Trace("matchesNodeTestWithPredicate: nodeTest='%s', elementName='%s', predicate='%s', node='%s'", 
+	Trace("matchesNodeTestWithPredicate: nodeTest='%s', elementName='%s', predicate='%s', node='%s'",
 		nodeTest, elementName, predicate, node.Name)
 
 	// Check element name match
@@ -194,22 +194,22 @@ func (e *Evaluator) matchesNodeTestWithPredicate(node *types.Node, nodeTest stri
 // isPositionalPredicate checks if a predicate is a position-based predicate
 func (e *Evaluator) isPositionalPredicate(predicate string) bool {
 	predicate = strings.TrimSpace(predicate)
-	
+
 	// Check for numeric position
 	if _, err := strconv.Atoi(predicate); err == nil {
 		return true
 	}
-	
+
 	// Check for last() function
 	if predicate == "last()" {
 		return true
 	}
-	
+
 	// Check for position() function calls
 	if strings.Contains(predicate, "position()") {
 		return true
 	}
-	
+
 	return false
 }
 
@@ -219,10 +219,10 @@ func (e *Evaluator) hasPositionalPredicate(nodeTest string) bool {
 	if idx == -1 {
 		return false
 	}
-	
+
 	predicate := strings.TrimSpace(nodeTest[idx+1:])
 	predicate = strings.TrimSuffix(predicate, "]")
-	
+
 	return e.isPositionalPredicate(predicate)
 }
 
@@ -233,13 +233,13 @@ func (e *Evaluator) evaluateAncestorWithPosition(node *types.Node, nodeTest stri
 	if idx == -1 {
 		return false
 	}
-	
+
 	elementName := strings.TrimSpace(nodeTest[:idx])
 	predicate := strings.TrimSpace(nodeTest[idx+1:])
 	predicate = strings.TrimSuffix(predicate, "]")
-	
+
 	Trace("evaluateAncestorWithPosition: elementName='%s', predicate='%s'", elementName, predicate)
-	
+
 	// Collect all ancestor nodes that match the element name
 	// For ancestor axis with position predicates, order is from closest to farthest
 	var matchingAncestors []*types.Node
@@ -250,17 +250,17 @@ func (e *Evaluator) evaluateAncestorWithPosition(node *types.Node, nodeTest stri
 		}
 		current = current.Parent
 	}
-	
+
 	Trace("found %d matching ancestors for element '%s'", len(matchingAncestors), elementName)
 	for i, ancestor := range matchingAncestors {
 		Trace("  ancestor[%d]: %s", i+1, ancestor.Name)
 	}
-	
+
 	// Apply positional predicate to the collection
 	filtered := e.applyPositionalPredicate(matchingAncestors, predicate)
-	
+
 	Trace("after position filtering: %d nodes remain", len(filtered))
-	
+
 	// Return true if any nodes remain after position filtering
 	return len(filtered) > 0
 }
@@ -268,43 +268,43 @@ func (e *Evaluator) evaluateAncestorWithPosition(node *types.Node, nodeTest stri
 // isArithmeticExpression checks if an expression contains arithmetic operations
 func (e *Evaluator) isArithmeticExpression(expr string) bool {
 	expr = strings.TrimSpace(expr)
-	
+
 	// Check for parentheses and arithmetic operators
 	return (strings.HasPrefix(expr, "(") && strings.HasSuffix(expr, ")")) &&
-		   (strings.Contains(expr, "+") || strings.Contains(expr, "-") || 
-		    strings.Contains(expr, "*") || strings.Contains(expr, "/") ||
-		    strings.Contains(expr, "div") || strings.Contains(expr, "mod"))
+		(strings.Contains(expr, "+") || strings.Contains(expr, "-") ||
+			strings.Contains(expr, "*") || strings.Contains(expr, "/") ||
+			strings.Contains(expr, "div") || strings.Contains(expr, "mod"))
 }
 
 // evaluateArithmeticExpression evaluates simple arithmetic expressions like (2 * 2)
 func (e *Evaluator) evaluateArithmeticExpression(expr string) (string, error) {
 	expr = strings.TrimSpace(expr)
-	
+
 	// Remove outer parentheses
 	if strings.HasPrefix(expr, "(") && strings.HasSuffix(expr, ")") {
 		expr = strings.TrimSpace(expr[1 : len(expr)-1])
 	}
-	
+
 	Trace("Evaluating arithmetic: '%s'", expr)
-	
+
 	// Handle simple binary operations: a op b
 	operators := []string{"*", "/", "div", "+", "-", "mod"}
-	
+
 	for _, op := range operators {
 		if strings.Contains(expr, op) {
 			parts := strings.Split(expr, op)
 			if len(parts) == 2 {
 				leftStr := strings.TrimSpace(parts[0])
 				rightStr := strings.TrimSpace(parts[1])
-				
+
 				// Convert to numbers
 				left, err1 := strconv.ParseFloat(leftStr, 64)
 				right, err2 := strconv.ParseFloat(rightStr, 64)
-				
+
 				if err1 != nil || err2 != nil {
 					continue // Skip if can't parse as numbers
 				}
-				
+
 				var result float64
 				switch op {
 				case "*":
@@ -324,7 +324,7 @@ func (e *Evaluator) evaluateArithmeticExpression(expr string) (string, error) {
 					}
 					result = float64(int(left) % int(right))
 				}
-				
+
 				// Convert back to string, handling integers cleanly
 				if result == float64(int(result)) {
 					return strconv.Itoa(int(result)), nil
@@ -333,7 +333,7 @@ func (e *Evaluator) evaluateArithmeticExpression(expr string) (string, error) {
 			}
 		}
 	}
-	
+
 	return expr, fmt.Errorf("unsupported arithmetic expression")
 }
 
@@ -440,6 +440,7 @@ func (e *Evaluator) evaluateStartsWithExpression(expr string, node *types.Node) 
 // evaluateStringLengthExpression evaluates string-length() function expressions
 func (e *Evaluator) evaluateStringLengthExpression(expr string, node *types.Node) bool {
 	// Parse string-length(text())>10 or string-length(@attr)>5
+	Trace("evaluateStringLengthExpression called with expr='%s', node text='%s'", expr, node.TextContent)
 	start := strings.Index(expr, "string-length(")
 	if start == -1 {
 		return false
@@ -488,11 +489,14 @@ func (e *Evaluator) evaluateStringLengthExpression(expr string, node *types.Node
 	}
 
 	actualLength := len(textToMeasure)
+	Trace("string-length() evaluation: text='%s' -> length=%d, comparison='%s'", textToMeasure, actualLength, comparison)
 
 	// Parse comparison
 	if strings.HasPrefix(comparison, ">") {
 		if targetLength, err := strconv.Atoi(strings.TrimSpace(comparison[1:])); err == nil {
-			return actualLength > targetLength
+			result := actualLength > targetLength
+			Trace("string-length() > comparison: %d > %d = %v", actualLength, targetLength, result)
+			return result
 		}
 	} else if strings.HasPrefix(comparison, "<") {
 		if targetLength, err := strconv.Atoi(strings.TrimSpace(comparison[1:])); err == nil {
@@ -725,15 +729,15 @@ func (e *Evaluator) evaluateAtomicCondition(node *types.Node, condition string) 
 			if len(parts) == 2 {
 				attrName := strings.TrimSpace(strings.TrimPrefix(parts[0], "@"))
 				rightSide := strings.TrimSpace(parts[1])
-				
+
 				// Check if right side contains function calls like concat()
 				if strings.Contains(rightSide, "concat(") {
 					// This is a function expression, evaluate it as such
 					return e.evaluateConcatExpression(condition, node)
 				}
-				
+
 				expectedValue := strings.Trim(rightSide, "'\"")
-				
+
 				// Evaluate arithmetic expressions if present
 				if e.isArithmeticExpression(expectedValue) {
 					if evaluatedValue, err := e.evaluateArithmeticExpression(expectedValue); err == nil {
@@ -934,193 +938,6 @@ func (e *Evaluator) evaluateOrExpression(expr string, node *types.Node) bool {
 	TraceBooleanOp("or", left, right, leftResult, rightResult, finalResult)
 
 	return finalResult
-}
-
-// evaluatePositionExpression evaluates position-based expressions
-func (e *Evaluator) evaluatePositionExpression(expr string, position int) bool {
-	// Handle position() = n, position() > n, position() < n, etc.
-	if strings.Contains(expr, "position()") {
-		if strings.Contains(expr, " = ") {
-			parts := strings.Split(expr, " = ")
-			if len(parts) == 2 {
-				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
-					return position == targetPos
-				}
-			}
-		} else if strings.Contains(expr, "=") {
-			parts := strings.Split(expr, "=")
-			if len(parts) == 2 {
-				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
-					return position == targetPos
-				}
-			}
-		} else if strings.Contains(expr, " > ") {
-			parts := strings.Split(expr, " > ")
-			if len(parts) == 2 {
-				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
-					return position > targetPos
-				}
-			}
-		} else if strings.Contains(expr, ">") {
-			parts := strings.Split(expr, ">")
-			if len(parts) == 2 {
-				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
-					return position > targetPos
-				}
-			}
-		} else if strings.Contains(expr, " < ") {
-			parts := strings.Split(expr, " < ")
-			if len(parts) == 2 {
-				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
-					return position < targetPos
-				}
-			}
-		} else if strings.Contains(expr, "<") {
-			parts := strings.Split(expr, "<")
-			if len(parts) == 2 {
-				if targetPos, err := strconv.Atoi(strings.TrimSpace(parts[1])); err == nil {
-					return position < targetPos
-				}
-			}
-		}
-	}
-
-	// Handle numeric position directly
-	if pos, err := strconv.Atoi(strings.TrimSpace(expr)); err == nil {
-		return position == pos
-	}
-
-	return false
-}
-
-// evaluatePositionExpressionWithContext evaluates position-based expressions with context (node count)
-func (e *Evaluator) evaluatePositionExpressionWithContext(expr string, position int, totalNodes int) bool {
-	// Handle position() = n, position() > n, position() < n, etc.
-	if strings.Contains(expr, "position()") {
-		if strings.Contains(expr, " = ") {
-			parts := strings.Split(expr, " = ")
-			if len(parts) == 2 {
-				rightSide := strings.TrimSpace(parts[1])
-				// Handle last() function
-				if rightSide == "last()" {
-					return position == totalNodes
-				}
-				// Handle numeric values
-				if targetPos, err := strconv.Atoi(rightSide); err == nil {
-					return position == targetPos
-				}
-			}
-		} else if strings.Contains(expr, "=") {
-			parts := strings.Split(expr, "=")
-			if len(parts) == 2 {
-				rightSide := strings.TrimSpace(parts[1])
-				// Handle last() function
-				if rightSide == "last()" {
-					return position == totalNodes
-				}
-				// Handle numeric values
-				if targetPos, err := strconv.Atoi(rightSide); err == nil {
-					return position == targetPos
-				}
-			}
-		} else if strings.Contains(expr, " > ") {
-			parts := strings.Split(expr, " > ")
-			if len(parts) == 2 {
-				rightSide := strings.TrimSpace(parts[1])
-				// Handle last() function
-				if rightSide == "last()" {
-					return position > totalNodes
-				}
-				// Handle numeric values
-				if targetPos, err := strconv.Atoi(rightSide); err == nil {
-					return position > targetPos
-				}
-			}
-		} else if strings.Contains(expr, ">") {
-			parts := strings.Split(expr, ">")
-			if len(parts) == 2 {
-				rightSide := strings.TrimSpace(parts[1])
-				// Handle last() function
-				if rightSide == "last()" {
-					return position > totalNodes
-				}
-				// Handle numeric values
-				if targetPos, err := strconv.Atoi(rightSide); err == nil {
-					return position > targetPos
-				}
-			}
-		} else if strings.Contains(expr, " < ") {
-			parts := strings.Split(expr, " < ")
-			if len(parts) == 2 {
-				rightSide := strings.TrimSpace(parts[1])
-				// Handle last() function
-				if rightSide == "last()" {
-					return position < totalNodes
-				}
-				// Handle numeric values
-				if targetPos, err := strconv.Atoi(rightSide); err == nil {
-					return position < targetPos
-				}
-			}
-		} else if strings.Contains(expr, "<") {
-			parts := strings.Split(expr, "<")
-			if len(parts) == 2 {
-				rightSide := strings.TrimSpace(parts[1])
-				// Handle last() function
-				if rightSide == "last()" {
-					return position < totalNodes
-				}
-				// Handle numeric values
-				if targetPos, err := strconv.Atoi(rightSide); err == nil {
-					return position < targetPos
-				}
-			}
-		}
-	}
-
-	// Handle numeric position directly
-	if pos, err := strconv.Atoi(strings.TrimSpace(expr)); err == nil {
-		return position == pos
-	}
-
-	// Handle last() directly
-	if strings.TrimSpace(expr) == "last()" {
-		return position == totalNodes
-	}
-
-	return false
-}
-
-// evaluatePositionModExpression evaluates position modulo expressions
-func (e *Evaluator) evaluatePositionModExpression(expr string, position int) bool {
-	// Handle position() mod n = 0
-	if strings.Contains(expr, "mod") && strings.Contains(expr, "position()") {
-		// Parse "position() mod N = X"
-		parts := strings.Split(expr, "=")
-		if len(parts) != 2 {
-			return false
-		}
-
-		leftSide := strings.TrimSpace(parts[0])
-		rightSide := strings.TrimSpace(parts[1])
-
-		// Extract mod operands from "position() mod N"
-		modParts := strings.Split(leftSide, "mod")
-		if len(modParts) != 2 {
-			return false
-		}
-
-		divisor, err1 := strconv.Atoi(strings.TrimSpace(modParts[1]))
-		remainder, err2 := strconv.Atoi(rightSide)
-
-		if err1 != nil || err2 != nil {
-			return false
-		}
-
-		return position%divisor == remainder
-	}
-
-	return false
 }
 
 // evaluateSubstringAfterExpression evaluates substring-after() function expressions
@@ -1370,13 +1187,13 @@ func (e *Evaluator) evaluateNumberExpression(expr string, node *types.Node) bool
 // evaluateConcatExpression evaluates concat() function expressions
 func (e *Evaluator) evaluateConcatExpression(expr string, node *types.Node) bool {
 	// Parse expressions like: @attr = concat(//path[1]/@attr1, //path[1]/@attr2)
-	
+
 	// Find the concat function call
 	concatStart := strings.Index(expr, "concat(")
 	if concatStart == -1 {
 		return false
 	}
-	
+
 	// Find the matching closing parenthesis
 	depth := 0
 	var concatEnd int
@@ -1391,20 +1208,20 @@ func (e *Evaluator) evaluateConcatExpression(expr string, node *types.Node) bool
 			depth--
 		}
 	}
-	
+
 	if concatEnd == 0 {
 		return false
 	}
-	
+
 	// Extract the arguments inside concat()
-	concatArgs := expr[concatStart+7:concatEnd]
-	
+	concatArgs := expr[concatStart+7 : concatEnd]
+
 	// Split arguments by comma (simplified - should handle nested expressions)
 	args := strings.Split(concatArgs, ",")
 	if len(args) < 2 {
 		return false
 	}
-	
+
 	// Evaluate each argument and concatenate
 	var resultBuilder strings.Builder
 	for _, arg := range args {
@@ -1412,13 +1229,13 @@ func (e *Evaluator) evaluateConcatExpression(expr string, node *types.Node) bool
 		argValue := e.evaluateConcatArgument(arg, node)
 		resultBuilder.WriteString(argValue)
 	}
-	
+
 	// Get the concatenated result
 	concatResult := resultBuilder.String()
-	
+
 	// Find what we're comparing against (left side of the comparison)
 	leftSide := strings.TrimSpace(expr[:concatStart])
-	
+
 	// Remove trailing = if present
 	if strings.HasSuffix(leftSide, "=") {
 		leftSide = strings.TrimSpace(leftSide[:len(leftSide)-1])
@@ -1426,7 +1243,7 @@ func (e *Evaluator) evaluateConcatExpression(expr string, node *types.Node) bool
 	if strings.HasSuffix(leftSide, " ") {
 		leftSide = strings.TrimSpace(leftSide)
 	}
-	
+
 	// Get the value to compare
 	var compareValue string
 	if strings.HasPrefix(leftSide, "@") {
@@ -1438,7 +1255,7 @@ func (e *Evaluator) evaluateConcatExpression(expr string, node *types.Node) bool
 	} else if leftSide == "text()" {
 		compareValue = node.TextContent
 	}
-	
+
 	result := compareValue == concatResult
 	Trace("Concat expression: %s concat('%s') == '%s' -> %v", leftSide, concatResult, compareValue, result)
 	return result
@@ -1447,7 +1264,7 @@ func (e *Evaluator) evaluateConcatExpression(expr string, node *types.Node) bool
 // evaluateConcatArgument evaluates a single argument to concat function
 func (e *Evaluator) evaluateConcatArgument(arg string, node *types.Node) string {
 	arg = strings.TrimSpace(arg)
-	
+
 	// Handle string literals
 	if strings.HasPrefix(arg, "'") && strings.HasSuffix(arg, "'") {
 		return strings.Trim(arg, "'")
@@ -1455,7 +1272,7 @@ func (e *Evaluator) evaluateConcatArgument(arg string, node *types.Node) string 
 	if strings.HasPrefix(arg, "\"") && strings.HasSuffix(arg, "\"") {
 		return strings.Trim(arg, "\"")
 	}
-	
+
 	// Handle XPath expressions like //div[@attr][1]/@attr
 	if strings.Contains(arg, "//") && strings.Contains(arg, "/@") {
 		// This is an XPath expression that needs to be evaluated
@@ -1463,7 +1280,7 @@ func (e *Evaluator) evaluateConcatArgument(arg string, node *types.Node) string 
 		Trace("Concat arg XPath '%s' -> '%s'", arg, result)
 		return result
 	}
-	
+
 	// Handle simple attribute references
 	if strings.HasPrefix(arg, "@") {
 		attrName := strings.TrimPrefix(arg, "@")
@@ -1471,12 +1288,12 @@ func (e *Evaluator) evaluateConcatArgument(arg string, node *types.Node) string 
 			return value
 		}
 	}
-	
+
 	// Handle text() function
 	if arg == "text()" {
 		return node.TextContent
 	}
-	
+
 	Trace("Concat arg '%s' -> ''", arg)
 	return ""
 }
@@ -1485,27 +1302,27 @@ func (e *Evaluator) evaluateConcatArgument(arg string, node *types.Node) string 
 func (e *Evaluator) evaluateXPathExpression(xpath string, contextNode *types.Node) string {
 	// For the concat test case: //div[@data-prefix][1]/@data-prefix
 	// We need to find the first div with data-prefix attribute and get its value
-	
+
 	// Find the root document
 	root := contextNode
 	for root.Parent != nil {
 		root = root.Parent
 	}
-	
+
 	// Remove spaces from xpath for matching
 	xpath = strings.ReplaceAll(xpath, " ", "")
-	
+
 	// Simple implementation for the specific test case pattern
 	if strings.Contains(xpath, "//div[@data-prefix][1]/@data-prefix") {
 		// Find first div with data-prefix attribute
 		return e.findFirstDivWithAttribute(root, "data-prefix")
 	}
-	
+
 	if strings.Contains(xpath, "//div[@data-suffix][1]/@data-suffix") {
-		// Find first div with data-suffix attribute  
+		// Find first div with data-suffix attribute
 		return e.findFirstDivWithAttribute(root, "data-suffix")
 	}
-	
+
 	return ""
 }
 
@@ -1516,13 +1333,331 @@ func (e *Evaluator) findFirstDivWithAttribute(node *types.Node, attrName string)
 			return value
 		}
 	}
-	
+
 	// Search children recursively
 	for _, child := range node.Children {
 		if result := e.findFirstDivWithAttribute(child, attrName); result != "" {
 			return result
 		}
 	}
-	
+
 	return ""
+}
+
+// evaluateArithmeticExpressionWithContext evaluates arithmetic expressions with position context
+func (e *Evaluator) evaluateArithmeticExpressionWithContext(expr string, position int, totalNodes int) bool {
+	Trace("evaluateArithmeticExpression: expr='%s', position=%d, totalNodes=%d", expr, position, totalNodes)
+
+	// Handle expressions like "position() mod 2 = 0" or "2 = 2"
+	if strings.Contains(expr, " mod ") {
+		return e.evaluateModuloExpression(expr, position)
+	}
+
+	// Handle direct arithmetic like "2 * 2"
+	if strings.Contains(expr, "=") {
+		parts := strings.Split(expr, "=")
+		if len(parts) == 2 {
+			left := strings.TrimSpace(parts[0])
+			right := strings.TrimSpace(parts[1])
+
+			// Evaluate both sides
+			leftVal := e.evaluateArithmeticSide(left, position, totalNodes)
+			rightVal := e.evaluateArithmeticSide(right, position, totalNodes)
+
+			Trace("arithmetic comparison: %s (%d) = %s (%d) -> %v", left, leftVal, right, rightVal, leftVal == rightVal)
+			return leftVal == rightVal
+		}
+	}
+
+	// Handle > comparisons
+	if strings.Contains(expr, ">") {
+		parts := strings.Split(expr, ">")
+		if len(parts) == 2 {
+			left := strings.TrimSpace(parts[0])
+			right := strings.TrimSpace(parts[1])
+
+			leftVal := e.evaluateArithmeticSide(left, position, totalNodes)
+			rightVal := e.evaluateArithmeticSide(right, position, totalNodes)
+
+			return leftVal > rightVal
+		}
+	}
+
+	return false
+}
+
+// evaluateArithmeticSide evaluates one side of an arithmetic expression
+func (e *Evaluator) evaluateArithmeticSide(expr string, position int, totalNodes int) int {
+	expr = strings.TrimSpace(expr)
+
+	// Handle position()
+	if expr == "position()" {
+		return position
+	}
+
+	// Handle last()
+	if expr == "last()" {
+		return totalNodes
+	}
+
+	// Handle arithmetic operations like "2 * 2"
+	for _, op := range []string{" * ", " / ", " + ", " - "} {
+		if strings.Contains(expr, op) {
+			parts := strings.Split(expr, op)
+			if len(parts) == 2 {
+				left, err1 := strconv.Atoi(strings.TrimSpace(parts[0]))
+				right, err2 := strconv.Atoi(strings.TrimSpace(parts[1]))
+				if err1 == nil && err2 == nil {
+					switch strings.TrimSpace(op) {
+					case "*":
+						return left * right
+					case "/":
+						if right != 0 {
+							return left / right
+						}
+					case "+":
+						return left + right
+					case "-":
+						return left - right
+					}
+				}
+			}
+		}
+	}
+
+	// Try to parse as integer
+	if val, err := strconv.Atoi(expr); err == nil {
+		return val
+	}
+
+	return 0
+}
+
+// evaluateModuloExpression evaluates modulo expressions like "position() mod 3 = 1"
+func (e *Evaluator) evaluateModuloExpression(expr string, position int) bool {
+	Trace("evaluateModuloExpression: expr='%s', position=%d", expr, position)
+
+	// Parse "position() mod N = X"
+	parts := strings.Split(expr, "=")
+	if len(parts) != 2 {
+		Trace("invalid mod expression: no = found")
+		return false
+	}
+
+	leftSide := strings.TrimSpace(parts[0])
+	rightValue, err := strconv.Atoi(strings.TrimSpace(parts[1]))
+	if err != nil {
+		Trace("invalid mod expression: right side not a number")
+		return false
+	}
+
+	// Parse "position() mod N"
+	modParts := strings.Split(leftSide, " mod ")
+	if len(modParts) != 2 {
+		Trace("invalid mod expression: no mod found")
+		return false
+	}
+
+	leftPart := strings.TrimSpace(modParts[0])
+	divisor, err := strconv.Atoi(strings.TrimSpace(modParts[1]))
+	if err != nil || divisor == 0 {
+		Trace("invalid mod expression: divisor not valid")
+		return false
+	}
+
+	// Get the value to apply modulo to
+	var leftValue int
+	if leftPart == "position()" {
+		leftValue = position
+	} else if val, err := strconv.Atoi(leftPart); err == nil {
+		leftValue = val
+	} else {
+		Trace("invalid mod expression: left part not recognized")
+		return false
+	}
+
+	result := leftValue%divisor == rightValue
+	Trace("modulo evaluation: %d mod %d = %d, comparing with %d -> %v", leftValue, divisor, leftValue%divisor, rightValue, result)
+	return result
+}
+
+// evaluateNodeFunctionCondition evaluates node() function expressions
+func (e *Evaluator) evaluateNodeFunctionCondition(node *types.Node, expr string) bool {
+	Trace("evaluateNodeFunctionCondition: expr='%s', node=%s, children=%d, textContent=%q", expr, node.Name, len(node.Children), node.TextContent)
+
+	// Handle "not(node())" or "not (node())" - elements with no child nodes
+	if strings.Contains(expr, "not(node())") || strings.Contains(expr, "not (node())") {
+		// In XPath, node() matches any child node (element, text, comment, etc.)
+		// For not(node()) to be true, the element must have no child elements AND no text content
+		hasNodes := len(node.Children) > 0 || node.TextContent != ""
+		result := !hasNodes
+		Trace("not(node()) evaluation: children=%d, textContent=%q -> hasNodes=%v, result=%v", len(node.Children), node.TextContent, hasNodes, result)
+		return result
+	}
+
+	// Handle "node()" - elements with child nodes
+	if strings.Contains(expr, "node()") {
+		hasNodes := len(node.Children) > 0 || node.TextContent != ""
+		Trace("node() evaluation: children=%d, textContent=%q -> hasNodes=%v", len(node.Children), node.TextContent, hasNodes)
+		return hasNodes
+	}
+
+	return false
+}
+
+// evaluateAxisExpressionCondition evaluates axis expressions like ancestor::div[10]
+func (e *Evaluator) evaluateAxisExpressionCondition(node *types.Node, expr string) bool {
+	Trace("evaluateAxisExpressionCondition: expr='%s'", expr)
+
+	// Handle expressions like "ancestor:: div [10]" or "ancestor::div[10]"
+	// First normalize by removing extra spaces around ::
+	normalizedExpr := strings.ReplaceAll(expr, " :: ", "::")
+	normalizedExpr = strings.ReplaceAll(normalizedExpr, ":: ", "::")
+	normalizedExpr = strings.ReplaceAll(normalizedExpr, " ::", "::")
+
+	// Split on ::
+	parts := strings.Split(normalizedExpr, "::")
+	if len(parts) != 2 {
+		Trace("invalid axis expression: not properly formatted with ::")
+		return false
+	}
+
+	axis := strings.TrimSpace(parts[0])
+	elementAndPredicate := strings.TrimSpace(parts[1])
+
+	// Parse element[predicate] pattern
+	var elementName string
+	var positionPredicate string
+
+	if strings.Contains(elementAndPredicate, "[") && strings.Contains(elementAndPredicate, "]") {
+		// Extract element name and predicate
+		bracketStart := strings.Index(elementAndPredicate, "[")
+		bracketEnd := strings.LastIndex(elementAndPredicate, "]")
+		elementName = strings.TrimSpace(elementAndPredicate[:bracketStart])
+		positionPredicate = strings.TrimSpace(elementAndPredicate[bracketStart+1 : bracketEnd])
+	} else {
+		elementName = elementAndPredicate
+		positionPredicate = ""
+	}
+
+	Trace("axis='%s', element='%s', predicate='%s'", axis, elementName, positionPredicate)
+
+	// Handle different axis types
+	switch axis {
+	case "ancestor":
+		return e.evaluateAncestorAxisCondition(node, elementName, positionPredicate)
+	case "parent":
+		return e.evaluateParentAxisCondition(node, elementName, positionPredicate)
+	case "child":
+		return e.evaluateChildAxisCondition(node, elementName, positionPredicate)
+	default:
+		Trace("unsupported axis type: %s", axis)
+		return false
+	}
+}
+
+// evaluateAncestorAxisCondition evaluates ancestor::element[position] expressions
+func (e *Evaluator) evaluateAncestorAxisCondition(node *types.Node, elementName string, positionPredicate string) bool {
+	Trace("evaluateAncestorAxisCondition: element='%s', predicate='%s'", elementName, positionPredicate)
+
+	// Get all ancestor elements of the specified type
+	var ancestors []*types.Node
+	current := node.Parent
+	for current != nil {
+		if elementName == "*" || current.Name == elementName {
+			ancestors = append(ancestors, current)
+		}
+		current = current.Parent
+	}
+
+	Trace("found %d ancestor %s elements", len(ancestors), elementName)
+
+	// If no position predicate, just check if any ancestors exist
+	if positionPredicate == "" {
+		return len(ancestors) > 0
+	}
+
+	// Handle position predicate
+	if pos, err := strconv.Atoi(positionPredicate); err == nil {
+		// Ancestors are in reverse document order (closest first), so position 1 = closest
+		return pos > 0 && pos <= len(ancestors)
+	}
+
+	// For other predicates, apply to each ancestor
+	for i := range ancestors {
+		position := i + 1
+
+		// Replace position() with actual position in the ancestor list
+		contextPredicate := strings.ReplaceAll(positionPredicate, "position()", strconv.Itoa(position))
+
+		if e.evaluateArithmeticExpressionWithContext(contextPredicate, position, len(ancestors)) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// evaluateParentAxisCondition evaluates parent::element[position] expressions
+func (e *Evaluator) evaluateParentAxisCondition(node *types.Node, elementName string, positionPredicate string) bool {
+	if node.Parent == nil {
+		return false
+	}
+
+	if elementName != "*" && node.Parent.Name != elementName {
+		return false
+	}
+
+	// For parent axis, position is always 1 since there's only one parent
+	if positionPredicate == "" {
+		return true
+	}
+
+	if pos, err := strconv.Atoi(positionPredicate); err == nil {
+		return pos == 1
+	}
+
+	return false
+}
+
+// evaluateChildAxisCondition evaluates child::element[position] expressions
+func (e *Evaluator) evaluateChildAxisCondition(node *types.Node, elementName string, positionPredicate string) bool {
+	// Get matching child elements
+	var children []*types.Node
+	for _, child := range node.Children {
+		if elementName == "*" || child.Name == elementName {
+			children = append(children, child)
+		}
+	}
+
+	if positionPredicate == "" {
+		return len(children) > 0
+	}
+
+	if pos, err := strconv.Atoi(positionPredicate); err == nil {
+		return pos > 0 && pos <= len(children)
+	}
+
+	return false
+}
+
+// evaluateChainedAttributeCondition evaluates multiple attribute conditions
+func (e *Evaluator) evaluateChainedAttributeCondition(node *types.Node, expr string) bool {
+	Trace("evaluateChainedAttributeCondition: expr='%s'", expr)
+
+	// Handle expressions with multiple attribute checks joined by 'and'
+	if strings.Contains(expr, " and ") {
+		return e.evaluateAndExpression(expr, node)
+	}
+
+	// Handle expressions with multiple attribute checks without explicit 'and'
+	// This typically shouldn't happen in well-formed XPath, but let's handle it
+	// Count @ symbols and treat as implicit AND
+	attrCount := strings.Count(expr, "@")
+	if attrCount > 1 {
+		// For now, fall back to simple evaluation
+		return e.evaluateSimpleCondition(node, expr)
+	}
+
+	return false
 }

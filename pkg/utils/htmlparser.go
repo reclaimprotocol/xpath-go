@@ -170,7 +170,7 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 	// Handle raw text elements like script, style, textarea, title
 	if p.isRawTextElement(node.Name) {
 		textContent := p.parseRawTextContent(node.Name)
-		
+
 		// Create a single text node for the raw content
 		if textContent != "" {
 			textNode := &types.Node{
@@ -188,7 +188,7 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 			}
 			node.Children = append(node.Children, textNode)
 		}
-		
+
 		node.TextContent = textContent
 		node.EndPos = p.pos
 		node.EndLine = p.line
@@ -219,9 +219,10 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 			return nil, err
 		}
 		if child != nil {
-			if child.Type == types.TextNode {
+			switch child.Type {
+			case types.TextNode:
 				textContent += child.Value
-			} else if child.Type == types.ElementNode {
+			case types.ElementNode:
 				// Recursively collect text content from element children
 				textContent += child.TextContent
 			}
@@ -519,12 +520,12 @@ func (p *HTMLParser) isRawTextElement(name string) bool {
 func (p *HTMLParser) parseRawTextContent(tagName string) string {
 	content := ""
 	closingTag := "</" + strings.ToLower(tagName)
-	
+
 	for p.pos < len(p.content) {
 		// Look for the closing tag
 		if p.pos+len(closingTag) <= len(p.content) {
 			// Check if we found the closing tag (case-insensitive)
-			potentialClosing := strings.ToLower(p.content[p.pos:p.pos+len(closingTag)])
+			potentialClosing := strings.ToLower(p.content[p.pos : p.pos+len(closingTag)])
 			if potentialClosing == closingTag {
 				// Check that the next character is either '>' or whitespace
 				nextPos := p.pos + len(closingTag)
@@ -543,7 +544,7 @@ func (p *HTMLParser) parseRawTextContent(tagName string) string {
 				}
 			}
 		}
-		
+
 		// Add character to content and advance
 		r, size := p.peekRune()
 		if r == 0 {
@@ -552,6 +553,6 @@ func (p *HTMLParser) parseRawTextContent(tagName string) string {
 		content += string(r)
 		p.advanceRune(size)
 	}
-	
+
 	return content
 }

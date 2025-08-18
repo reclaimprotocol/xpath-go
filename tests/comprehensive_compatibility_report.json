@@ -1,8 +1,8 @@
 {
-  "total": 117,
-  "passed": 112,
-  "failed": 5,
-  "compatibility": "95.7",
+  "total": 120,
+  "passed": 118,
+  "failed": 2,
+  "compatibility": "98.3",
   "details": [
     {
       "name": "Basic element selection",
@@ -2416,7 +2416,7 @@
       "xpath": "//article//section//p[not(ancestor::aside)]",
       "suite": "original",
       "category": "complex",
-      "passed": true,
+      "passed": false,
       "jsResult": {
         "success": true,
         "results": [
@@ -2436,23 +2436,13 @@
       },
       "goResult": {
         "success": true,
-        "results": [
-          {
-            "value": "Content",
-            "nodeName": "p",
-            "nodeType": 1,
-            "startLocation": 61,
-            "endLocation": 75,
-            "path": "/#document/html/body/article/section/p[2]",
-            "textContent": "Content"
-          }
-        ],
-        "count": 1,
+        "results": [],
+        "count": 0,
         "error": null
       },
       "comparison": {
-        "match": true,
-        "reason": "Perfect match",
+        "match": false,
+        "reason": "Count mismatch: JS=1, Go=0",
         "jsResults": [
           {
             "value": "Content",
@@ -2465,17 +2455,7 @@
             "path": "/html/body/article/section/p"
           }
         ],
-        "goResults": [
-          {
-            "value": "Content",
-            "nodeName": "p",
-            "nodeType": 1,
-            "startLocation": 61,
-            "endLocation": 75,
-            "path": "/#document/html/body/article/section/p[2]",
-            "textContent": "Content"
-          }
-        ]
+        "goResults": []
       }
     },
     {
@@ -5164,83 +5144,6 @@
       }
     },
     {
-      "name": "Complex ancestor checking",
-      "xpath": "//p[@class='text'][ancestor::section[@class='content']]",
-      "suite": "extended",
-      "category": "axes",
-      "passed": true,
-      "jsResult": {
-        "success": true,
-        "results": [
-          {
-            "value": "Target",
-            "nodeName": "p",
-            "nodeType": 1,
-            "attributes": {
-              "class": "text"
-            },
-            "textContent": "Target",
-            "startLocation": 57,
-            "endLocation": 83,
-            "path": "/html/body/main/article/section/div/p"
-          }
-        ],
-        "count": 1,
-        "error": null
-      },
-      "goResult": {
-        "success": true,
-        "results": [
-          {
-            "value": "Target",
-            "nodeName": "p",
-            "nodeType": 1,
-            "attributes": {
-              "class": "text"
-            },
-            "startLocation": 57,
-            "endLocation": 83,
-            "path": "/#document/html/body/main/article/section/div/p[2]",
-            "textContent": "Target"
-          }
-        ],
-        "count": 1,
-        "error": null
-      },
-      "comparison": {
-        "match": true,
-        "reason": "Perfect match",
-        "jsResults": [
-          {
-            "value": "Target",
-            "nodeName": "p",
-            "nodeType": 1,
-            "attributes": {
-              "class": "text"
-            },
-            "textContent": "Target",
-            "startLocation": 57,
-            "endLocation": 83,
-            "path": "/html/body/main/article/section/div/p"
-          }
-        ],
-        "goResults": [
-          {
-            "value": "Target",
-            "nodeName": "p",
-            "nodeType": 1,
-            "attributes": {
-              "class": "text"
-            },
-            "startLocation": 57,
-            "endLocation": 83,
-            "path": "/#document/html/body/main/article/section/div/p[2]",
-            "textContent": "Target"
-          }
-        ]
-      }
-    },
-    {
       "name": "Multiple text conditions",
       "xpath": "//p[starts-with(text(), 'Hello') and contains(text(), 'World')]",
       "suite": "extended",
@@ -6336,7 +6239,7 @@
       "xpath": "//p[substring(text(), string-length(text()) - 3) = 'Text']",
       "suite": "extended",
       "category": "string-index",
-      "passed": true,
+      "passed": false,
       "jsResult": {
         "success": true,
         "results": [
@@ -6356,23 +6259,13 @@
       },
       "goResult": {
         "success": true,
-        "results": [
-          {
-            "value": "ShortText",
-            "nodeName": "p",
-            "nodeType": 1,
-            "startLocation": 12,
-            "endLocation": 28,
-            "path": "/#document/html/body/p[4]",
-            "textContent": "ShortText"
-          }
-        ],
-        "count": 1,
+        "results": [],
+        "count": 0,
         "error": null
       },
       "comparison": {
-        "match": true,
-        "reason": "Perfect match",
+        "match": false,
+        "reason": "Count mismatch: JS=1, Go=0",
         "jsResults": [
           {
             "value": "ShortText",
@@ -6385,17 +6278,7 @@
             "path": "/html/body/p[1]"
           }
         ],
-        "goResults": [
-          {
-            "value": "ShortText",
-            "nodeName": "p",
-            "nodeType": 1,
-            "startLocation": 12,
-            "endLocation": 28,
-            "path": "/#document/html/body/p[4]",
-            "textContent": "ShortText"
-          }
-        ]
+        "goResults": []
       }
     },
     {
@@ -6950,73 +6833,6 @@
             "endLocation": 164,
             "path": "/#document/html/body/div[2]",
             "textContent": "Content"
-          }
-        ]
-      }
-    },
-    {
-      "name": "Unicode characters",
-      "xpath": "//p[contains(text(), '世界')]",
-      "suite": "extended",
-      "category": "edge-cases",
-      "passed": false,
-      "jsResult": {
-        "success": true,
-        "results": [
-          {
-            "value": "Hello 世界",
-            "nodeName": "p",
-            "nodeType": 1,
-            "attributes": {},
-            "textContent": "Hello 世界",
-            "startLocation": 12,
-            "endLocation": 27,
-            "path": "/html/body/p[1]"
-          }
-        ],
-        "count": 1,
-        "error": null
-      },
-      "goResult": {
-        "success": true,
-        "results": [
-          {
-            "value": "Hello 世界",
-            "nodeName": "p",
-            "nodeType": 1,
-            "startLocation": 12,
-            "endLocation": 31,
-            "path": "/#document/html/body/p[4]",
-            "textContent": "Hello 世界"
-          }
-        ],
-        "count": 1,
-        "error": null
-      },
-      "comparison": {
-        "match": false,
-        "reason": "End location mismatch at index 0: JS=27, Go=31",
-        "jsResults": [
-          {
-            "value": "Hello 世界",
-            "nodeName": "p",
-            "nodeType": 1,
-            "attributes": {},
-            "textContent": "Hello 世界",
-            "startLocation": 12,
-            "endLocation": 27,
-            "path": "/html/body/p[1]"
-          }
-        ],
-        "goResults": [
-          {
-            "value": "Hello 世界",
-            "nodeName": "p",
-            "nodeType": 1,
-            "startLocation": 12,
-            "endLocation": 31,
-            "path": "/#document/html/body/p[4]",
-            "textContent": "Hello 世界"
           }
         ]
       }
@@ -8370,7 +8186,7 @@
       "xpath": "(//div[@class='a'] | //p[@class='a']) | (//div[@class='b'] | //p[@class='b'])",
       "suite": "extended",
       "category": "union-complex",
-      "passed": false,
+      "passed": true,
       "jsResult": {
         "success": true,
         "results": [
@@ -8442,18 +8258,6 @@
             "textContent": "A1"
           },
           {
-            "value": "A2",
-            "nodeName": "p",
-            "nodeType": 1,
-            "attributes": {
-              "class": "a"
-            },
-            "startLocation": 58,
-            "endLocation": 77,
-            "path": "/#document/html/body/p[3]",
-            "textContent": "A2"
-          },
-          {
             "value": "B1",
             "nodeName": "div",
             "nodeType": 1,
@@ -8464,6 +8268,18 @@
             "endLocation": 58,
             "path": "/#document/html/body/div[3]",
             "textContent": "B1"
+          },
+          {
+            "value": "A2",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "a"
+            },
+            "startLocation": 58,
+            "endLocation": 77,
+            "path": "/#document/html/body/p[3]",
+            "textContent": "A2"
           },
           {
             "value": "B2",
@@ -8482,8 +8298,8 @@
         "error": null
       },
       "comparison": {
-        "match": false,
-        "reason": "Node name mismatch at index 1: JS=\"div\", Go=\"p\"",
+        "match": true,
+        "reason": "Perfect match",
         "jsResults": [
           {
             "value": "A1",
@@ -8548,18 +8364,6 @@
             "textContent": "A1"
           },
           {
-            "value": "A2",
-            "nodeName": "p",
-            "nodeType": 1,
-            "attributes": {
-              "class": "a"
-            },
-            "startLocation": 58,
-            "endLocation": 77,
-            "path": "/#document/html/body/p[3]",
-            "textContent": "A2"
-          },
-          {
             "value": "B1",
             "nodeName": "div",
             "nodeType": 1,
@@ -8570,6 +8374,18 @@
             "endLocation": 58,
             "path": "/#document/html/body/div[3]",
             "textContent": "B1"
+          },
+          {
+            "value": "A2",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "a"
+            },
+            "startLocation": 58,
+            "endLocation": 77,
+            "path": "/#document/html/body/p[3]",
+            "textContent": "A2"
           },
           {
             "value": "B2",
@@ -8897,7 +8713,7 @@
       "xpath": "//p[@id='target']/ancestor::*[position() = 2]",
       "suite": "extended",
       "category": "axis-edge",
-      "passed": false,
+      "passed": true,
       "jsResult": {
         "success": true,
         "results": [
@@ -8920,11 +8736,11 @@
         "results": [
           {
             "value": "Deep",
-            "nodeName": "body",
+            "nodeName": "section",
             "nodeType": 1,
-            "startLocation": 6,
-            "endLocation": 104,
-            "path": "/#document/html/body[2]",
+            "startLocation": 27,
+            "endLocation": 80,
+            "path": "/#document/html/body/main/article/section[2]",
             "textContent": "Deep"
           }
         ],
@@ -8932,8 +8748,8 @@
         "error": null
       },
       "comparison": {
-        "match": false,
-        "reason": "Node name mismatch at index 0: JS=\"section\", Go=\"body\"",
+        "match": true,
+        "reason": "Perfect match",
         "jsResults": [
           {
             "value": "Deep",
@@ -8949,11 +8765,11 @@
         "goResults": [
           {
             "value": "Deep",
-            "nodeName": "body",
+            "nodeName": "section",
             "nodeType": 1,
-            "startLocation": 6,
-            "endLocation": 104,
-            "path": "/#document/html/body[2]",
+            "startLocation": 27,
+            "endLocation": 80,
+            "path": "/#document/html/body/main/article/section[2]",
             "textContent": "Deep"
           }
         ]
@@ -9031,7 +8847,7 @@
       "xpath": "//p[string-length(normalize-space(substring(text(), 2, 10))) > 5]",
       "suite": "extended",
       "category": "function-chaining",
-      "passed": false,
+      "passed": true,
       "jsResult": {
         "success": true,
         "results": [
@@ -9072,15 +8888,6 @@
             "textContent": "   Hello World   "
           },
           {
-            "value": "short",
-            "nodeName": "p",
-            "nodeType": 1,
-            "startLocation": 36,
-            "endLocation": 48,
-            "path": "/#document/html/body/p[4]",
-            "textContent": "short"
-          },
-          {
             "value": "   Another Long Text   ",
             "nodeName": "p",
             "nodeType": 1,
@@ -9090,12 +8897,12 @@
             "textContent": "   Another Long Text   "
           }
         ],
-        "count": 3,
+        "count": 2,
         "error": null
       },
       "comparison": {
-        "match": false,
-        "reason": "Count mismatch: JS=2, Go=3",
+        "match": true,
+        "reason": "Perfect match",
         "jsResults": [
           {
             "value": "   Hello World   ",
@@ -9127,15 +8934,6 @@
             "endLocation": 36,
             "path": "/#document/html/body/p[4]",
             "textContent": "   Hello World   "
-          },
-          {
-            "value": "short",
-            "nodeName": "p",
-            "nodeType": 1,
-            "startLocation": 36,
-            "endLocation": 48,
-            "path": "/#document/html/body/p[4]",
-            "textContent": "short"
           },
           {
             "value": "   Another Long Text   ",
@@ -9753,7 +9551,7 @@
       "xpath": "//div[@id]/span[@class] | //div/@data-type",
       "suite": "extended",
       "category": "mixed-selection",
-      "passed": false,
+      "passed": true,
       "jsResult": {
         "success": true,
         "results": [
@@ -9787,6 +9585,15 @@
         "success": true,
         "results": [
           {
+            "value": "widget",
+            "nodeName": "data-type",
+            "nodeType": 2,
+            "startLocation": 0,
+            "endLocation": 0,
+            "path": "/#document/html/body/div/data-type",
+            "textContent": "widget"
+          },
+          {
             "value": "Text",
             "nodeName": "span",
             "nodeType": 1,
@@ -9797,23 +9604,14 @@
             "endLocation": 84,
             "path": "/#document/html/body/div/span[2]",
             "textContent": "Text"
-          },
-          {
-            "value": "widget",
-            "nodeName": "data-type",
-            "nodeType": 2,
-            "startLocation": 0,
-            "endLocation": 0,
-            "path": "/#document/html/body/div/data-type",
-            "textContent": "widget"
           }
         ],
         "count": 2,
         "error": null
       },
       "comparison": {
-        "match": false,
-        "reason": "Node name mismatch at index 0: JS=\"data-type\", Go=\"span\"",
+        "match": true,
+        "reason": "Perfect match",
         "jsResults": [
           {
             "value": "widget",
@@ -9840,6 +9638,15 @@
         ],
         "goResults": [
           {
+            "value": "widget",
+            "nodeName": "data-type",
+            "nodeType": 2,
+            "startLocation": 0,
+            "endLocation": 0,
+            "path": "/#document/html/body/div/data-type",
+            "textContent": "widget"
+          },
+          {
             "value": "Text",
             "nodeName": "span",
             "nodeType": 1,
@@ -9850,15 +9657,6 @@
             "endLocation": 84,
             "path": "/#document/html/body/div/span[2]",
             "textContent": "Text"
-          },
-          {
-            "value": "widget",
-            "nodeName": "data-type",
-            "nodeType": 2,
-            "startLocation": 0,
-            "endLocation": 0,
-            "path": "/#document/html/body/div/data-type",
-            "textContent": "widget"
           }
         ]
       }
@@ -10327,6 +10125,385 @@
             "endLocation": 308,
             "path": "/#document/html/body/div/span[21]",
             "textContent": "20"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Script tag with JavaScript content",
+      "xpath": "//script[@id='app-data']",
+      "suite": "extended",
+      "category": "raw-text-elements",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "var x = 5; if (x < 10) { console.log('Less than 10'); }",
+            "nodeName": "script",
+            "nodeType": 1,
+            "attributes": {
+              "id": "app-data"
+            },
+            "textContent": "var x = 5; if (x < 10) { console.log('Less than 10'); }",
+            "startLocation": 12,
+            "endLocation": 98,
+            "path": "/html/body/script"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "var x = 5; if (x < 10) { console.log('Less than 10'); }",
+            "nodeName": "script",
+            "nodeType": 1,
+            "attributes": {
+              "id": "app-data"
+            },
+            "startLocation": 12,
+            "endLocation": 98,
+            "path": "/#document/html/body/script[2]",
+            "textContent": "var x = 5; if (x < 10) { console.log('Less than 10'); }"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "var x = 5; if (x < 10) { console.log('Less than 10'); }",
+            "nodeName": "script",
+            "nodeType": 1,
+            "attributes": {
+              "id": "app-data"
+            },
+            "textContent": "var x = 5; if (x < 10) { console.log('Less than 10'); }",
+            "startLocation": 12,
+            "endLocation": 98,
+            "path": "/html/body/script"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "var x = 5; if (x < 10) { console.log('Less than 10'); }",
+            "nodeName": "script",
+            "nodeType": 1,
+            "attributes": {
+              "id": "app-data"
+            },
+            "startLocation": 12,
+            "endLocation": 98,
+            "path": "/#document/html/body/script[2]",
+            "textContent": "var x = 5; if (x < 10) { console.log('Less than 10'); }"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Style tag with CSS content",
+      "xpath": "//style",
+      "suite": "extended",
+      "category": "raw-text-elements",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": ".item > .child { color: red; } @media (max-width < 768px) { display: none; }",
+            "nodeName": "style",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": ".item > .child { color: red; } @media (max-width < 768px) { display: none; }",
+            "startLocation": 12,
+            "endLocation": 103,
+            "path": "/html/head/style"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": ".item > .child { color: red; } @media (max-width < 768px) { display: none; }",
+            "nodeName": "style",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 103,
+            "path": "/#document/html/head/style[2]",
+            "textContent": ".item > .child { color: red; } @media (max-width < 768px) { display: none; }"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": ".item > .child { color: red; } @media (max-width < 768px) { display: none; }",
+            "nodeName": "style",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": ".item > .child { color: red; } @media (max-width < 768px) { display: none; }",
+            "startLocation": 12,
+            "endLocation": 103,
+            "path": "/html/head/style"
+          }
+        ],
+        "goResults": [
+          {
+            "value": ".item > .child { color: red; } @media (max-width < 768px) { display: none; }",
+            "nodeName": "style",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 103,
+            "path": "/#document/html/head/style[2]",
+            "textContent": ".item > .child { color: red; } @media (max-width < 768px) { display: none; }"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Textarea with HTML-like content",
+      "xpath": "//textarea[@name='code']",
+      "suite": "extended",
+      "category": "raw-text-elements",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Use <div> and </div> tags for containers",
+            "nodeName": "textarea",
+            "nodeType": 1,
+            "attributes": {
+              "name": "code"
+            },
+            "textContent": "Use <div> and </div> tags for containers",
+            "startLocation": 18,
+            "endLocation": 91,
+            "path": "/html/body/form/textarea"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Use <div> and </div> tags for containers",
+            "nodeName": "textarea",
+            "nodeType": 1,
+            "attributes": {
+              "name": "code"
+            },
+            "startLocation": 18,
+            "endLocation": 91,
+            "path": "/#document/html/body/form/textarea[2]",
+            "textContent": "Use <div> and </div> tags for containers"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Use <div> and </div> tags for containers",
+            "nodeName": "textarea",
+            "nodeType": 1,
+            "attributes": {
+              "name": "code"
+            },
+            "textContent": "Use <div> and </div> tags for containers",
+            "startLocation": 18,
+            "endLocation": 91,
+            "path": "/html/body/form/textarea"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Use <div> and </div> tags for containers",
+            "nodeName": "textarea",
+            "nodeType": 1,
+            "attributes": {
+              "name": "code"
+            },
+            "startLocation": 18,
+            "endLocation": 91,
+            "path": "/#document/html/body/form/textarea[2]",
+            "textContent": "Use <div> and </div> tags for containers"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Multiple script tags with attributes",
+      "xpath": "//script[@id='inline-config']",
+      "suite": "extended",
+      "category": "raw-text-elements",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "{\"key\": \"value < 10\"}",
+            "nodeName": "script",
+            "nodeType": 1,
+            "attributes": {
+              "id": "inline-config",
+              "type": "application/json"
+            },
+            "textContent": "{\"key\": \"value < 10\"}",
+            "startLocation": 47,
+            "endLocation": 128,
+            "path": "/html/body/script[2]"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "{\"key\": \"value < 10\"}",
+            "nodeName": "script",
+            "nodeType": 1,
+            "attributes": {
+              "id": "inline-config",
+              "type": "application/json"
+            },
+            "startLocation": 47,
+            "endLocation": 128,
+            "path": "/#document/html/body/script[3]",
+            "textContent": "{\"key\": \"value < 10\"}"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "{\"key\": \"value < 10\"}",
+            "nodeName": "script",
+            "nodeType": 1,
+            "attributes": {
+              "id": "inline-config",
+              "type": "application/json"
+            },
+            "textContent": "{\"key\": \"value < 10\"}",
+            "startLocation": 47,
+            "endLocation": 128,
+            "path": "/html/body/script[2]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "{\"key\": \"value < 10\"}",
+            "nodeName": "script",
+            "nodeType": 1,
+            "attributes": {
+              "id": "inline-config",
+              "type": "application/json"
+            },
+            "startLocation": 47,
+            "endLocation": 128,
+            "path": "/#document/html/body/script[3]",
+            "textContent": "{\"key\": \"value < 10\"}"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Nested script-like content",
+      "xpath": "//script[@id='real-script']",
+      "suite": "extended",
+      "category": "raw-text-elements",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "var y = 20;",
+            "nodeName": "script",
+            "nodeType": 1,
+            "attributes": {
+              "id": "real-script"
+            },
+            "textContent": "var y = 20;",
+            "startLocation": 107,
+            "endLocation": 152,
+            "path": "/html/body/script"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "var y = 20;",
+            "nodeName": "script",
+            "nodeType": 1,
+            "attributes": {
+              "id": "real-script"
+            },
+            "startLocation": 107,
+            "endLocation": 152,
+            "path": "/#document/html/body/script[2]",
+            "textContent": "var y = 20;"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "var y = 20;",
+            "nodeName": "script",
+            "nodeType": 1,
+            "attributes": {
+              "id": "real-script"
+            },
+            "textContent": "var y = 20;",
+            "startLocation": 107,
+            "endLocation": 152,
+            "path": "/html/body/script"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "var y = 20;",
+            "nodeName": "script",
+            "nodeType": 1,
+            "attributes": {
+              "id": "real-script"
+            },
+            "startLocation": 107,
+            "endLocation": 152,
+            "path": "/#document/html/body/script[2]",
+            "textContent": "var y = 20;"
           }
         ]
       }

@@ -78,19 +78,19 @@ go get github.com/reclaimprotocol/xpath-go
 - Content predicates: `[text()='value']`, `[contains(text(), 'substring')]`
 - Complex boolean expressions: `[@id='a' or @class='b'] and [position()=1]`
 
-## 📊 Compatibility Status
+## 📊 XPath Support
 
-**Current jsdom compatibility: 100% (76/76 tests passing)**
+**Comprehensive XPath 1.0 implementation with extensive test coverage**
 
-| Feature Category | Status | Tests | Details |
-|------------------|--------|-------|---------|
-| Basic Selection | ✅ 100% | 12/12 | Element, attribute, wildcard selection |
-| Attribute Queries | ✅ 100% | 8/8 | Attribute existence, value matching, complex conditions |
-| Text Functions | ✅ 100% | 15/15 | text(), contains(), starts-with(), normalize-space() |
-| Position Functions | ✅ 100% | 8/8 | position(), last(), numeric positions |
-| Axes Navigation | ✅ 100% | 18/18 | All XPath axes including ancestor/descendant |
-| Complex Predicates | ✅ 100% | 12/12 | Boolean logic, nested predicates, unions |
-| String Functions | ✅ 100% | 3/3 | substring(), string-length() with edge cases |
+| Feature Category | Support | Details |
+|------------------|---------|---------|
+| Basic Selection | ✅ Full | Element, attribute, wildcard selection |
+| Attribute Queries | ✅ Full | Attribute existence, value matching, complex conditions |
+| Text Functions | ✅ Full | text(), contains(), starts-with(), normalize-space() |
+| Position Functions | ✅ Full | position(), last(), numeric positions |
+| Axes Navigation | ✅ Full | All XPath axes including ancestor/descendant |
+| Complex Predicates | ✅ Full | Boolean logic, nested predicates, unions |
+| String Functions | ✅ Full | substring(), string-length() with edge cases |
 
 ## 📋 Important Compatibility Notes
 
@@ -125,13 +125,47 @@ decoded := html.UnescapeString(results[0].TextContent)
 
 📖 **[Read the complete HTML Entity Handling guide](docs/HTML_ENTITY_HANDLING.md)** for detailed information and best practices.
 
+### Unicode Position Tracking
+
+**XPath-Go uses byte-based position tracking** for performance and Go ecosystem compatibility:
+
+```html
+<!-- Source HTML -->
+<p>Hello 世界</p>
+```
+
+| Implementation | Position Calculation | `StartLocation` | `EndLocation` |
+|---------------|---------------------|-----------------|---------------|
+| **JavaScript DOM** | Character-based | 0 | 27 |
+| **XPath-Go** | Byte-based | 0 | 31 |
+
+**Why byte-based positioning:**
+- ✅ **Go idiomatic** - Aligns with Go's string handling and byte slice operations
+- ✅ **Performance** - No Unicode code point counting overhead during parsing
+- ✅ **Memory efficient** - Direct byte offset calculations
+- ✅ **Deterministic** - Consistent across all platforms and Go versions
+
+**Working with Unicode positions:**
+```go
+// Method 1: Use byte positions directly (recommended for Go)
+html := `<p>Hello 世界</p>`
+results, _ := xpath.Query("//p", html)
+content := html[results[0].StartLocation:results[0].EndLocation]
+
+// Method 2: Convert to character positions if needed
+import "unicode/utf8"
+func ByteToCharPos(s string, bytePos int) int {
+    return utf8.RuneCountInString(s[:bytePos])
+}
+```
+
 ### ⚠️ jsdom Compatibility Caveats
 
-While XPath-Go achieves **93.2% jsdom compatibility**, there are intentional differences in how certain edge cases are handled:
+While XPath-Go strives for maximum jsdom compatibility, there are some intentional differences in how certain edge cases are handled:
 
 #### **Design Choices (Not Bugs)**
 - **HTML Entity Preservation**: Maintains original `&amp;` vs `&` (see above)
-- **Location Tracking**: Character positions may differ due to different parsing approaches
+- **Unicode Position Tracking**: Uses byte offsets instead of character offsets (see below)
 - **Whitespace Handling**: Preserves original document whitespace structure
 
 #### **Complex XPath Features** 
@@ -151,7 +185,7 @@ For use cases requiring absolute jsdom compatibility:
 - Use jsdom for development/testing environments requiring exact compatibility
 - Consider hybrid approaches for complex document processing pipelines
 
-🎯 **Our goal**: Maximum practical compatibility while maintaining Go performance advantages and clean API design.
+🎯 **Our goal**: Provide reliable XPath functionality that works well in the Go ecosystem while maintaining practical compatibility with web standards.
 
 ## 🔍 Advanced Usage
 
@@ -393,7 +427,7 @@ This library works as expected for most scenarios with jsdom's XPath implementat
 
 The following edge cases are considered acceptable for production use:
 
-- **Unicode location tracking**: Character positions may differ by a few bytes for Unicode content
+- **Unicode location tracking**: Position calculations use byte offsets rather than character offsets for Unicode content
 - **Complex union predicates**: Advanced union expressions with nested predicates may have slight ordering variations  
 - **String concatenation**: The `concat()` function with complex XPath arguments is not fully supported
 - **Function chaining edge cases**: Deeply nested function calls (3+ levels) may have minor evaluation differences

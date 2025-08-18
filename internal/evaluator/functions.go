@@ -31,11 +31,72 @@ func (e *Evaluator) evaluateNormalizeSpaceFunction(funcCall string, node *types.
 		}
 	} else if strings.HasPrefix(args, "'") && strings.HasSuffix(args, "'") {
 		text = strings.Trim(args, "'")
+	} else if strings.HasPrefix(args, "substring(") {
+		// Handle nested substring() function calls
+		text = e.evaluateSubstringFunction(args, node)
+		Trace("normalize-space() with substring: substring result='%s'", text)
 	}
 
 	// Normalize whitespace: collapse multiple spaces into single spaces and trim
 	normalized := strings.Join(strings.Fields(text), " ")
+	Trace("normalize-space() final: input='%s' -> output='%s'", text, normalized)
 	return normalized
+}
+
+// evaluateSubstringFunction evaluates substring() function calls and returns the result as a string
+func (e *Evaluator) evaluateSubstringFunction(funcCall string, node *types.Node) string {
+	// Parse substring(text(), start, length) and return the substring
+
+	// Find function boundaries
+	start := strings.Index(funcCall, "(")
+	end := strings.LastIndex(funcCall, ")")
+
+	if start == -1 || end == -1 || start >= end {
+		return ""
+	}
+
+	// Extract arguments
+	argsStr := funcCall[start+1 : end]
+	args := e.parseSubstringArgs(argsStr)
+
+	if len(args) < 2 {
+		return ""
+	}
+
+	// Get source text
+	sourceText := ""
+	if strings.HasPrefix(args[0], "text()") {
+		sourceText = node.TextContent
+	} else if strings.HasPrefix(args[0], "@") {
+		attrName := strings.TrimPrefix(args[0], "@")
+		if value, exists := node.Attributes[attrName]; exists {
+			sourceText = value
+		}
+	}
+
+	// Calculate start position (1-based XPath)
+	startPos := 1
+	if pos, err := strconv.Atoi(strings.TrimSpace(args[1])); err == nil {
+		startPos = pos
+	}
+
+	// Extract substring according to XPath 1.0 spec
+	var result string
+	if len(args) > 2 {
+		// 3-argument substring: substring(text, start, length)
+		if length, err := strconv.Atoi(strings.TrimSpace(args[2])); err == nil {
+			result = e.xpathSubstring(sourceText, startPos, length)
+			Trace("substring() 3-arg: source='%s', start=%d, length=%d -> '%s'", sourceText, startPos, length, result)
+		} else {
+			result = e.xpathSubstring(sourceText, startPos, -1) // Invalid length, take to end
+			Trace("substring() 3-arg (invalid length): source='%s', start=%d -> '%s'", sourceText, startPos, result)
+		}
+	} else {
+		// 2-argument substring: substring(text, start) - take to end
+		result = e.xpathSubstring(sourceText, startPos, -1)
+		Trace("substring() 2-arg: source='%s', start=%d -> '%s'", sourceText, startPos, result)
+	}
+	return result
 }
 
 // evaluateSubstringExpression evaluates substring expressions like substring(text(), 1, 5) = 'Hello'

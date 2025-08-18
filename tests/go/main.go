@@ -27,6 +27,7 @@ func main() {
 	if len(os.Args) > 3 && os.Args[3] == "--trace" {
 		xpath.EnableTrace()
 		defer xpath.DisableTrace()
+		fmt.Fprintf(os.Stderr, "[TRACE-ENABLED] XPath trace mode enabled\n")
 	}
 
 	// Read HTML content

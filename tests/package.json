@@ -5,6 +5,8 @@
   "main": "comprehensive_compare.js",
   "scripts": {
     "test": "node comprehensive_compare.js",
+    "test:edge-cases": "node edge_cases_test.js",
+    "test:all": "npm test && npm run test:edge-cases",
     "install-deps": "npm install"
   },
   "dependencies": {

@@ -75,8 +75,8 @@ func (e *Evaluator) isValidElementName(name string) bool {
 
 	// Simple validation: letters, digits, hyphens, underscores, colons
 	for _, r := range name {
-		if !((r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') ||
-			(r >= '0' && r <= '9') || r == '-' || r == '_' || r == ':') {
+		if (r < 'a' || r > 'z') && (r < 'A' || r > 'Z') &&
+			(r < '0' || r > '9') && r != '-' && r != '_' && r != ':' {
 			return false
 		}
 	}
@@ -123,7 +123,7 @@ func (e *Evaluator) evaluateChildPath(node *types.Node, path string) bool {
 				for _, child := range currentNode.Children {
 					// Handle wildcard (*) or exact element name match
 					if elementName == "*" || child.Name == elementName {
-						if e.evaluateSimpleCondition(child, predicate) {
+						if e.evaluateAtomicCondition(child, predicate) {
 							nextNodes = append(nextNodes, child)
 						}
 					}

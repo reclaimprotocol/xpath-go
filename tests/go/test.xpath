@@ -1,1 +1,1 @@
-//div
+//p[string-length(normalize-space(substring(text(), 2, 10))) > 5]
