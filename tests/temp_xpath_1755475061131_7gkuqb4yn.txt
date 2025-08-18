@@ -1,1 +1,0 @@
-//div[(@id='a' or @id='c') and contains(@class, 'x')]

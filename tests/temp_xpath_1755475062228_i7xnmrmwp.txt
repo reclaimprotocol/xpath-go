@@ -1,1 +1,0 @@
-//div/descendant::text()[position() = 2]

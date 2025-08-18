@@ -164,8 +164,14 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 		node.EndPos = p.pos
 		node.EndLine = p.line
 		node.EndColumn = p.col
+		// For self-closing tags, content start and end are the same (no inner content)
+		node.ContentStart = p.pos
+		node.ContentEnd = p.pos
 		return node, nil
 	}
+
+	// Mark the start of inner content (after opening tag)
+	contentStartPos := p.pos
 
 	// Handle raw text elements like script, style, textarea, title
 	if p.isRawTextElement(node.Name) {
@@ -190,6 +196,10 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 		}
 
 		node.TextContent = textContent
+		// For raw text elements, content ends before the closing tag starts
+		contentEndPos := p.pos - len(node.Name) - 3 // Account for "</" and ">"
+		node.ContentStart = contentStartPos
+		node.ContentEnd = contentEndPos
 		node.EndPos = p.pos
 		node.EndLine = p.line
 		node.EndColumn = p.col
@@ -198,6 +208,8 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 
 	// Parse child nodes normally for other elements
 	textContent := ""
+	contentEndPos := contentStartPos // Default to start if no content
+
 	for p.pos < len(p.content) {
 		if p.pos >= len(p.content) {
 			break
@@ -205,6 +217,8 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 
 		// Check for closing tag
 		if p.peek() == '<' && p.pos+1 < len(p.content) && p.content[p.pos+1] == '/' {
+			// Mark content end position before closing tag
+			contentEndPos = p.pos
 			closingTag := p.parseClosingTag()
 			if strings.EqualFold(closingTag, node.Name) {
 				break
@@ -231,6 +245,8 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 	}
 
 	node.TextContent = textContent
+	node.ContentStart = contentStartPos
+	node.ContentEnd = contentEndPos
 	node.EndPos = p.pos
 	node.EndLine = p.line
 	node.EndColumn = p.col

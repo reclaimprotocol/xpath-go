@@ -1,1 +1,0 @@
-//p[substring(text(), string-length(text()) - 3) = 'Text']

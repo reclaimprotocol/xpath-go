@@ -91,8 +91,14 @@ class ComprehensiveXPathTester {
                 continue;
             }
 
-            console.log(`[${testNumber}/${this.allTestCases.length}] ${testCase.name} ${testCase.suite === 'extended' ? '🆕' : ''}`);
+            const extractionModeIcon = testCase.extractionMode === 'content' ? '📄' : testCase.extractionMode === 'full' ? '🏷️' : '';
+            console.log(`[${testNumber}/${this.allTestCases.length}] ${testCase.name} ${testCase.suite === 'extended' ? '🆕' : ''} ${extractionModeIcon}`);
             console.log(`XPath: ${testCase.xpath}`);
+            
+            if (testCase.extractionMode) {
+                const modeDesc = testCase.extractionMode === 'content' ? 'Content-Only Mode' : 'Full Element Mode';
+                console.log(`Mode: ${modeDesc}`);
+            }
             
             if (this.options.verbose) {
                 console.log(`HTML: ${testCase.html}`);
@@ -137,16 +143,20 @@ class ComprehensiveXPathTester {
     }
 
     async runSingleTest(testCase) {
-        const jsResult = this.runJavaScriptTest(testCase.xpath, testCase.html);
-        const goResult = this.runGoTest(testCase.xpath, testCase.html);
+        // Check if this is a contentsOnly test case
+        const contentsOnly = testCase.extractionMode === 'content';
         
-        const comparison = this.compareResults(jsResult, goResult);
+        const jsResult = this.runJavaScriptTest(testCase.xpath, testCase.html, contentsOnly);
+        const goResult = this.runGoTest(testCase.xpath, testCase.html, contentsOnly);
+        
+        const comparison = this.compareResults(jsResult, goResult, testCase);
 
         return {
             name: testCase.name,
             xpath: testCase.xpath,
             suite: testCase.suite,
             category: testCase.category,
+            extractionMode: testCase.extractionMode,
             passed: comparison.match,
             jsResult,
             goResult,
@@ -154,7 +164,7 @@ class ComprehensiveXPathTester {
         };
     }
 
-    runJavaScriptTest(xpath, html) {
+    runJavaScriptTest(xpath, html, contentsOnly = false) {
         try {
             const dom = new JSDOM(html, {
                 contentType: 'text/html',
@@ -165,6 +175,7 @@ class ComprehensiveXPathTester {
             
             // Store reference to dom for position lookups
             this.currentDom = dom;
+            this.contentsOnly = contentsOnly;
             
             const xpathResult = document.evaluate(
                 xpath,
@@ -223,7 +234,7 @@ class ComprehensiveXPathTester {
         }
     }
 
-    runGoTest(xpath, html) {
+    runGoTest(xpath, html, contentsOnly = false) {
         try {
             // Create temporary files
             const timestamp = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
@@ -236,7 +247,8 @@ class ComprehensiveXPathTester {
             // Run Go test program
             const goTestPath = path.join(__dirname, 'go', 'main.go');
             const traceFlag = this.options.trace ? '--trace' : '';
-            const cmd = `cd "${path.dirname(goTestPath)}" && go run main.go "${htmlFile}" "${xpathFile}" ${traceFlag}`;
+            const contentsOnlyFlag = contentsOnly ? '--contents-only' : '';
+            const cmd = `cd "${path.dirname(goTestPath)}" && go run main.go "${htmlFile}" "${xpathFile}" ${traceFlag} ${contentsOnlyFlag}`;
             
             const output = execSync(cmd, { 
                 encoding: 'utf8',
@@ -284,8 +296,15 @@ class ComprehensiveXPathTester {
         if (this.currentDom && typeof this.currentDom.nodeLocation === 'function') {
             const location = this.currentDom.nodeLocation(node);
             if (location) {
-                startLocation = location.startOffset || 0;
-                endLocation = location.endOffset || startLocation;
+                if (this.contentsOnly) {
+                    // Use content positions (inner content between tags)
+                    startLocation = location.startTag ? location.startTag.endOffset : location.startOffset;
+                    endLocation = location.endTag ? location.endTag.startOffset : location.endOffset;
+                } else {
+                    // Use full element positions (including tags)
+                    startLocation = location.startOffset || 0;
+                    endLocation = location.endOffset || startLocation;
+                }
             }
         }
         
@@ -488,6 +507,25 @@ class ComprehensiveXPathTester {
                 const percentage = (passed / total * 100).toFixed(1);
                 console.log(`${cat.padEnd(20)}: ${passed}/${total} (${percentage}%)`);
             });
+        }
+
+        // Extraction mode breakdown for contentsOnly tests
+        const contentsOnlyTests = this.results.details.filter(r => r.extractionMode);
+        if (contentsOnlyTests.length > 0) {
+            console.log('\\n📄 CONTENTS-ONLY EXTRACTION BREAKDOWN');
+            console.log('======================================');
+            const fullModeTests = contentsOnlyTests.filter(r => r.extractionMode === 'full');
+            const contentModeTests = contentsOnlyTests.filter(r => r.extractionMode === 'content');
+            
+            const fullPassed = fullModeTests.filter(r => r.passed).length;
+            const contentPassed = contentModeTests.filter(r => r.passed).length;
+            
+            if (fullModeTests.length > 0) {
+                console.log(`Full Element Mode  : ${fullPassed}/${fullModeTests.length} (${(fullPassed/fullModeTests.length*100).toFixed(1)}%)`);
+            }
+            if (contentModeTests.length > 0) {
+                console.log(`Content-Only Mode  : ${contentPassed}/${contentModeTests.length} (${(contentPassed/contentModeTests.length*100).toFixed(1)}%)`);
+            }
         }
 
         if (this.results.failed > 0) {

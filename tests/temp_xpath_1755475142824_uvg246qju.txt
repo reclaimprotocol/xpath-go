@@ -1,1 +1,0 @@
-//span[position() mod 3 = 1]

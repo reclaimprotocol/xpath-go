@@ -30,6 +30,8 @@ type Node struct {
 	Parent         *Node             `json:"-"` // Avoid circular JSON
 	StartPos       int               `json:"start_pos"`
 	EndPos         int               `json:"end_pos"`
+	ContentStart   int               `json:"content_start,omitempty"` // Start of inner content (after opening tag)
+	ContentEnd     int               `json:"content_end,omitempty"`   // End of inner content (before closing tag)
 	StartLine      int               `json:"start_line"`
 	StartColumn    int               `json:"start_column"`
 	EndLine        int               `json:"end_line"`

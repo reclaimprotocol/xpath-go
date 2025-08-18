@@ -16,6 +16,8 @@ type Result struct {
 	Attributes    map[string]string `json:"attributes,omitempty"`
 	StartLocation int               `json:"startLocation"`
 	EndLocation   int               `json:"endLocation"`
+	ContentStart  int               `json:"contentStart,omitempty"` // Start of inner content (after opening tag)
+	ContentEnd    int               `json:"contentEnd,omitempty"`   // End of inner content (before closing tag)
 	Path          string            `json:"path"`
 	TextContent   string            `json:"textContent"`
 }
@@ -30,6 +32,7 @@ type XPath struct {
 type Options struct {
 	IncludeLocation bool   `json:"include_location"`
 	OutputFormat    string `json:"output_format"` // "nodes", "values", "paths"
+	ContentsOnly    bool   `json:"contents_only"` // Extract only inner content between tags
 }
 
 // Query evaluates an XPath expression against HTML/XML content
@@ -101,14 +104,25 @@ func convertNodesToResults(nodes []types.Node, opts Options) []Result {
 
 	for _, node := range nodes {
 		result := Result{
-			Value:         node.Value,
-			NodeName:      node.Name,
-			NodeType:      int(node.Type),
-			Attributes:    node.Attributes,
-			StartLocation: node.StartPos,
-			EndLocation:   node.EndPos,
-			Path:          generateNodePath(&node),
-			TextContent:   node.TextContent,
+			Value:        node.Value,
+			NodeName:     node.Name,
+			NodeType:     int(node.Type),
+			Attributes:   node.Attributes,
+			Path:         generateNodePath(&node),
+			TextContent:  node.TextContent,
+			ContentStart: node.ContentStart,
+			ContentEnd:   node.ContentEnd,
+		}
+
+		// Handle contentsOnly option - adjust positions based on extraction mode
+		if opts.ContentsOnly {
+			// Use content positions (inner content between tags)
+			result.StartLocation = node.ContentStart
+			result.EndLocation = node.ContentEnd
+		} else {
+			// Use full element positions (including tags)
+			result.StartLocation = node.StartPos
+			result.EndLocation = node.EndPos
 		}
 
 		// Handle different output formats

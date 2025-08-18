@@ -16,18 +16,34 @@ type TestResult struct {
 
 func main() {
 	if len(os.Args) < 3 {
-		fmt.Fprintf(os.Stderr, "Usage: %s <html_file> <xpath_file> [--trace]\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Usage: %s <html_file> <xpath_file> [--trace] [--contents-only]\n", os.Args[0])
 		os.Exit(1)
 	}
 
 	htmlFile := os.Args[1]
 	xpathFile := os.Args[2]
 
-	// Check for trace mode
-	if len(os.Args) > 3 && os.Args[3] == "--trace" {
+	// Check for options
+	traceMode := false
+	contentsOnly := false
+
+	for i := 3; i < len(os.Args); i++ {
+		switch os.Args[i] {
+		case "--trace":
+			traceMode = true
+		case "--contents-only":
+			contentsOnly = true
+		}
+	}
+
+	if traceMode {
 		xpath.EnableTrace()
 		defer xpath.DisableTrace()
 		fmt.Fprintf(os.Stderr, "[TRACE-ENABLED] XPath trace mode enabled\n")
+	}
+
+	if contentsOnly {
+		fmt.Fprintf(os.Stderr, "[CONTENTS-ONLY] Content-only extraction mode enabled\n")
 	}
 
 	// Read HTML content
@@ -67,7 +83,11 @@ func main() {
 				xpathErr = fmt.Errorf("panic during XPath execution: %v", r)
 			}
 		}()
-		results, xpathErr = xpath.Query(xpathExpr, html)
+		results, xpathErr = xpath.QueryWithOptions(xpathExpr, html, xpath.Options{
+			IncludeLocation: true,
+			OutputFormat:    "nodes",
+			ContentsOnly:    contentsOnly,
+		})
 	}()
 
 	if xpathErr != nil {

@@ -1,6 +1,6 @@
 {
-  "total": 120,
-  "passed": 120,
+  "total": 132,
+  "passed": 132,
   "failed": 0,
   "compatibility": "100.0",
   "details": [
@@ -36,6 +36,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 28,
+            "contentStart": 17,
+            "contentEnd": 22,
             "path": "/#document/html/body/div[2]",
             "textContent": "Hello"
           }
@@ -65,6 +67,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 28,
+            "contentStart": 17,
+            "contentEnd": 22,
             "path": "/#document/html/body/div[2]",
             "textContent": "Hello"
           }
@@ -103,6 +107,8 @@
             "nodeType": 1,
             "startLocation": 0,
             "endLocation": 76,
+            "contentStart": 6,
+            "contentEnd": 69,
             "path": "/#document/html[2]",
             "textContent": "TestContent"
           }
@@ -132,6 +138,8 @@
             "nodeType": 1,
             "startLocation": 0,
             "endLocation": 76,
+            "contentStart": 6,
+            "contentEnd": 69,
             "path": "/#document/html[2]",
             "textContent": "TestContent"
           }
@@ -170,6 +178,8 @@
             "nodeType": 1,
             "startLocation": 36,
             "endLocation": 52,
+            "contentStart": 39,
+            "contentEnd": 48,
             "path": "/#document/html/body/p[2]",
             "textContent": "Top level"
           }
@@ -199,6 +209,8 @@
             "nodeType": 1,
             "startLocation": 36,
             "endLocation": 52,
+            "contentStart": 39,
+            "contentEnd": 48,
             "path": "/#document/html/body/p[2]",
             "textContent": "Top level"
           }
@@ -244,6 +256,8 @@
             },
             "startLocation": 12,
             "endLocation": 58,
+            "contentStart": 45,
+            "contentEnd": 52,
             "path": "/#document/html/body/div[3]",
             "textContent": "Content"
           }
@@ -280,6 +294,8 @@
             },
             "startLocation": 12,
             "endLocation": 58,
+            "contentStart": 45,
+            "contentEnd": 52,
             "path": "/#document/html/body/div[3]",
             "textContent": "Content"
           }
@@ -323,6 +339,8 @@
             },
             "startLocation": 12,
             "endLocation": 40,
+            "contentStart": 27,
+            "contentEnd": 34,
             "path": "/#document/html/body/div[3]",
             "textContent": "With ID"
           }
@@ -357,6 +375,8 @@
             },
             "startLocation": 12,
             "endLocation": 40,
+            "contentStart": 27,
+            "contentEnd": 34,
             "path": "/#document/html/body/div[3]",
             "textContent": "With ID"
           }
@@ -402,6 +422,8 @@
             },
             "startLocation": 12,
             "endLocation": 55,
+            "contentStart": 45,
+            "contentEnd": 49,
             "path": "/#document/html/body/div[4]",
             "textContent": "Both"
           }
@@ -438,6 +460,8 @@
             },
             "startLocation": 12,
             "endLocation": 55,
+            "contentStart": 45,
+            "contentEnd": 49,
             "path": "/#document/html/body/div[4]",
             "textContent": "Both"
           }
@@ -476,6 +500,8 @@
             "nodeType": 1,
             "startLocation": 24,
             "endLocation": 37,
+            "contentStart": 27,
+            "contentEnd": 33,
             "path": "/#document/html/body/p[4]",
             "textContent": "Second"
           }
@@ -505,6 +531,8 @@
             "nodeType": 1,
             "startLocation": 24,
             "endLocation": 37,
+            "contentStart": 27,
+            "contentEnd": 33,
             "path": "/#document/html/body/p[4]",
             "textContent": "Second"
           }
@@ -553,6 +581,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 27,
+            "contentStart": 15,
+            "contentEnd": 23,
             "path": "/#document/html/body/p[4]",
             "textContent": "Has text"
           },
@@ -562,6 +592,8 @@
             "nodeType": 1,
             "startLocation": 34,
             "endLocation": 54,
+            "contentStart": 37,
+            "contentEnd": 50,
             "path": "/#document/html/body/p[4]",
             "textContent": "Also has text"
           }
@@ -601,6 +633,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 27,
+            "contentStart": 15,
+            "contentEnd": 23,
             "path": "/#document/html/body/p[4]",
             "textContent": "Has text"
           },
@@ -610,6 +644,8 @@
             "nodeType": 1,
             "startLocation": 34,
             "endLocation": 54,
+            "contentStart": 37,
+            "contentEnd": 50,
             "path": "/#document/html/body/p[4]",
             "textContent": "Also has text"
           }
@@ -648,6 +684,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 38,
+            "contentStart": 15,
+            "contentEnd": 34,
             "path": "/#document/html/body/p[4]",
             "textContent": "The quick brown fox"
           }
@@ -677,6 +715,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 38,
+            "contentStart": 15,
+            "contentEnd": 34,
             "path": "/#document/html/body/p[4]",
             "textContent": "The quick brown fox"
           }
@@ -715,6 +755,8 @@
             "nodeType": 1,
             "startLocation": 31,
             "endLocation": 46,
+            "contentStart": 35,
+            "contentEnd": 41,
             "path": "/#document/html/body/ul/li[4]",
             "textContent": "Item 2"
           }
@@ -744,6 +786,8 @@
             "nodeType": 1,
             "startLocation": 31,
             "endLocation": 46,
+            "contentStart": 35,
+            "contentEnd": 41,
             "path": "/#document/html/body/ul/li[4]",
             "textContent": "Item 2"
           }
@@ -782,6 +826,8 @@
             "nodeType": 1,
             "startLocation": 45,
             "endLocation": 58,
+            "contentStart": 49,
+            "contentEnd": 53,
             "path": "/#document/html/body/ul/li[4]",
             "textContent": "Last"
           }
@@ -811,6 +857,8 @@
             "nodeType": 1,
             "startLocation": 45,
             "endLocation": 58,
+            "contentStart": 49,
+            "contentEnd": 53,
             "path": "/#document/html/body/ul/li[4]",
             "textContent": "Last"
           }
@@ -849,6 +897,8 @@
             "nodeType": 1,
             "startLocation": 40,
             "endLocation": 54,
+            "contentStart": 44,
+            "contentEnd": 49,
             "path": "/#document/html/body/ol/li[5]",
             "textContent": "Three"
           }
@@ -878,6 +928,8 @@
             "nodeType": 1,
             "startLocation": 40,
             "endLocation": 54,
+            "contentStart": 44,
+            "contentEnd": 49,
             "path": "/#document/html/body/ol/li[5]",
             "textContent": "Three"
           }
@@ -921,6 +973,8 @@
             },
             "startLocation": 23,
             "endLocation": 43,
+            "contentStart": 35,
+            "contentEnd": 39,
             "path": "/#document/html/body/div/span/a[2]",
             "textContent": "Link"
           }
@@ -955,6 +1009,8 @@
             },
             "startLocation": 23,
             "endLocation": 43,
+            "contentStart": 35,
+            "contentEnd": 39,
             "path": "/#document/html/body/div/span/a[2]",
             "textContent": "Link"
           }
@@ -993,6 +1049,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 46,
+            "contentStart": 17,
+            "contentEnd": 40,
             "path": "/#document/html/body/div[2]",
             "textContent": "Child"
           }
@@ -1022,6 +1080,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 46,
+            "contentStart": 17,
+            "contentEnd": 40,
             "path": "/#document/html/body/div[2]",
             "textContent": "Child"
           }
@@ -1070,6 +1130,8 @@
             "nodeType": 1,
             "startLocation": 31,
             "endLocation": 48,
+            "contentStart": 34,
+            "contentEnd": 44,
             "path": "/#document/html/body/div/p[3]",
             "textContent": "First para"
           },
@@ -1079,6 +1141,8 @@
             "nodeType": 1,
             "startLocation": 48,
             "endLocation": 66,
+            "contentStart": 51,
+            "contentEnd": 62,
             "path": "/#document/html/body/div/p[3]",
             "textContent": "Second para"
           }
@@ -1118,6 +1182,8 @@
             "nodeType": 1,
             "startLocation": 31,
             "endLocation": 48,
+            "contentStart": 34,
+            "contentEnd": 44,
             "path": "/#document/html/body/div/p[3]",
             "textContent": "First para"
           },
@@ -1127,6 +1193,8 @@
             "nodeType": 1,
             "startLocation": 48,
             "endLocation": 66,
+            "contentStart": 51,
+            "contentEnd": 62,
             "path": "/#document/html/body/div/p[3]",
             "textContent": "Second para"
           }
@@ -1165,6 +1233,8 @@
             "nodeType": 1,
             "startLocation": 17,
             "endLocation": 30,
+            "contentStart": 20,
+            "contentEnd": 26,
             "path": "/#document/html/body/div/p[3]",
             "textContent": "Before"
           }
@@ -1194,6 +1264,8 @@
             "nodeType": 1,
             "startLocation": 17,
             "endLocation": 30,
+            "contentStart": 20,
+            "contentEnd": 26,
             "path": "/#document/html/body/div/p[3]",
             "textContent": "Before"
           }
@@ -1237,6 +1309,8 @@
             },
             "startLocation": 12,
             "endLocation": 39,
+            "contentStart": 29,
+            "contentEnd": 33,
             "path": "/#document/html/body/div[2]",
             "textContent": "Self"
           }
@@ -1271,6 +1345,8 @@
             },
             "startLocation": 12,
             "endLocation": 39,
+            "contentStart": 29,
+            "contentEnd": 33,
             "path": "/#document/html/body/div[2]",
             "textContent": "Self"
           }
@@ -1326,6 +1402,8 @@
             },
             "startLocation": 12,
             "endLocation": 38,
+            "contentStart": 29,
+            "contentEnd": 32,
             "path": "/#document/html/body/div[4]",
             "textContent": "Red"
           },
@@ -1338,6 +1416,8 @@
             },
             "startLocation": 38,
             "endLocation": 66,
+            "contentStart": 56,
+            "contentEnd": 60,
             "path": "/#document/html/body/div[4]",
             "textContent": "Blue"
           }
@@ -1384,6 +1464,8 @@
             },
             "startLocation": 12,
             "endLocation": 38,
+            "contentStart": 29,
+            "contentEnd": 32,
             "path": "/#document/html/body/div[4]",
             "textContent": "Red"
           },
@@ -1396,6 +1478,8 @@
             },
             "startLocation": 38,
             "endLocation": 66,
+            "contentStart": 56,
+            "contentEnd": 60,
             "path": "/#document/html/body/div[4]",
             "textContent": "Blue"
           }
@@ -1441,6 +1525,8 @@
             },
             "startLocation": 12,
             "endLocation": 54,
+            "contentStart": 42,
+            "contentEnd": 48,
             "path": "/#document/html/body/div[4]",
             "textContent": "Target"
           }
@@ -1477,6 +1563,8 @@
             },
             "startLocation": 12,
             "endLocation": 54,
+            "contentStart": 42,
+            "contentEnd": 48,
             "path": "/#document/html/body/div[4]",
             "textContent": "Target"
           }
@@ -1515,6 +1603,8 @@
             "nodeType": 1,
             "startLocation": 43,
             "endLocation": 71,
+            "contentStart": 47,
+            "contentEnd": 66,
             "path": "/#document/html/body/ul/li[3]",
             "textContent": "Second"
           }
@@ -1544,6 +1634,8 @@
             "nodeType": 1,
             "startLocation": 43,
             "endLocation": 71,
+            "contentStart": 47,
+            "contentEnd": 66,
             "path": "/#document/html/body/ul/li[3]",
             "textContent": "Second"
           }
@@ -1599,6 +1691,8 @@
             },
             "startLocation": 12,
             "endLocation": 44,
+            "contentStart": 35,
+            "contentEnd": 38,
             "path": "/#document/html/body/div[2]",
             "textContent": "Div"
           },
@@ -1611,6 +1705,8 @@
             },
             "startLocation": 44,
             "endLocation": 73,
+            "contentStart": 65,
+            "contentEnd": 69,
             "path": "/#document/html/body/p[2]",
             "textContent": "Para"
           }
@@ -1657,6 +1753,8 @@
             },
             "startLocation": 12,
             "endLocation": 44,
+            "contentStart": 35,
+            "contentEnd": 38,
             "path": "/#document/html/body/div[2]",
             "textContent": "Div"
           },
@@ -1669,6 +1767,8 @@
             },
             "startLocation": 44,
             "endLocation": 73,
+            "contentStart": 65,
+            "contentEnd": 69,
             "path": "/#document/html/body/p[2]",
             "textContent": "Para"
           }
@@ -1717,6 +1817,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 27,
+            "contentStart": 16,
+            "contentEnd": 22,
             "path": "/#document/html/body/h1[2]",
             "textContent": "Header"
           },
@@ -1726,6 +1828,8 @@
             "nodeType": 1,
             "startLocation": 38,
             "endLocation": 56,
+            "contentStart": 42,
+            "contentEnd": 51,
             "path": "/#document/html/body/h2[2]",
             "textContent": "Subheader"
           }
@@ -1765,6 +1869,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 27,
+            "contentStart": 16,
+            "contentEnd": 22,
             "path": "/#document/html/body/h1[2]",
             "textContent": "Header"
           },
@@ -1774,6 +1880,8 @@
             "nodeType": 1,
             "startLocation": 38,
             "endLocation": 56,
+            "contentStart": 42,
+            "contentEnd": 51,
             "path": "/#document/html/body/h2[2]",
             "textContent": "Subheader"
           }
@@ -2051,6 +2159,8 @@
             "nodeType": 1,
             "startLocation": 28,
             "endLocation": 46,
+            "contentStart": 33,
+            "contentEnd": 40,
             "path": "/#document/html/body/div[2]",
             "textContent": "Element"
           },
@@ -2118,6 +2228,8 @@
             "nodeType": 1,
             "startLocation": 28,
             "endLocation": 46,
+            "contentStart": 33,
+            "contentEnd": 40,
             "path": "/#document/html/body/div[2]",
             "textContent": "Element"
           },
@@ -2165,6 +2277,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 51,
+            "contentStart": 16,
+            "contentEnd": 46,
             "path": "/#document/html/body/ul[2]",
             "textContent": "ABC"
           }
@@ -2194,6 +2308,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 51,
+            "contentStart": 16,
+            "contentEnd": 46,
             "path": "/#document/html/body/ul[2]",
             "textContent": "ABC"
           }
@@ -2232,6 +2348,8 @@
             "nodeType": 1,
             "startLocation": 24,
             "endLocation": 57,
+            "contentStart": 27,
+            "contentEnd": 53,
             "path": "/#document/html/body/p[3]",
             "textContent": "This is a longer paragraph"
           }
@@ -2261,6 +2379,8 @@
             "nodeType": 1,
             "startLocation": 24,
             "endLocation": 57,
+            "contentStart": 27,
+            "contentEnd": 53,
             "path": "/#document/html/body/p[3]",
             "textContent": "This is a longer paragraph"
           }
@@ -2304,6 +2424,8 @@
             },
             "startLocation": 12,
             "endLocation": 51,
+            "contentStart": 42,
+            "contentEnd": 47,
             "path": "/#document/html/body/a[3]",
             "textContent": "HTTPS"
           }
@@ -2338,6 +2460,8 @@
             },
             "startLocation": 12,
             "endLocation": 51,
+            "contentStart": 42,
+            "contentEnd": 47,
             "path": "/#document/html/body/a[3]",
             "textContent": "HTTPS"
           }
@@ -2376,6 +2500,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 42,
+            "contentStart": 15,
+            "contentEnd": 38,
             "path": "/#document/html/body/p[3]",
             "textContent": "  Lots   of    spaces  "
           }
@@ -2405,6 +2531,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 42,
+            "contentStart": 15,
+            "contentEnd": 38,
             "path": "/#document/html/body/p[3]",
             "textContent": "  Lots   of    spaces  "
           }
@@ -2443,6 +2571,8 @@
             "nodeType": 1,
             "startLocation": 61,
             "endLocation": 75,
+            "contentStart": 64,
+            "contentEnd": 71,
             "path": "/#document/html/body/article/section/p[2]",
             "textContent": "Content"
           }
@@ -2472,6 +2602,8 @@
             "nodeType": 1,
             "startLocation": 61,
             "endLocation": 75,
+            "contentStart": 64,
+            "contentEnd": 71,
             "path": "/#document/html/body/article/section/p[2]",
             "textContent": "Content"
           }
@@ -2510,6 +2642,8 @@
             "nodeType": 1,
             "startLocation": 54,
             "endLocation": 65,
+            "contentStart": 58,
+            "contentEnd": 60,
             "path": "/#document/html/body/table/tr[2]/td[3]",
             "textContent": "A2"
           }
@@ -2539,6 +2673,8 @@
             "nodeType": 1,
             "startLocation": 54,
             "endLocation": 65,
+            "contentStart": 58,
+            "contentEnd": 60,
             "path": "/#document/html/body/table/tr[2]/td[3]",
             "textContent": "A2"
           }
@@ -2584,6 +2720,8 @@
             },
             "startLocation": 18,
             "endLocation": 50,
+            "contentStart": 50,
+            "contentEnd": 50,
             "path": "/#document/html/body/form/input[3]",
             "textContent": ""
           }
@@ -2620,6 +2758,8 @@
             },
             "startLocation": 18,
             "endLocation": 50,
+            "contentStart": 50,
+            "contentEnd": 50,
             "path": "/#document/html/body/form/input[3]",
             "textContent": ""
           }
@@ -2675,6 +2815,8 @@
             },
             "startLocation": 29,
             "endLocation": 57,
+            "contentStart": 48,
+            "contentEnd": 52,
             "path": "/#document/html/body/ul/li[4]",
             "textContent": "Home"
           },
@@ -2687,6 +2829,8 @@
             },
             "startLocation": 71,
             "endLocation": 102,
+            "contentStart": 90,
+            "contentEnd": 97,
             "path": "/#document/html/body/ul/li[4]",
             "textContent": "Contact"
           }
@@ -2733,6 +2877,8 @@
             },
             "startLocation": 29,
             "endLocation": 57,
+            "contentStart": 48,
+            "contentEnd": 52,
             "path": "/#document/html/body/ul/li[4]",
             "textContent": "Home"
           },
@@ -2745,6 +2891,8 @@
             },
             "startLocation": 71,
             "endLocation": 102,
+            "contentStart": 90,
+            "contentEnd": 97,
             "path": "/#document/html/body/ul/li[4]",
             "textContent": "Contact"
           }
@@ -2783,6 +2931,8 @@
             "nodeType": 1,
             "startLocation": 91,
             "endLocation": 112,
+            "contentStart": 95,
+            "contentEnd": 107,
             "path": "/#document/html/body/nav/ol/li[4]",
             "textContent": "Current Page"
           }
@@ -2812,6 +2962,8 @@
             "nodeType": 1,
             "startLocation": 91,
             "endLocation": 112,
+            "contentStart": 95,
+            "contentEnd": 107,
             "path": "/#document/html/body/nav/ol/li[4]",
             "textContent": "Current Page"
           }
@@ -2857,6 +3009,8 @@
             },
             "startLocation": 12,
             "endLocation": 64,
+            "contentStart": 51,
+            "contentEnd": 58,
             "path": "/#document/html/body/div[3]",
             "textContent": "Product"
           }
@@ -2893,6 +3047,8 @@
             },
             "startLocation": 12,
             "endLocation": 64,
+            "contentStart": 51,
+            "contentEnd": 58,
             "path": "/#document/html/body/div[3]",
             "textContent": "Product"
           }
@@ -2931,6 +3087,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 23,
+            "contentStart": 17,
+            "contentEnd": 17,
             "path": "/#document/html/body/div[4]",
             "textContent": ""
           }
@@ -2960,6 +3118,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 23,
+            "contentStart": 17,
+            "contentEnd": 17,
             "path": "/#document/html/body/div[4]",
             "textContent": ""
           }
@@ -3003,6 +3163,8 @@
             },
             "startLocation": 12,
             "endLocation": 63,
+            "contentStart": 51,
+            "contentEnd": 57,
             "path": "/#document/html/body/div[3]",
             "textContent": "Button"
           }
@@ -3037,8 +3199,1146 @@
             },
             "startLocation": 12,
             "endLocation": 63,
+            "contentStart": 51,
+            "contentEnd": 57,
             "path": "/#document/html/body/div[3]",
             "textContent": "Button"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ContentsOnly - Simple paragraph (full element)",
+      "xpath": "//p",
+      "suite": "extended",
+      "category": "contents-extraction",
+      "extractionMode": "full",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Hello World",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "test"
+            },
+            "textContent": "Hello World",
+            "startLocation": 12,
+            "endLocation": 43,
+            "path": "/html/body/p"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Hello World",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "test"
+            },
+            "startLocation": 12,
+            "endLocation": 43,
+            "contentStart": 28,
+            "contentEnd": 39,
+            "path": "/#document/html/body/p[2]",
+            "textContent": "Hello World"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Hello World",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "test"
+            },
+            "textContent": "Hello World",
+            "startLocation": 12,
+            "endLocation": 43,
+            "path": "/html/body/p"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Hello World",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "test"
+            },
+            "startLocation": 12,
+            "endLocation": 43,
+            "contentStart": 28,
+            "contentEnd": 39,
+            "path": "/#document/html/body/p[2]",
+            "textContent": "Hello World"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ContentsOnly - Simple paragraph (content only)",
+      "xpath": "//p",
+      "suite": "extended",
+      "category": "contents-extraction",
+      "extractionMode": "content",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Hello World",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "test"
+            },
+            "textContent": "Hello World",
+            "startLocation": 28,
+            "endLocation": 39,
+            "path": "/html/body/p"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Hello World",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "test"
+            },
+            "startLocation": 28,
+            "endLocation": 39,
+            "contentStart": 28,
+            "contentEnd": 39,
+            "path": "/#document/html/body/p[2]",
+            "textContent": "Hello World"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Hello World",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "test"
+            },
+            "textContent": "Hello World",
+            "startLocation": 28,
+            "endLocation": 39,
+            "path": "/html/body/p"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Hello World",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "class": "test"
+            },
+            "startLocation": 28,
+            "endLocation": 39,
+            "contentStart": 28,
+            "contentEnd": 39,
+            "path": "/#document/html/body/p[2]",
+            "textContent": "Hello World"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ContentsOnly - Multiple elements (full)",
+      "xpath": "//span",
+      "suite": "extended",
+      "category": "contents-extraction",
+      "extractionMode": "full",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "First",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "First",
+            "startLocation": 17,
+            "endLocation": 35,
+            "path": "/html/body/div/span[1]"
+          },
+          {
+            "value": "Second",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Second",
+            "startLocation": 35,
+            "endLocation": 54,
+            "path": "/html/body/div/span[2]"
+          },
+          {
+            "value": "Third",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Third",
+            "startLocation": 54,
+            "endLocation": 72,
+            "path": "/html/body/div/span[3]"
+          }
+        ],
+        "count": 3,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "First",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 17,
+            "endLocation": 35,
+            "contentStart": 23,
+            "contentEnd": 28,
+            "path": "/#document/html/body/div/span[4]",
+            "textContent": "First"
+          },
+          {
+            "value": "Second",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 35,
+            "endLocation": 54,
+            "contentStart": 41,
+            "contentEnd": 47,
+            "path": "/#document/html/body/div/span[4]",
+            "textContent": "Second"
+          },
+          {
+            "value": "Third",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 54,
+            "endLocation": 72,
+            "contentStart": 60,
+            "contentEnd": 65,
+            "path": "/#document/html/body/div/span[4]",
+            "textContent": "Third"
+          }
+        ],
+        "count": 3,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "First",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "First",
+            "startLocation": 17,
+            "endLocation": 35,
+            "path": "/html/body/div/span[1]"
+          },
+          {
+            "value": "Second",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Second",
+            "startLocation": 35,
+            "endLocation": 54,
+            "path": "/html/body/div/span[2]"
+          },
+          {
+            "value": "Third",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Third",
+            "startLocation": 54,
+            "endLocation": 72,
+            "path": "/html/body/div/span[3]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "First",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 17,
+            "endLocation": 35,
+            "contentStart": 23,
+            "contentEnd": 28,
+            "path": "/#document/html/body/div/span[4]",
+            "textContent": "First"
+          },
+          {
+            "value": "Second",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 35,
+            "endLocation": 54,
+            "contentStart": 41,
+            "contentEnd": 47,
+            "path": "/#document/html/body/div/span[4]",
+            "textContent": "Second"
+          },
+          {
+            "value": "Third",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 54,
+            "endLocation": 72,
+            "contentStart": 60,
+            "contentEnd": 65,
+            "path": "/#document/html/body/div/span[4]",
+            "textContent": "Third"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ContentsOnly - Multiple elements (content)",
+      "xpath": "//span",
+      "suite": "extended",
+      "category": "contents-extraction",
+      "extractionMode": "content",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "First",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "First",
+            "startLocation": 23,
+            "endLocation": 28,
+            "path": "/html/body/div/span[1]"
+          },
+          {
+            "value": "Second",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Second",
+            "startLocation": 41,
+            "endLocation": 47,
+            "path": "/html/body/div/span[2]"
+          },
+          {
+            "value": "Third",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Third",
+            "startLocation": 60,
+            "endLocation": 65,
+            "path": "/html/body/div/span[3]"
+          }
+        ],
+        "count": 3,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "First",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 23,
+            "endLocation": 28,
+            "contentStart": 23,
+            "contentEnd": 28,
+            "path": "/#document/html/body/div/span[4]",
+            "textContent": "First"
+          },
+          {
+            "value": "Second",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 41,
+            "endLocation": 47,
+            "contentStart": 41,
+            "contentEnd": 47,
+            "path": "/#document/html/body/div/span[4]",
+            "textContent": "Second"
+          },
+          {
+            "value": "Third",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 60,
+            "endLocation": 65,
+            "contentStart": 60,
+            "contentEnd": 65,
+            "path": "/#document/html/body/div/span[4]",
+            "textContent": "Third"
+          }
+        ],
+        "count": 3,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "First",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "First",
+            "startLocation": 23,
+            "endLocation": 28,
+            "path": "/html/body/div/span[1]"
+          },
+          {
+            "value": "Second",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Second",
+            "startLocation": 41,
+            "endLocation": 47,
+            "path": "/html/body/div/span[2]"
+          },
+          {
+            "value": "Third",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Third",
+            "startLocation": 60,
+            "endLocation": 65,
+            "path": "/html/body/div/span[3]"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "First",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 23,
+            "endLocation": 28,
+            "contentStart": 23,
+            "contentEnd": 28,
+            "path": "/#document/html/body/div/span[4]",
+            "textContent": "First"
+          },
+          {
+            "value": "Second",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 41,
+            "endLocation": 47,
+            "contentStart": 41,
+            "contentEnd": 47,
+            "path": "/#document/html/body/div/span[4]",
+            "textContent": "Second"
+          },
+          {
+            "value": "Third",
+            "nodeName": "span",
+            "nodeType": 1,
+            "startLocation": 60,
+            "endLocation": 65,
+            "contentStart": 60,
+            "contentEnd": 65,
+            "path": "/#document/html/body/div/span[4]",
+            "textContent": "Third"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ContentsOnly - Nested elements (full)",
+      "xpath": "//div",
+      "suite": "extended",
+      "category": "contents-extraction",
+      "extractionMode": "full",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Outer emphasized text",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Outer emphasized text",
+            "startLocation": 12,
+            "endLocation": 53,
+            "path": "/html/body/div"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Outer emphasized text",
+            "nodeName": "div",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 53,
+            "contentStart": 17,
+            "contentEnd": 47,
+            "path": "/#document/html/body/div[2]",
+            "textContent": "Outer emphasized text"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Outer emphasized text",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Outer emphasized text",
+            "startLocation": 12,
+            "endLocation": 53,
+            "path": "/html/body/div"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Outer emphasized text",
+            "nodeName": "div",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 53,
+            "contentStart": 17,
+            "contentEnd": 47,
+            "path": "/#document/html/body/div[2]",
+            "textContent": "Outer emphasized text"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ContentsOnly - Nested elements (content)",
+      "xpath": "//div",
+      "suite": "extended",
+      "category": "contents-extraction",
+      "extractionMode": "content",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Outer emphasized text",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Outer emphasized text",
+            "startLocation": 17,
+            "endLocation": 47,
+            "path": "/html/body/div"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Outer emphasized text",
+            "nodeName": "div",
+            "nodeType": 1,
+            "startLocation": 17,
+            "endLocation": 47,
+            "contentStart": 17,
+            "contentEnd": 47,
+            "path": "/#document/html/body/div[2]",
+            "textContent": "Outer emphasized text"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Outer emphasized text",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {},
+            "textContent": "Outer emphasized text",
+            "startLocation": 17,
+            "endLocation": 47,
+            "path": "/html/body/div"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Outer emphasized text",
+            "nodeName": "div",
+            "nodeType": 1,
+            "startLocation": 17,
+            "endLocation": 47,
+            "contentStart": 17,
+            "contentEnd": 47,
+            "path": "/#document/html/body/div[2]",
+            "textContent": "Outer emphasized text"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ContentsOnly - Empty element (full)",
+      "xpath": "//div[@id='empty']",
+      "suite": "extended",
+      "category": "contents-extraction",
+      "extractionMode": "full",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "id": "empty"
+            },
+            "textContent": "",
+            "startLocation": 12,
+            "endLocation": 34,
+            "path": "/html/body/div"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "id": "empty"
+            },
+            "startLocation": 12,
+            "endLocation": 34,
+            "contentStart": 28,
+            "contentEnd": 28,
+            "path": "/#document/html/body/div[2]",
+            "textContent": ""
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "id": "empty"
+            },
+            "textContent": "",
+            "startLocation": 12,
+            "endLocation": 34,
+            "path": "/html/body/div"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "id": "empty"
+            },
+            "startLocation": 12,
+            "endLocation": 34,
+            "contentStart": 28,
+            "contentEnd": 28,
+            "path": "/#document/html/body/div[2]",
+            "textContent": ""
+          }
+        ]
+      }
+    },
+    {
+      "name": "ContentsOnly - Empty element (content)",
+      "xpath": "//div[@id='empty']",
+      "suite": "extended",
+      "category": "contents-extraction",
+      "extractionMode": "content",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "id": "empty"
+            },
+            "textContent": "",
+            "startLocation": 28,
+            "endLocation": 28,
+            "path": "/html/body/div"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "id": "empty"
+            },
+            "startLocation": 28,
+            "endLocation": 28,
+            "contentStart": 28,
+            "contentEnd": 28,
+            "path": "/#document/html/body/div[2]",
+            "textContent": ""
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "id": "empty"
+            },
+            "textContent": "",
+            "startLocation": 28,
+            "endLocation": 28,
+            "path": "/html/body/div"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "id": "empty"
+            },
+            "startLocation": 28,
+            "endLocation": 28,
+            "contentStart": 28,
+            "contentEnd": 28,
+            "path": "/#document/html/body/div[2]",
+            "textContent": ""
+          }
+        ]
+      }
+    },
+    {
+      "name": "ContentsOnly - Self-closing element (full)",
+      "xpath": "//img",
+      "suite": "extended",
+      "category": "contents-extraction",
+      "extractionMode": "full",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "nodeName": "img",
+            "nodeType": 1,
+            "attributes": {
+              "src": "test.jpg",
+              "alt": "test image"
+            },
+            "textContent": "",
+            "startLocation": 12,
+            "endLocation": 51,
+            "path": "/html/body/img"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "nodeName": "img",
+            "nodeType": 1,
+            "attributes": {
+              "alt": "test image",
+              "src": "test.jpg"
+            },
+            "startLocation": 12,
+            "endLocation": 51,
+            "contentStart": 51,
+            "contentEnd": 51,
+            "path": "/#document/html/body/img[2]",
+            "textContent": ""
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "",
+            "nodeName": "img",
+            "nodeType": 1,
+            "attributes": {
+              "src": "test.jpg",
+              "alt": "test image"
+            },
+            "textContent": "",
+            "startLocation": 12,
+            "endLocation": 51,
+            "path": "/html/body/img"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "",
+            "nodeName": "img",
+            "nodeType": 1,
+            "attributes": {
+              "alt": "test image",
+              "src": "test.jpg"
+            },
+            "startLocation": 12,
+            "endLocation": 51,
+            "contentStart": 51,
+            "contentEnd": 51,
+            "path": "/#document/html/body/img[2]",
+            "textContent": ""
+          }
+        ]
+      }
+    },
+    {
+      "name": "ContentsOnly - Self-closing element (content)",
+      "xpath": "//img",
+      "suite": "extended",
+      "category": "contents-extraction",
+      "extractionMode": "content",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "nodeName": "img",
+            "nodeType": 1,
+            "attributes": {
+              "src": "test.jpg",
+              "alt": "test image"
+            },
+            "textContent": "",
+            "startLocation": 51,
+            "endLocation": 51,
+            "path": "/html/body/img"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "",
+            "nodeName": "img",
+            "nodeType": 1,
+            "attributes": {
+              "alt": "test image",
+              "src": "test.jpg"
+            },
+            "startLocation": 51,
+            "endLocation": 51,
+            "contentStart": 51,
+            "contentEnd": 51,
+            "path": "/#document/html/body/img[2]",
+            "textContent": ""
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "",
+            "nodeName": "img",
+            "nodeType": 1,
+            "attributes": {
+              "src": "test.jpg",
+              "alt": "test image"
+            },
+            "textContent": "",
+            "startLocation": 51,
+            "endLocation": 51,
+            "path": "/html/body/img"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "",
+            "nodeName": "img",
+            "nodeType": 1,
+            "attributes": {
+              "alt": "test image",
+              "src": "test.jpg"
+            },
+            "startLocation": 51,
+            "endLocation": 51,
+            "contentStart": 51,
+            "contentEnd": 51,
+            "path": "/#document/html/body/img[2]",
+            "textContent": ""
+          }
+        ]
+      }
+    },
+    {
+      "name": "ContentsOnly - Complex attributes (full)",
+      "xpath": "//a[@class='external link']",
+      "suite": "extended",
+      "category": "contents-extraction",
+      "extractionMode": "full",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Click here",
+            "nodeName": "a",
+            "nodeType": 1,
+            "attributes": {
+              "href": "https://example.com",
+              "class": "external link",
+              "data-id": "123"
+            },
+            "textContent": "Click here",
+            "startLocation": 12,
+            "endLocation": 92,
+            "path": "/html/body/a"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Click here",
+            "nodeName": "a",
+            "nodeType": 1,
+            "attributes": {
+              "class": "external link",
+              "data-id": "123",
+              "href": "https://example.com"
+            },
+            "startLocation": 12,
+            "endLocation": 92,
+            "contentStart": 78,
+            "contentEnd": 88,
+            "path": "/#document/html/body/a[2]",
+            "textContent": "Click here"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Click here",
+            "nodeName": "a",
+            "nodeType": 1,
+            "attributes": {
+              "href": "https://example.com",
+              "class": "external link",
+              "data-id": "123"
+            },
+            "textContent": "Click here",
+            "startLocation": 12,
+            "endLocation": 92,
+            "path": "/html/body/a"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Click here",
+            "nodeName": "a",
+            "nodeType": 1,
+            "attributes": {
+              "class": "external link",
+              "data-id": "123",
+              "href": "https://example.com"
+            },
+            "startLocation": 12,
+            "endLocation": 92,
+            "contentStart": 78,
+            "contentEnd": 88,
+            "path": "/#document/html/body/a[2]",
+            "textContent": "Click here"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ContentsOnly - Complex attributes (content)",
+      "xpath": "//a[@class='external link']",
+      "suite": "extended",
+      "category": "contents-extraction",
+      "extractionMode": "content",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Click here",
+            "nodeName": "a",
+            "nodeType": 1,
+            "attributes": {
+              "href": "https://example.com",
+              "class": "external link",
+              "data-id": "123"
+            },
+            "textContent": "Click here",
+            "startLocation": 78,
+            "endLocation": 88,
+            "path": "/html/body/a"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Click here",
+            "nodeName": "a",
+            "nodeType": 1,
+            "attributes": {
+              "class": "external link",
+              "data-id": "123",
+              "href": "https://example.com"
+            },
+            "startLocation": 78,
+            "endLocation": 88,
+            "contentStart": 78,
+            "contentEnd": 88,
+            "path": "/#document/html/body/a[2]",
+            "textContent": "Click here"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Click here",
+            "nodeName": "a",
+            "nodeType": 1,
+            "attributes": {
+              "href": "https://example.com",
+              "class": "external link",
+              "data-id": "123"
+            },
+            "textContent": "Click here",
+            "startLocation": 78,
+            "endLocation": 88,
+            "path": "/html/body/a"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Click here",
+            "nodeName": "a",
+            "nodeType": 1,
+            "attributes": {
+              "class": "external link",
+              "data-id": "123",
+              "href": "https://example.com"
+            },
+            "startLocation": 78,
+            "endLocation": 88,
+            "contentStart": 78,
+            "contentEnd": 88,
+            "path": "/#document/html/body/a[2]",
+            "textContent": "Click here"
           }
         ]
       }
@@ -3085,6 +4385,8 @@
             "nodeType": 1,
             "startLocation": 17,
             "endLocation": 29,
+            "contentStart": 20,
+            "contentEnd": 25,
             "path": "/#document/html/body/div/p[2]",
             "textContent": "First"
           },
@@ -3094,6 +4396,8 @@
             "nodeType": 1,
             "startLocation": 34,
             "endLocation": 47,
+            "contentStart": 37,
+            "contentEnd": 43,
             "path": "/#document/html/body/div/div/p[2]",
             "textContent": "Nested"
           }
@@ -3133,6 +4437,8 @@
             "nodeType": 1,
             "startLocation": 17,
             "endLocation": 29,
+            "contentStart": 20,
+            "contentEnd": 25,
             "path": "/#document/html/body/div/p[2]",
             "textContent": "First"
           },
@@ -3142,6 +4448,8 @@
             "nodeType": 1,
             "startLocation": 34,
             "endLocation": 47,
+            "contentStart": 37,
+            "contentEnd": 43,
             "path": "/#document/html/body/div/div/p[2]",
             "textContent": "Nested"
           }
@@ -3222,6 +4530,8 @@
             "nodeType": 1,
             "startLocation": 0,
             "endLocation": 90,
+            "contentStart": 6,
+            "contentEnd": 83,
             "path": "/#document/html[2]",
             "textContent": "Content"
           },
@@ -3231,6 +4541,8 @@
             "nodeType": 1,
             "startLocation": 6,
             "endLocation": 83,
+            "contentStart": 12,
+            "contentEnd": 76,
             "path": "/#document/html/body[2]",
             "textContent": "Content"
           },
@@ -3240,6 +4552,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 76,
+            "contentStart": 21,
+            "contentEnd": 66,
             "path": "/#document/html/body/article[2]",
             "textContent": "Content"
           },
@@ -3249,6 +4563,8 @@
             "nodeType": 1,
             "startLocation": 21,
             "endLocation": 66,
+            "contentStart": 30,
+            "contentEnd": 56,
             "path": "/#document/html/body/article/section[2]",
             "textContent": "Content"
           },
@@ -3261,6 +4577,8 @@
             },
             "startLocation": 30,
             "endLocation": 56,
+            "contentStart": 45,
+            "contentEnd": 52,
             "path": "/#document/html/body/article/section/p[2]",
             "textContent": "Content"
           }
@@ -3332,6 +4650,8 @@
             "nodeType": 1,
             "startLocation": 0,
             "endLocation": 90,
+            "contentStart": 6,
+            "contentEnd": 83,
             "path": "/#document/html[2]",
             "textContent": "Content"
           },
@@ -3341,6 +4661,8 @@
             "nodeType": 1,
             "startLocation": 6,
             "endLocation": 83,
+            "contentStart": 12,
+            "contentEnd": 76,
             "path": "/#document/html/body[2]",
             "textContent": "Content"
           },
@@ -3350,6 +4672,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 76,
+            "contentStart": 21,
+            "contentEnd": 66,
             "path": "/#document/html/body/article[2]",
             "textContent": "Content"
           },
@@ -3359,6 +4683,8 @@
             "nodeType": 1,
             "startLocation": 21,
             "endLocation": 66,
+            "contentStart": 30,
+            "contentEnd": 56,
             "path": "/#document/html/body/article/section[2]",
             "textContent": "Content"
           },
@@ -3371,6 +4697,8 @@
             },
             "startLocation": 30,
             "endLocation": 56,
+            "contentStart": 45,
+            "contentEnd": 52,
             "path": "/#document/html/body/article/section/p[2]",
             "textContent": "Content"
           }
@@ -3438,6 +4766,8 @@
             },
             "startLocation": 12,
             "endLocation": 41,
+            "contentStart": 30,
+            "contentEnd": 36,
             "path": "/#document/html/body/h1[2]",
             "textContent": "Header"
           },
@@ -3450,6 +4780,8 @@
             },
             "startLocation": 41,
             "endLocation": 73,
+            "contentStart": 59,
+            "contentEnd": 68,
             "path": "/#document/html/body/h2[2]",
             "textContent": "Subheader"
           },
@@ -3462,6 +4794,8 @@
             },
             "startLocation": 87,
             "endLocation": 112,
+            "contentStart": 104,
+            "contentEnd": 108,
             "path": "/#document/html/body/p[2]",
             "textContent": "Para"
           }
@@ -3520,6 +4854,8 @@
             },
             "startLocation": 12,
             "endLocation": 41,
+            "contentStart": 30,
+            "contentEnd": 36,
             "path": "/#document/html/body/h1[2]",
             "textContent": "Header"
           },
@@ -3532,6 +4868,8 @@
             },
             "startLocation": 41,
             "endLocation": 73,
+            "contentStart": 59,
+            "contentEnd": 68,
             "path": "/#document/html/body/h2[2]",
             "textContent": "Subheader"
           },
@@ -3544,6 +4882,8 @@
             },
             "startLocation": 87,
             "endLocation": 112,
+            "contentStart": 104,
+            "contentEnd": 108,
             "path": "/#document/html/body/p[2]",
             "textContent": "Para"
           }
@@ -3582,6 +4922,8 @@
             "nodeType": 1,
             "startLocation": 65,
             "endLocation": 78,
+            "contentStart": 68,
+            "contentEnd": 74,
             "path": "/#document/html/body/div/article/div/p[2]",
             "textContent": "Target"
           }
@@ -3611,6 +4953,8 @@
             "nodeType": 1,
             "startLocation": 65,
             "endLocation": 78,
+            "contentStart": 68,
+            "contentEnd": 74,
             "path": "/#document/html/body/div/article/div/p[2]",
             "textContent": "Target"
           }
@@ -3654,6 +4998,8 @@
             },
             "startLocation": 12,
             "endLocation": 61,
+            "contentStart": 47,
+            "contentEnd": 55,
             "path": "/#document/html/body/div[4]",
             "textContent": "Button 1"
           }
@@ -3688,6 +5034,8 @@
             },
             "startLocation": 12,
             "endLocation": 61,
+            "contentStart": 47,
+            "contentEnd": 55,
             "path": "/#document/html/body/div[4]",
             "textContent": "Button 1"
           }
@@ -3731,6 +5079,8 @@
             },
             "startLocation": 49,
             "endLocation": 72,
+            "contentStart": 66,
+            "contentEnd": 67,
             "path": "/#document/html/body/ul/li[6]",
             "textContent": "C"
           }
@@ -3765,6 +5115,8 @@
             },
             "startLocation": 49,
             "endLocation": 72,
+            "contentStart": 66,
+            "contentEnd": 67,
             "path": "/#document/html/body/ul/li[6]",
             "textContent": "C"
           }
@@ -3808,6 +5160,8 @@
             },
             "startLocation": 61,
             "endLocation": 85,
+            "contentStart": 77,
+            "contentEnd": 81,
             "path": "/#document/html/body/div/p[3]",
             "textContent": "Last"
           }
@@ -3842,6 +5196,8 @@
             },
             "startLocation": 61,
             "endLocation": 85,
+            "contentStart": 77,
+            "contentEnd": 81,
             "path": "/#document/html/body/div/p[3]",
             "textContent": "Last"
           }
@@ -3985,6 +5341,8 @@
             "nodeType": 1,
             "startLocation": 28,
             "endLocation": 46,
+            "contentStart": 33,
+            "contentEnd": 40,
             "path": "/#document/html/body/div[2]",
             "textContent": "Element"
           }
@@ -4014,6 +5372,8 @@
             "nodeType": 1,
             "startLocation": 28,
             "endLocation": 46,
+            "contentStart": 33,
+            "contentEnd": 40,
             "path": "/#document/html/body/div[2]",
             "textContent": "Element"
           }
@@ -4072,6 +5432,8 @@
             },
             "startLocation": 12,
             "endLocation": 41,
+            "contentStart": 34,
+            "contentEnd": 35,
             "path": "/#document/html/body/div[5]",
             "textContent": "A"
           },
@@ -4085,6 +5447,8 @@
             },
             "startLocation": 70,
             "endLocation": 101,
+            "contentStart": 94,
+            "contentEnd": 95,
             "path": "/#document/html/body/div[5]",
             "textContent": "C"
           }
@@ -4134,6 +5498,8 @@
             },
             "startLocation": 12,
             "endLocation": 41,
+            "contentStart": 34,
+            "contentEnd": 35,
             "path": "/#document/html/body/div[5]",
             "textContent": "A"
           },
@@ -4147,6 +5513,8 @@
             },
             "startLocation": 70,
             "endLocation": 101,
+            "contentStart": 94,
+            "contentEnd": 95,
             "path": "/#document/html/body/div[5]",
             "textContent": "C"
           }
@@ -4195,6 +5563,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 34,
+            "contentStart": 15,
+            "contentEnd": 30,
             "path": "/#document/html/body/p[4]",
             "textContent": "  Hello World  "
           },
@@ -4204,6 +5574,8 @@
             "nodeType": 1,
             "startLocation": 46,
             "endLocation": 79,
+            "contentStart": 49,
+            "contentEnd": 75,
             "path": "/#document/html/body/p[4]",
             "textContent": "  Very long content here  "
           }
@@ -4243,6 +5615,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 34,
+            "contentStart": 15,
+            "contentEnd": 30,
             "path": "/#document/html/body/p[4]",
             "textContent": "  Hello World  "
           },
@@ -4252,6 +5626,8 @@
             "nodeType": 1,
             "startLocation": 46,
             "endLocation": 79,
+            "contentStart": 49,
+            "contentEnd": 75,
             "path": "/#document/html/body/p[4]",
             "textContent": "  Very long content here  "
           }
@@ -4310,6 +5686,8 @@
             },
             "startLocation": 12,
             "endLocation": 47,
+            "contentStart": 47,
+            "contentEnd": 47,
             "path": "/#document/html/body/input[4]",
             "textContent": ""
           },
@@ -4323,6 +5701,8 @@
             },
             "startLocation": 47,
             "endLocation": 86,
+            "contentStart": 86,
+            "contentEnd": 86,
             "path": "/#document/html/body/input[4]",
             "textContent": ""
           }
@@ -4372,6 +5752,8 @@
             },
             "startLocation": 12,
             "endLocation": 47,
+            "contentStart": 47,
+            "contentEnd": 47,
             "path": "/#document/html/body/input[4]",
             "textContent": ""
           },
@@ -4385,6 +5767,8 @@
             },
             "startLocation": 47,
             "endLocation": 86,
+            "contentStart": 86,
+            "contentEnd": 86,
             "path": "/#document/html/body/input[4]",
             "textContent": ""
           }
@@ -4423,6 +5807,8 @@
             "nodeType": 1,
             "startLocation": 38,
             "endLocation": 60,
+            "contentStart": 44,
+            "contentEnd": 53,
             "path": "/#document/html/body/nav/span[2]",
             "textContent": "Separator"
           }
@@ -4452,6 +5838,8 @@
             "nodeType": 1,
             "startLocation": 38,
             "endLocation": 60,
+            "contentStart": 44,
+            "contentEnd": 53,
             "path": "/#document/html/body/nav/span[2]",
             "textContent": "Separator"
           }
@@ -4490,6 +5878,8 @@
             "nodeType": 1,
             "startLocation": 76,
             "endLocation": 87,
+            "contentStart": 79,
+            "contentEnd": 83,
             "path": "/#document/html/body/div/div/div/div/p[2]",
             "textContent": "Deep"
           }
@@ -4519,6 +5909,8 @@
             "nodeType": 1,
             "startLocation": 76,
             "endLocation": 87,
+            "contentStart": 79,
+            "contentEnd": 83,
             "path": "/#document/html/body/div/div/div/div/p[2]",
             "textContent": "Deep"
           }
@@ -4566,6 +5958,8 @@
             },
             "startLocation": 12,
             "endLocation": 70,
+            "contentStart": 55,
+            "contentEnd": 61,
             "path": "/#document/html/body/button[3]",
             "textContent": "Submit"
           }
@@ -4604,6 +5998,8 @@
             },
             "startLocation": 12,
             "endLocation": 70,
+            "contentStart": 55,
+            "contentEnd": 61,
             "path": "/#document/html/body/button[3]",
             "textContent": "Submit"
           }
@@ -4651,6 +6047,8 @@
             },
             "startLocation": 12,
             "endLocation": 85,
+            "contentStart": 72,
+            "contentEnd": 79,
             "path": "/#document/html/body/div[3]",
             "textContent": "Content"
           }
@@ -4689,6 +6087,8 @@
             },
             "startLocation": 12,
             "endLocation": 85,
+            "contentStart": 72,
+            "contentEnd": 79,
             "path": "/#document/html/body/div[3]",
             "textContent": "Content"
           }
@@ -4727,6 +6127,8 @@
             "nodeType": 1,
             "startLocation": 112,
             "endLocation": 125,
+            "contentStart": 116,
+            "contentEnd": 120,
             "path": "/#document/html/body/table/tbody/tr[2]/td[3]",
             "textContent": "Jane"
           }
@@ -4756,6 +6158,8 @@
             "nodeType": 1,
             "startLocation": 112,
             "endLocation": 125,
+            "contentStart": 116,
+            "contentEnd": 120,
             "path": "/#document/html/body/table/tbody/tr[2]/td[3]",
             "textContent": "Jane"
           }
@@ -4803,6 +6207,8 @@
             },
             "startLocation": 93,
             "endLocation": 138,
+            "contentStart": 138,
+            "contentEnd": 138,
             "path": "/#document/html/body/form/input[4]",
             "textContent": ""
           }
@@ -4841,6 +6247,8 @@
             },
             "startLocation": 93,
             "endLocation": 138,
+            "contentStart": 138,
+            "contentEnd": 138,
             "path": "/#document/html/body/form/input[4]",
             "textContent": ""
           }
@@ -4879,6 +6287,8 @@
             "nodeType": 1,
             "startLocation": 16,
             "endLocation": 60,
+            "contentStart": 20,
+            "contentEnd": 55,
             "path": "/#document/html/body/ul/li[4]",
             "textContent": "Item 1"
           }
@@ -4908,6 +6318,8 @@
             "nodeType": 1,
             "startLocation": 16,
             "endLocation": 60,
+            "contentStart": 20,
+            "contentEnd": 55,
             "path": "/#document/html/body/ul/li[4]",
             "textContent": "Item 1"
           }
@@ -4946,6 +6358,8 @@
             "nodeType": 1,
             "startLocation": 17,
             "endLocation": 35,
+            "contentStart": 20,
+            "contentEnd": 31,
             "path": "/#document/html/body/div[1]/p[2]",
             "textContent": "Paragraph 1"
           }
@@ -4975,6 +6389,8 @@
             "nodeType": 1,
             "startLocation": 17,
             "endLocation": 35,
+            "contentStart": 20,
+            "contentEnd": 31,
             "path": "/#document/html/body/div[1]/p[2]",
             "textContent": "Paragraph 1"
           }
@@ -5018,6 +6434,8 @@
             },
             "startLocation": 12,
             "endLocation": 56,
+            "contentStart": 46,
+            "contentEnd": 50,
             "path": "/#document/html/body/div[3]",
             "textContent": "Test"
           }
@@ -5052,6 +6470,8 @@
             },
             "startLocation": 12,
             "endLocation": 56,
+            "contentStart": 46,
+            "contentEnd": 50,
             "path": "/#document/html/body/div[3]",
             "textContent": "Test"
           }
@@ -5100,6 +6520,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 23,
+            "contentStart": 17,
+            "contentEnd": 17,
             "path": "/#document/html/body/div[5]",
             "textContent": ""
           },
@@ -5109,6 +6531,8 @@
             "nodeType": 1,
             "startLocation": 23,
             "endLocation": 35,
+            "contentStart": 28,
+            "contentEnd": 29,
             "path": "/#document/html/body/div[5]",
             "textContent": " "
           }
@@ -5148,6 +6572,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 23,
+            "contentStart": 17,
+            "contentEnd": 17,
             "path": "/#document/html/body/div[5]",
             "textContent": ""
           },
@@ -5157,6 +6583,8 @@
             "nodeType": 1,
             "startLocation": 23,
             "endLocation": 35,
+            "contentStart": 28,
+            "contentEnd": 29,
             "path": "/#document/html/body/div[5]",
             "textContent": " "
           }
@@ -5195,6 +6623,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 30,
+            "contentStart": 15,
+            "contentEnd": 26,
             "path": "/#document/html/body/p[5]",
             "textContent": "Hello World"
           }
@@ -5224,6 +6654,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 30,
+            "contentStart": 15,
+            "contentEnd": 26,
             "path": "/#document/html/body/p[5]",
             "textContent": "Hello World"
           }
@@ -5279,6 +6711,8 @@
             },
             "startLocation": 52,
             "endLocation": 79,
+            "contentStart": 71,
+            "contentEnd": 72,
             "path": "/#document/html/body/div/span[5]",
             "textContent": "B"
           },
@@ -5291,6 +6725,8 @@
             },
             "startLocation": 118,
             "endLocation": 145,
+            "contentStart": 137,
+            "contentEnd": 138,
             "path": "/#document/html/body/div/span[5]",
             "textContent": "D"
           }
@@ -5337,6 +6773,8 @@
             },
             "startLocation": 52,
             "endLocation": 79,
+            "contentStart": 71,
+            "contentEnd": 72,
             "path": "/#document/html/body/div/span[5]",
             "textContent": "B"
           },
@@ -5349,6 +6787,8 @@
             },
             "startLocation": 118,
             "endLocation": 145,
+            "contentStart": 137,
+            "contentEnd": 138,
             "path": "/#document/html/body/div/span[5]",
             "textContent": "D"
           }
@@ -5387,6 +6827,8 @@
             "nodeType": 1,
             "startLocation": 106,
             "endLocation": 129,
+            "contentStart": 114,
+            "contentEnd": 120,
             "path": "/#document/html/body/div/footer[2]",
             "textContent": "Footer"
           }
@@ -5416,6 +6858,8 @@
             "nodeType": 1,
             "startLocation": 106,
             "endLocation": 129,
+            "contentStart": 114,
+            "contentEnd": 120,
             "path": "/#document/html/body/div/footer[2]",
             "textContent": "Footer"
           }
@@ -5486,6 +6930,8 @@
             },
             "startLocation": 12,
             "endLocation": 47,
+            "contentStart": 39,
+            "contentEnd": 43,
             "path": "/#document/html/body/a[4]",
             "textContent": "Link"
           },
@@ -5498,6 +6944,8 @@
             },
             "startLocation": 47,
             "endLocation": 88,
+            "contentStart": 76,
+            "contentEnd": 84,
             "path": "/#document/html/body/a[4]",
             "textContent": "External"
           },
@@ -5511,6 +6959,8 @@
             },
             "startLocation": 88,
             "endLocation": 135,
+            "contentStart": 123,
+            "contentEnd": 131,
             "path": "/#document/html/body/a[4]",
             "textContent": "Internal"
           }
@@ -5572,6 +7022,8 @@
             },
             "startLocation": 12,
             "endLocation": 47,
+            "contentStart": 39,
+            "contentEnd": 43,
             "path": "/#document/html/body/a[4]",
             "textContent": "Link"
           },
@@ -5584,6 +7036,8 @@
             },
             "startLocation": 47,
             "endLocation": 88,
+            "contentStart": 76,
+            "contentEnd": 84,
             "path": "/#document/html/body/a[4]",
             "textContent": "External"
           },
@@ -5597,6 +7051,8 @@
             },
             "startLocation": 88,
             "endLocation": 135,
+            "contentStart": 123,
+            "contentEnd": 131,
             "path": "/#document/html/body/a[4]",
             "textContent": "Internal"
           }
@@ -5665,6 +7121,8 @@
             "nodeType": 1,
             "startLocation": 21,
             "endLocation": 35,
+            "contentStart": 25,
+            "contentEnd": 30,
             "path": "/#document/html/body/section/h1[2]",
             "textContent": "Title"
           },
@@ -5674,6 +7132,8 @@
             "nodeType": 1,
             "startLocation": 35,
             "endLocation": 46,
+            "contentStart": 38,
+            "contentEnd": 42,
             "path": "/#document/html/body/section/p[2]",
             "textContent": "Para"
           },
@@ -5683,6 +7143,8 @@
             "nodeType": 1,
             "startLocation": 65,
             "endLocation": 82,
+            "contentStart": 69,
+            "contentEnd": 77,
             "path": "/#document/html/body/article/h2[2]",
             "textContent": "Subtitle"
           },
@@ -5692,6 +7154,8 @@
             "nodeType": 1,
             "startLocation": 82,
             "endLocation": 100,
+            "contentStart": 87,
+            "contentEnd": 94,
             "path": "/#document/html/body/article/div[2]",
             "textContent": "Content"
           }
@@ -5751,6 +7215,8 @@
             "nodeType": 1,
             "startLocation": 21,
             "endLocation": 35,
+            "contentStart": 25,
+            "contentEnd": 30,
             "path": "/#document/html/body/section/h1[2]",
             "textContent": "Title"
           },
@@ -5760,6 +7226,8 @@
             "nodeType": 1,
             "startLocation": 35,
             "endLocation": 46,
+            "contentStart": 38,
+            "contentEnd": 42,
             "path": "/#document/html/body/section/p[2]",
             "textContent": "Para"
           },
@@ -5769,6 +7237,8 @@
             "nodeType": 1,
             "startLocation": 65,
             "endLocation": 82,
+            "contentStart": 69,
+            "contentEnd": 77,
             "path": "/#document/html/body/article/h2[2]",
             "textContent": "Subtitle"
           },
@@ -5778,6 +7248,8 @@
             "nodeType": 1,
             "startLocation": 82,
             "endLocation": 100,
+            "contentStart": 87,
+            "contentEnd": 94,
             "path": "/#document/html/body/article/div[2]",
             "textContent": "Content"
           }
@@ -5821,6 +7293,8 @@
             },
             "startLocation": 12,
             "endLocation": 58,
+            "contentStart": 46,
+            "contentEnd": 52,
             "path": "/#document/html/body/div[4]",
             "textContent": "Item 1"
           }
@@ -5855,6 +7329,8 @@
             },
             "startLocation": 12,
             "endLocation": 58,
+            "contentStart": 46,
+            "contentEnd": 52,
             "path": "/#document/html/body/div[4]",
             "textContent": "Item 1"
           }
@@ -5893,6 +7369,8 @@
             "nodeType": 1,
             "startLocation": 0,
             "endLocation": 122,
+            "contentStart": 6,
+            "contentEnd": 115,
             "path": "/#document/html[2]",
             "textContent": "TestTitleContent"
           }
@@ -5922,6 +7400,8 @@
             "nodeType": 1,
             "startLocation": 0,
             "endLocation": 122,
+            "contentStart": 6,
+            "contentEnd": 115,
             "path": "/#document/html[2]",
             "textContent": "TestTitleContent"
           }
@@ -5965,6 +7445,8 @@
             },
             "startLocation": 12,
             "endLocation": 139,
+            "contentStart": 32,
+            "contentEnd": 133,
             "path": "/#document/html/body/div[2]",
             "textContent": "Loading...Loaded Content"
           }
@@ -5999,6 +7481,8 @@
             },
             "startLocation": 12,
             "endLocation": 139,
+            "contentStart": 32,
+            "contentEnd": 133,
             "path": "/#document/html/body/div[2]",
             "textContent": "Loading...Loaded Content"
           }
@@ -6037,6 +7521,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 30,
+            "contentStart": 15,
+            "contentEnd": 26,
             "path": "/#document/html/body/p[4]",
             "textContent": "Hello World"
           }
@@ -6066,6 +7552,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 30,
+            "contentStart": 15,
+            "contentEnd": 26,
             "path": "/#document/html/body/p[4]",
             "textContent": "Hello World"
           }
@@ -6109,6 +7597,8 @@
             },
             "startLocation": 50,
             "endLocation": 90,
+            "contentStart": 78,
+            "contentEnd": 84,
             "path": "/#document/html/body/div[3]",
             "textContent": "Item 2"
           }
@@ -6143,6 +7633,8 @@
             },
             "startLocation": 50,
             "endLocation": 90,
+            "contentStart": 78,
+            "contentEnd": 84,
             "path": "/#document/html/body/div[3]",
             "textContent": "Item 2"
           }
@@ -6191,6 +7683,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 30,
+            "contentStart": 18,
+            "contentEnd": 23,
             "path": "/#document/html/body/span[4]",
             "textContent": "First"
           },
@@ -6200,6 +7694,8 @@
             "nodeType": 1,
             "startLocation": 49,
             "endLocation": 67,
+            "contentStart": 55,
+            "contentEnd": 60,
             "path": "/#document/html/body/span[4]",
             "textContent": "Third"
           }
@@ -6239,6 +7735,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 30,
+            "contentStart": 18,
+            "contentEnd": 23,
             "path": "/#document/html/body/span[4]",
             "textContent": "First"
           },
@@ -6248,6 +7746,8 @@
             "nodeType": 1,
             "startLocation": 49,
             "endLocation": 67,
+            "contentStart": 55,
+            "contentEnd": 60,
             "path": "/#document/html/body/span[4]",
             "textContent": "Third"
           }
@@ -6286,6 +7786,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 28,
+            "contentStart": 15,
+            "contentEnd": 24,
             "path": "/#document/html/body/p[4]",
             "textContent": "ShortText"
           }
@@ -6315,6 +7817,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 28,
+            "contentStart": 15,
+            "contentEnd": 24,
             "path": "/#document/html/body/p[4]",
             "textContent": "ShortText"
           }
@@ -6353,6 +7857,8 @@
             "nodeType": 1,
             "startLocation": 35,
             "endLocation": 54,
+            "contentStart": 40,
+            "contentEnd": 48,
             "path": "/#document/html/body/div[4]",
             "textContent": "Complete"
           }
@@ -6382,6 +7888,8 @@
             "nodeType": 1,
             "startLocation": 35,
             "endLocation": 54,
+            "contentStart": 40,
+            "contentEnd": 48,
             "path": "/#document/html/body/div[4]",
             "textContent": "Complete"
           }
@@ -6420,6 +7928,8 @@
             "nodeType": 1,
             "startLocation": 27,
             "endLocation": 46,
+            "contentStart": 34,
+            "contentEnd": 38,
             "path": "/#document/html/head/title[2]",
             "textContent": "Test"
           }
@@ -6449,6 +7959,8 @@
             "nodeType": 1,
             "startLocation": 27,
             "endLocation": 46,
+            "contentStart": 34,
+            "contentEnd": 38,
             "path": "/#document/html/head/title[2]",
             "textContent": "Test"
           }
@@ -6492,6 +8004,8 @@
             },
             "startLocation": 168,
             "endLocation": 199,
+            "contentStart": 189,
+            "contentEnd": 193,
             "path": "/#document/html/body/div[2]",
             "textContent": "Text"
           }
@@ -6526,6 +8040,8 @@
             },
             "startLocation": 168,
             "endLocation": 199,
+            "contentStart": 189,
+            "contentEnd": 193,
             "path": "/#document/html/body/div[2]",
             "textContent": "Text"
           }
@@ -6564,6 +8080,8 @@
             "nodeType": 1,
             "startLocation": 32,
             "endLocation": 45,
+            "contentStart": 35,
+            "contentEnd": 41,
             "path": "/#document/html/body/div/p[2]",
             "textContent": "Nested"
           }
@@ -6593,6 +8111,8 @@
             "nodeType": 1,
             "startLocation": 32,
             "endLocation": 45,
+            "contentStart": 35,
+            "contentEnd": 41,
             "path": "/#document/html/body/div/p[2]",
             "textContent": "Nested"
           }
@@ -6631,6 +8151,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 19,
+            "contentStart": 15,
+            "contentEnd": 15,
             "path": "/#document/html/body/p[4]",
             "textContent": ""
           }
@@ -6660,6 +8182,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 19,
+            "contentStart": 15,
+            "contentEnd": 15,
             "path": "/#document/html/body/p[4]",
             "textContent": ""
           }
@@ -6698,6 +8222,8 @@
             "nodeType": 1,
             "startLocation": 16,
             "endLocation": 30,
+            "contentStart": 20,
+            "contentEnd": 25,
             "path": "/#document/html/body/ul/li[4]",
             "textContent": "First"
           }
@@ -6727,6 +8253,8 @@
             "nodeType": 1,
             "startLocation": 16,
             "endLocation": 30,
+            "contentStart": 20,
+            "contentEnd": 25,
             "path": "/#document/html/body/ul/li[4]",
             "textContent": "First"
           }
@@ -6765,6 +8293,8 @@
             "nodeType": 1,
             "startLocation": 62,
             "endLocation": 73,
+            "contentStart": 65,
+            "contentEnd": 69,
             "path": "/#document/html/body/div/div/div/div/div/div/div/div/div/div/p[2]",
             "textContent": "Deep"
           }
@@ -6794,6 +8324,8 @@
             "nodeType": 1,
             "startLocation": 62,
             "endLocation": 73,
+            "contentStart": 65,
+            "contentEnd": 69,
             "path": "/#document/html/body/div/div/div/div/div/div/div/div/div/div/p[2]",
             "textContent": "Deep"
           }
@@ -6837,6 +8369,8 @@
             },
             "startLocation": 12,
             "endLocation": 164,
+            "contentStart": 151,
+            "contentEnd": 158,
             "path": "/#document/html/body/div[2]",
             "textContent": "Content"
           }
@@ -6871,6 +8405,8 @@
             },
             "startLocation": 12,
             "endLocation": 164,
+            "contentStart": 151,
+            "contentEnd": 158,
             "path": "/#document/html/body/div[2]",
             "textContent": "Content"
           }
@@ -6926,6 +8462,8 @@
             },
             "startLocation": 12,
             "endLocation": 45,
+            "contentStart": 30,
+            "contentEnd": 39,
             "path": "/#document/html/body/div[4]",
             "textContent": "Uppercase"
           },
@@ -6938,6 +8476,8 @@
             },
             "startLocation": 78,
             "endLocation": 107,
+            "contentStart": 96,
+            "contentEnd": 101,
             "path": "/#document/html/body/div[4]",
             "textContent": "Mixed"
           }
@@ -6984,6 +8524,8 @@
             },
             "startLocation": 12,
             "endLocation": 45,
+            "contentStart": 30,
+            "contentEnd": 39,
             "path": "/#document/html/body/div[4]",
             "textContent": "Uppercase"
           },
@@ -6996,6 +8538,8 @@
             },
             "startLocation": 78,
             "endLocation": 107,
+            "contentStart": 96,
+            "contentEnd": 101,
             "path": "/#document/html/body/div[4]",
             "textContent": "Mixed"
           }
@@ -7034,6 +8578,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 40,
+            "contentStart": 15,
+            "contentEnd": 36,
             "path": "/#document/html/body/p[3]",
             "textContent": "  multiple   spaces  "
           }
@@ -7063,6 +8609,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 40,
+            "contentStart": 15,
+            "contentEnd": 36,
             "path": "/#document/html/body/p[3]",
             "textContent": "  multiple   spaces  "
           }
@@ -7121,6 +8669,8 @@
             },
             "startLocation": 12,
             "endLocation": 44,
+            "contentStart": 44,
+            "contentEnd": 44,
             "path": "/#document/html/body/input[4]",
             "textContent": ""
           },
@@ -7134,6 +8684,8 @@
             },
             "startLocation": 68,
             "endLocation": 107,
+            "contentStart": 107,
+            "contentEnd": 107,
             "path": "/#document/html/body/input[4]",
             "textContent": ""
           }
@@ -7183,6 +8735,8 @@
             },
             "startLocation": 12,
             "endLocation": 44,
+            "contentStart": 44,
+            "contentEnd": 44,
             "path": "/#document/html/body/input[4]",
             "textContent": ""
           },
@@ -7196,6 +8750,8 @@
             },
             "startLocation": 68,
             "endLocation": 107,
+            "contentStart": 107,
+            "contentEnd": 107,
             "path": "/#document/html/body/input[4]",
             "textContent": ""
           }
@@ -7239,6 +8795,8 @@
             },
             "startLocation": 12,
             "endLocation": 40,
+            "contentStart": 31,
+            "contentEnd": 34,
             "path": "/#document/html/body/div[4]",
             "textContent": "Ten"
           }
@@ -7273,6 +8831,8 @@
             },
             "startLocation": 12,
             "endLocation": 40,
+            "contentStart": 31,
+            "contentEnd": 34,
             "path": "/#document/html/body/div[4]",
             "textContent": "Ten"
           }
@@ -7318,6 +8878,8 @@
             },
             "startLocation": 12,
             "endLocation": 44,
+            "contentStart": 44,
+            "contentEnd": 44,
             "path": "/#document/html/body/img[2]",
             "textContent": ""
           }
@@ -7354,6 +8916,8 @@
             },
             "startLocation": 12,
             "endLocation": 44,
+            "contentStart": 44,
+            "contentEnd": 44,
             "path": "/#document/html/body/img[2]",
             "textContent": ""
           }
@@ -7392,6 +8956,8 @@
             "nodeType": 1,
             "startLocation": 35,
             "endLocation": 46,
+            "contentStart": 38,
+            "contentEnd": 42,
             "path": "/#document/html/body/div/p[2]",
             "textContent": "Text"
           }
@@ -7421,6 +8987,8 @@
             "nodeType": 1,
             "startLocation": 35,
             "endLocation": 46,
+            "contentStart": 38,
+            "contentEnd": 42,
             "path": "/#document/html/body/div/p[2]",
             "textContent": "Text"
           }
@@ -7459,6 +9027,8 @@
             "nodeType": 1,
             "startLocation": 63,
             "endLocation": 81,
+            "contentStart": 68,
+            "contentEnd": 75,
             "path": "/#document/html/body/div[2]",
             "textContent": "Content"
           }
@@ -7488,6 +9058,8 @@
             "nodeType": 1,
             "startLocation": 63,
             "endLocation": 81,
+            "contentStart": 68,
+            "contentEnd": 75,
             "path": "/#document/html/body/div[2]",
             "textContent": "Content"
           }
@@ -7526,6 +9098,8 @@
             "nodeType": 1,
             "startLocation": 67,
             "endLocation": 84,
+            "contentStart": 73,
+            "contentEnd": 77,
             "path": "/#document/html/body/div/p/span[2]",
             "textContent": "Text"
           }
@@ -7555,6 +9129,8 @@
             "nodeType": 1,
             "startLocation": 67,
             "endLocation": 84,
+            "contentStart": 73,
+            "contentEnd": 77,
             "path": "/#document/html/body/div/p/span[2]",
             "textContent": "Text"
           }
@@ -7610,6 +9186,8 @@
             },
             "startLocation": 12,
             "endLocation": 52,
+            "contentStart": 41,
+            "contentEnd": 46,
             "path": "/#document/html/body/div[3]",
             "textContent": "First"
           },
@@ -7622,6 +9200,8 @@
             },
             "startLocation": 52,
             "endLocation": 93,
+            "contentStart": 81,
+            "contentEnd": 87,
             "path": "/#document/html/body/div[3]",
             "textContent": "Second"
           }
@@ -7668,6 +9248,8 @@
             },
             "startLocation": 12,
             "endLocation": 52,
+            "contentStart": 41,
+            "contentEnd": 46,
             "path": "/#document/html/body/div[3]",
             "textContent": "First"
           },
@@ -7680,6 +9262,8 @@
             },
             "startLocation": 52,
             "endLocation": 93,
+            "contentStart": 81,
+            "contentEnd": 87,
             "path": "/#document/html/body/div[3]",
             "textContent": "Second"
           }
@@ -7723,6 +9307,8 @@
             },
             "startLocation": 12,
             "endLocation": 39,
+            "contentStart": 28,
+            "contentEnd": 35,
             "path": "/#document/html/body/p[2]",
             "textContent": "Content"
           }
@@ -7757,6 +9343,8 @@
             },
             "startLocation": 12,
             "endLocation": 39,
+            "contentStart": 28,
+            "contentEnd": 35,
             "path": "/#document/html/body/p[2]",
             "textContent": "Content"
           }
@@ -7815,6 +9403,8 @@
             },
             "startLocation": 12,
             "endLocation": 43,
+            "contentStart": 36,
+            "contentEnd": 37,
             "path": "/#document/html/body/div[5]",
             "textContent": "A"
           },
@@ -7828,6 +9418,8 @@
             },
             "startLocation": 43,
             "endLocation": 72,
+            "contentStart": 65,
+            "contentEnd": 66,
             "path": "/#document/html/body/div[5]",
             "textContent": "B"
           }
@@ -7877,6 +9469,8 @@
             },
             "startLocation": 12,
             "endLocation": 43,
+            "contentStart": 36,
+            "contentEnd": 37,
             "path": "/#document/html/body/div[5]",
             "textContent": "A"
           },
@@ -7890,6 +9484,8 @@
             },
             "startLocation": 43,
             "endLocation": 72,
+            "contentStart": 65,
+            "contentEnd": 66,
             "path": "/#document/html/body/div[5]",
             "textContent": "B"
           }
@@ -7933,6 +9529,8 @@
             },
             "startLocation": 93,
             "endLocation": 120,
+            "contentStart": 113,
+            "contentEnd": 114,
             "path": "/#document/html/body/div[5]",
             "textContent": "D"
           }
@@ -7967,6 +9565,8 @@
             },
             "startLocation": 93,
             "endLocation": 120,
+            "contentStart": 113,
+            "contentEnd": 114,
             "path": "/#document/html/body/div[5]",
             "textContent": "D"
           }
@@ -8015,6 +9615,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 26,
+            "contentStart": 18,
+            "contentEnd": 19,
             "path": "/#document/html/body/span[7]",
             "textContent": "1"
           },
@@ -8024,6 +9626,8 @@
             "nodeType": 1,
             "startLocation": 54,
             "endLocation": 68,
+            "contentStart": 60,
+            "contentEnd": 61,
             "path": "/#document/html/body/span[7]",
             "textContent": "4"
           }
@@ -8063,6 +9667,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 26,
+            "contentStart": 18,
+            "contentEnd": 19,
             "path": "/#document/html/body/span[7]",
             "textContent": "1"
           },
@@ -8072,6 +9678,8 @@
             "nodeType": 1,
             "startLocation": 54,
             "endLocation": 68,
+            "contentStart": 60,
+            "contentEnd": 61,
             "path": "/#document/html/body/span[7]",
             "textContent": "4"
           }
@@ -8130,6 +9738,8 @@
             "nodeType": 1,
             "startLocation": 20,
             "endLocation": 34,
+            "contentStart": 24,
+            "contentEnd": 29,
             "path": "/#document/html/body/header/h1[2]",
             "textContent": "Title"
           },
@@ -8139,6 +9749,8 @@
             "nodeType": 1,
             "startLocation": 80,
             "endLocation": 97,
+            "contentStart": 84,
+            "contentEnd": 92,
             "path": "/#document/html/body/main/section/h2[2]",
             "textContent": "Subtitle"
           },
@@ -8148,6 +9760,8 @@
             "nodeType": 1,
             "startLocation": 133,
             "endLocation": 146,
+            "contentStart": 136,
+            "contentEnd": 142,
             "path": "/#document/html/body/footer/p[2]",
             "textContent": "Footer"
           }
@@ -8197,6 +9811,8 @@
             "nodeType": 1,
             "startLocation": 20,
             "endLocation": 34,
+            "contentStart": 24,
+            "contentEnd": 29,
             "path": "/#document/html/body/header/h1[2]",
             "textContent": "Title"
           },
@@ -8206,6 +9822,8 @@
             "nodeType": 1,
             "startLocation": 80,
             "endLocation": 97,
+            "contentStart": 84,
+            "contentEnd": 92,
             "path": "/#document/html/body/main/section/h2[2]",
             "textContent": "Subtitle"
           },
@@ -8215,6 +9833,8 @@
             "nodeType": 1,
             "startLocation": 133,
             "endLocation": 146,
+            "contentStart": 136,
+            "contentEnd": 142,
             "path": "/#document/html/body/footer/p[2]",
             "textContent": "Footer"
           }
@@ -8294,6 +9914,8 @@
             },
             "startLocation": 12,
             "endLocation": 35,
+            "contentStart": 27,
+            "contentEnd": 29,
             "path": "/#document/html/body/div[3]",
             "textContent": "A1"
           },
@@ -8306,6 +9928,8 @@
             },
             "startLocation": 35,
             "endLocation": 58,
+            "contentStart": 50,
+            "contentEnd": 52,
             "path": "/#document/html/body/div[3]",
             "textContent": "B1"
           },
@@ -8318,6 +9942,8 @@
             },
             "startLocation": 58,
             "endLocation": 77,
+            "contentStart": 71,
+            "contentEnd": 73,
             "path": "/#document/html/body/p[3]",
             "textContent": "A2"
           },
@@ -8330,6 +9956,8 @@
             },
             "startLocation": 77,
             "endLocation": 96,
+            "contentStart": 90,
+            "contentEnd": 92,
             "path": "/#document/html/body/p[3]",
             "textContent": "B2"
           }
@@ -8400,6 +10028,8 @@
             },
             "startLocation": 12,
             "endLocation": 35,
+            "contentStart": 27,
+            "contentEnd": 29,
             "path": "/#document/html/body/div[3]",
             "textContent": "A1"
           },
@@ -8412,6 +10042,8 @@
             },
             "startLocation": 35,
             "endLocation": 58,
+            "contentStart": 50,
+            "contentEnd": 52,
             "path": "/#document/html/body/div[3]",
             "textContent": "B1"
           },
@@ -8424,6 +10056,8 @@
             },
             "startLocation": 58,
             "endLocation": 77,
+            "contentStart": 71,
+            "contentEnd": 73,
             "path": "/#document/html/body/p[3]",
             "textContent": "A2"
           },
@@ -8436,6 +10070,8 @@
             },
             "startLocation": 77,
             "endLocation": 96,
+            "contentStart": 90,
+            "contentEnd": 92,
             "path": "/#document/html/body/p[3]",
             "textContent": "B2"
           }
@@ -8479,6 +10115,8 @@
             },
             "startLocation": 64,
             "endLocation": 102,
+            "contentStart": 90,
+            "contentEnd": 96,
             "path": "/#document/html/body/div[3]",
             "textContent": "Target"
           }
@@ -8513,6 +10151,8 @@
             },
             "startLocation": 64,
             "endLocation": 102,
+            "contentStart": 90,
+            "contentEnd": 96,
             "path": "/#document/html/body/div[3]",
             "textContent": "Target"
           }
@@ -8556,6 +10196,8 @@
             },
             "startLocation": 58,
             "endLocation": 95,
+            "contentStart": 87,
+            "contentEnd": 91,
             "path": "/#document/html/body/a[4]",
             "textContent": "HTTP"
           }
@@ -8590,6 +10232,8 @@
             },
             "startLocation": 58,
             "endLocation": 95,
+            "contentStart": 87,
+            "contentEnd": 91,
             "path": "/#document/html/body/a[4]",
             "textContent": "HTTP"
           }
@@ -8633,6 +10277,8 @@
             },
             "startLocation": 82,
             "endLocation": 105,
+            "contentStart": 99,
+            "contentEnd": 100,
             "path": "/#document/html/body/ul/li[6]",
             "textContent": "C"
           }
@@ -8667,6 +10313,8 @@
             },
             "startLocation": 82,
             "endLocation": 105,
+            "contentStart": 99,
+            "contentEnd": 100,
             "path": "/#document/html/body/ul/li[6]",
             "textContent": "C"
           }
@@ -8780,6 +10428,8 @@
             "nodeType": 1,
             "startLocation": 27,
             "endLocation": 80,
+            "contentStart": 36,
+            "contentEnd": 70,
             "path": "/#document/html/body/main/article/section[2]",
             "textContent": "Deep"
           }
@@ -8809,6 +10459,8 @@
             "nodeType": 1,
             "startLocation": 27,
             "endLocation": 80,
+            "contentStart": 36,
+            "contentEnd": 70,
             "path": "/#document/html/body/main/article/section[2]",
             "textContent": "Deep"
           }
@@ -8924,6 +10576,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 36,
+            "contentStart": 15,
+            "contentEnd": 32,
             "path": "/#document/html/body/p[4]",
             "textContent": "   Hello World   "
           },
@@ -8933,6 +10587,8 @@
             "nodeType": 1,
             "startLocation": 48,
             "endLocation": 78,
+            "contentStart": 51,
+            "contentEnd": 74,
             "path": "/#document/html/body/p[4]",
             "textContent": "   Another Long Text   "
           }
@@ -8972,6 +10628,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 36,
+            "contentStart": 15,
+            "contentEnd": 32,
             "path": "/#document/html/body/p[4]",
             "textContent": "   Hello World   "
           },
@@ -8981,6 +10639,8 @@
             "nodeType": 1,
             "startLocation": 48,
             "endLocation": 78,
+            "contentStart": 51,
+            "contentEnd": 74,
             "path": "/#document/html/body/p[4]",
             "textContent": "   Another Long Text   "
           }
@@ -9036,6 +10696,8 @@
             },
             "startLocation": 42,
             "endLocation": 72,
+            "contentStart": 63,
+            "contentEnd": 66,
             "path": "/#document/html/body/div[4]",
             "textContent": "Ten"
           },
@@ -9048,6 +10710,8 @@
             },
             "startLocation": 72,
             "endLocation": 106,
+            "contentStart": 93,
+            "contentEnd": 100,
             "path": "/#document/html/body/div[4]",
             "textContent": "Fifteen"
           }
@@ -9094,6 +10758,8 @@
             },
             "startLocation": 42,
             "endLocation": 72,
+            "contentStart": 63,
+            "contentEnd": 66,
             "path": "/#document/html/body/div[4]",
             "textContent": "Ten"
           },
@@ -9106,6 +10772,8 @@
             },
             "startLocation": 72,
             "endLocation": 106,
+            "contentStart": 93,
+            "contentEnd": 100,
             "path": "/#document/html/body/div[4]",
             "textContent": "Fifteen"
           }
@@ -9151,6 +10819,8 @@
             },
             "startLocation": 12,
             "endLocation": 47,
+            "contentStart": 47,
+            "contentEnd": 47,
             "path": "/#document/html/body/input[4]",
             "textContent": ""
           }
@@ -9187,6 +10857,8 @@
             },
             "startLocation": 12,
             "endLocation": 47,
+            "contentStart": 47,
+            "contentEnd": 47,
             "path": "/#document/html/body/input[4]",
             "textContent": ""
           }
@@ -9225,6 +10897,8 @@
             "nodeType": 1,
             "startLocation": 6,
             "endLocation": 93,
+            "contentStart": 12,
+            "contentEnd": 86,
             "path": "/#document/html/body[2]",
             "textContent": "ABCD"
           }
@@ -9254,6 +10928,8 @@
             "nodeType": 1,
             "startLocation": 6,
             "endLocation": 93,
+            "contentStart": 12,
+            "contentEnd": 86,
             "path": "/#document/html/body[2]",
             "textContent": "ABCD"
           }
@@ -9307,6 +10983,8 @@
             },
             "startLocation": 12,
             "endLocation": 45,
+            "contentStart": 30,
+            "contentEnd": 39,
             "path": "/#document/html/body/div[3]",
             "textContent": "different"
           },
@@ -9316,6 +10994,8 @@
             "nodeType": 1,
             "startLocation": 45,
             "endLocation": 60,
+            "contentStart": 50,
+            "contentEnd": 54,
             "path": "/#document/html/body/div[3]",
             "textContent": "test"
           }
@@ -9360,6 +11040,8 @@
             },
             "startLocation": 12,
             "endLocation": 45,
+            "contentStart": 30,
+            "contentEnd": 39,
             "path": "/#document/html/body/div[3]",
             "textContent": "different"
           },
@@ -9369,6 +11051,8 @@
             "nodeType": 1,
             "startLocation": 45,
             "endLocation": 60,
+            "contentStart": 50,
+            "contentEnd": 54,
             "path": "/#document/html/body/div[3]",
             "textContent": "test"
           }
@@ -9407,6 +11091,8 @@
             "nodeType": 1,
             "startLocation": 23,
             "endLocation": 34,
+            "contentStart": 26,
+            "contentEnd": 30,
             "path": "/#document/html/body/p[4]",
             "textContent": "test"
           }
@@ -9436,6 +11122,8 @@
             "nodeType": 1,
             "startLocation": 23,
             "endLocation": 34,
+            "contentStart": 26,
+            "contentEnd": 30,
             "path": "/#document/html/body/p[4]",
             "textContent": "test"
           }
@@ -9479,6 +11167,8 @@
             },
             "startLocation": 23,
             "endLocation": 55,
+            "contentStart": 45,
+            "contentEnd": 49,
             "path": "/#document/html/body/div[4]",
             "textContent": "Null"
           }
@@ -9513,6 +11203,8 @@
             },
             "startLocation": 23,
             "endLocation": 55,
+            "contentStart": 45,
+            "contentEnd": 49,
             "path": "/#document/html/body/div[4]",
             "textContent": "Null"
           }
@@ -9551,6 +11243,8 @@
             "nodeType": 1,
             "startLocation": 46,
             "endLocation": 62,
+            "contentStart": 50,
+            "contentEnd": 57,
             "path": "/#document/html/body/ul/li/ul/li/ul/li[2]",
             "textContent": "Level 3"
           }
@@ -9580,6 +11274,8 @@
             "nodeType": 1,
             "startLocation": 46,
             "endLocation": 62,
+            "contentStart": 50,
+            "contentEnd": 57,
             "path": "/#document/html/body/ul/li/ul/li/ul/li[2]",
             "textContent": "Level 3"
           }
@@ -9642,6 +11338,8 @@
             },
             "startLocation": 51,
             "endLocation": 84,
+            "contentStart": 73,
+            "contentEnd": 77,
             "path": "/#document/html/body/div/span[2]",
             "textContent": "Text"
           }
@@ -9695,6 +11393,8 @@
             },
             "startLocation": 51,
             "endLocation": 84,
+            "contentStart": 73,
+            "contentEnd": 77,
             "path": "/#document/html/body/div/span[2]",
             "textContent": "Text"
           }
@@ -9738,6 +11438,8 @@
             },
             "startLocation": 57,
             "endLocation": 84,
+            "contentStart": 76,
+            "contentEnd": 80,
             "path": "/#document/html/body/div/p[4]",
             "textContent": "Main"
           }
@@ -9772,6 +11474,8 @@
             },
             "startLocation": 57,
             "endLocation": 84,
+            "contentStart": 76,
+            "contentEnd": 80,
             "path": "/#document/html/body/div/p[4]",
             "textContent": "Main"
           }
@@ -9820,6 +11524,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 28,
+            "contentStart": 17,
+            "contentEnd": 22,
             "path": "/#document/html/body/div[3]",
             "textContent": "First"
           },
@@ -9829,6 +11535,8 @@
             "nodeType": 1,
             "startLocation": 28,
             "endLocation": 45,
+            "contentStart": 33,
+            "contentEnd": 39,
             "path": "/#document/html/body/div[3]",
             "textContent": "Second"
           }
@@ -9868,6 +11576,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 28,
+            "contentStart": 17,
+            "contentEnd": 22,
             "path": "/#document/html/body/div[3]",
             "textContent": "First"
           },
@@ -9877,6 +11587,8 @@
             "nodeType": 1,
             "startLocation": 28,
             "endLocation": 45,
+            "contentStart": 33,
+            "contentEnd": 39,
             "path": "/#document/html/body/div[3]",
             "textContent": "Second"
           }
@@ -9915,6 +11627,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 53,
+            "contentStart": 17,
+            "contentEnd": 47,
             "path": "/#document/html/body/div[3]",
             "textContent": "ABC"
           }
@@ -9944,6 +11658,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 53,
+            "contentStart": 17,
+            "contentEnd": 47,
             "path": "/#document/html/body/div[3]",
             "textContent": "ABC"
           }
@@ -10022,6 +11738,8 @@
             "nodeType": 1,
             "startLocation": 233,
             "endLocation": 248,
+            "contentStart": 239,
+            "contentEnd": 241,
             "path": "/#document/html/body/div/span[21]",
             "textContent": "16"
           },
@@ -10031,6 +11749,8 @@
             "nodeType": 1,
             "startLocation": 248,
             "endLocation": 263,
+            "contentStart": 254,
+            "contentEnd": 256,
             "path": "/#document/html/body/div/span[21]",
             "textContent": "17"
           },
@@ -10040,6 +11760,8 @@
             "nodeType": 1,
             "startLocation": 263,
             "endLocation": 278,
+            "contentStart": 269,
+            "contentEnd": 271,
             "path": "/#document/html/body/div/span[21]",
             "textContent": "18"
           },
@@ -10049,6 +11771,8 @@
             "nodeType": 1,
             "startLocation": 278,
             "endLocation": 293,
+            "contentStart": 284,
+            "contentEnd": 286,
             "path": "/#document/html/body/div/span[21]",
             "textContent": "19"
           },
@@ -10058,6 +11782,8 @@
             "nodeType": 1,
             "startLocation": 293,
             "endLocation": 308,
+            "contentStart": 299,
+            "contentEnd": 301,
             "path": "/#document/html/body/div/span[21]",
             "textContent": "20"
           }
@@ -10127,6 +11853,8 @@
             "nodeType": 1,
             "startLocation": 233,
             "endLocation": 248,
+            "contentStart": 239,
+            "contentEnd": 241,
             "path": "/#document/html/body/div/span[21]",
             "textContent": "16"
           },
@@ -10136,6 +11864,8 @@
             "nodeType": 1,
             "startLocation": 248,
             "endLocation": 263,
+            "contentStart": 254,
+            "contentEnd": 256,
             "path": "/#document/html/body/div/span[21]",
             "textContent": "17"
           },
@@ -10145,6 +11875,8 @@
             "nodeType": 1,
             "startLocation": 263,
             "endLocation": 278,
+            "contentStart": 269,
+            "contentEnd": 271,
             "path": "/#document/html/body/div/span[21]",
             "textContent": "18"
           },
@@ -10154,6 +11886,8 @@
             "nodeType": 1,
             "startLocation": 278,
             "endLocation": 293,
+            "contentStart": 284,
+            "contentEnd": 286,
             "path": "/#document/html/body/div/span[21]",
             "textContent": "19"
           },
@@ -10163,6 +11897,8 @@
             "nodeType": 1,
             "startLocation": 293,
             "endLocation": 308,
+            "contentStart": 299,
+            "contentEnd": 301,
             "path": "/#document/html/body/div/span[21]",
             "textContent": "20"
           }
@@ -10206,6 +11942,8 @@
             },
             "startLocation": 12,
             "endLocation": 98,
+            "contentStart": 34,
+            "contentEnd": 89,
             "path": "/#document/html/body/script[2]",
             "textContent": "var x = 5; if (x < 10) { console.log('Less than 10'); }"
           }
@@ -10240,6 +11978,8 @@
             },
             "startLocation": 12,
             "endLocation": 98,
+            "contentStart": 34,
+            "contentEnd": 89,
             "path": "/#document/html/body/script[2]",
             "textContent": "var x = 5; if (x < 10) { console.log('Less than 10'); }"
           }
@@ -10278,6 +12018,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 103,
+            "contentStart": 19,
+            "contentEnd": 95,
             "path": "/#document/html/head/style[2]",
             "textContent": ".item > .child { color: red; } @media (max-width < 768px) { display: none; }"
           }
@@ -10307,6 +12049,8 @@
             "nodeType": 1,
             "startLocation": 12,
             "endLocation": 103,
+            "contentStart": 19,
+            "contentEnd": 95,
             "path": "/#document/html/head/style[2]",
             "textContent": ".item > .child { color: red; } @media (max-width < 768px) { display: none; }"
           }
@@ -10350,6 +12094,8 @@
             },
             "startLocation": 18,
             "endLocation": 91,
+            "contentStart": 40,
+            "contentEnd": 80,
             "path": "/#document/html/body/form/textarea[2]",
             "textContent": "Use <div> and </div> tags for containers"
           }
@@ -10384,6 +12130,8 @@
             },
             "startLocation": 18,
             "endLocation": 91,
+            "contentStart": 40,
+            "contentEnd": 80,
             "path": "/#document/html/body/form/textarea[2]",
             "textContent": "Use <div> and </div> tags for containers"
           }
@@ -10429,6 +12177,8 @@
             },
             "startLocation": 47,
             "endLocation": 128,
+            "contentStart": 98,
+            "contentEnd": 119,
             "path": "/#document/html/body/script[3]",
             "textContent": "{\"key\": \"value < 10\"}"
           }
@@ -10465,6 +12215,8 @@
             },
             "startLocation": 47,
             "endLocation": 128,
+            "contentStart": 98,
+            "contentEnd": 119,
             "path": "/#document/html/body/script[3]",
             "textContent": "{\"key\": \"value < 10\"}"
           }
@@ -10508,6 +12260,8 @@
             },
             "startLocation": 107,
             "endLocation": 152,
+            "contentStart": 132,
+            "contentEnd": 143,
             "path": "/#document/html/body/script[2]",
             "textContent": "var y = 20;"
           }
@@ -10542,6 +12296,8 @@
             },
             "startLocation": 107,
             "endLocation": 152,
+            "contentStart": 132,
+            "contentEnd": 143,
             "path": "/#document/html/body/script[2]",
             "textContent": "var y = 20;"
           }
