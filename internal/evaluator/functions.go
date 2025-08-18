@@ -75,9 +75,14 @@ func (e *Evaluator) evaluateSubstringFunction(funcCall string, node *types.Node)
 	}
 
 	// Calculate start position (1-based XPath)
-	startPos := 1
-	if pos, err := strconv.Atoi(strings.TrimSpace(args[1])); err == nil {
+	var startPos int
+	startPosExpr := strings.TrimSpace(args[1])
+	if pos, err := strconv.Atoi(startPosExpr); err == nil {
+		// Simple integer
 		startPos = pos
+	} else {
+		// Complex expression like "string-length(text()) - 3"
+		startPos = e.evaluateArithmeticPositionExpression(startPosExpr, node)
 	}
 
 	// Extract substring according to XPath 1.0 spec
@@ -97,6 +102,144 @@ func (e *Evaluator) evaluateSubstringFunction(funcCall string, node *types.Node)
 		Trace("substring() 2-arg: source='%s', start=%d -> '%s'", sourceText, startPos, result)
 	}
 	return result
+}
+
+// parseSubstringArgs parses the arguments of a substring function with proper nested function handling
+func (e *Evaluator) parseSubstringArgs(argsStr string) []string {
+	var args []string
+	current := ""
+	inQuotes := false
+	quoteChar := byte(0)
+	parenDepth := 0
+
+	for i := 0; i < len(argsStr); i++ {
+		c := argsStr[i]
+
+		if !inQuotes && (c == '\'' || c == '"') {
+			inQuotes = true
+			quoteChar = c
+			current += string(c)
+		} else if inQuotes && c == quoteChar {
+			inQuotes = false
+			quoteChar = 0
+			current += string(c)
+		} else if !inQuotes && c == '(' {
+			parenDepth++
+			current += string(c)
+		} else if !inQuotes && c == ')' {
+			parenDepth--
+			current += string(c)
+		} else if !inQuotes && c == ',' && parenDepth == 0 {
+			args = append(args, strings.TrimSpace(current))
+			current = ""
+		} else {
+			current += string(c)
+		}
+	}
+
+	if current != "" {
+		args = append(args, strings.TrimSpace(current))
+	}
+
+	return args
+}
+
+// evaluateArithmeticPositionExpression evaluates arithmetic expressions like "string-length(text()) - 3"
+func (e *Evaluator) evaluateArithmeticPositionExpression(expr string, node *types.Node) int {
+	expr = strings.TrimSpace(expr)
+
+	// Handle subtraction expressions like "string-length(text())-3" or "string-length(text()) - 3"
+	if strings.Contains(expr, "-") {
+		// Try with spaces first
+		if strings.Contains(expr, " - ") {
+			parts := strings.Split(expr, " - ")
+			if len(parts) == 2 {
+				leftValue := e.evaluateArithmeticTerm(strings.TrimSpace(parts[0]), node)
+				rightValue := e.evaluateArithmeticTerm(strings.TrimSpace(parts[1]), node)
+				result := leftValue - rightValue
+				Trace("arithmetic (spaced): %s (%d) - %s (%d) = %d", parts[0], leftValue, parts[1], rightValue, result)
+				return result
+			}
+		}
+		// Try without spaces (parser may remove them)
+		lastMinus := strings.LastIndex(expr, "-")
+		if lastMinus > 0 && lastMinus < len(expr)-1 {
+			leftPart := strings.TrimSpace(expr[:lastMinus])
+			rightPart := strings.TrimSpace(expr[lastMinus+1:])
+			// Make sure it's not a negative number at the start
+			if leftPart != "" {
+				leftValue := e.evaluateArithmeticTerm(leftPart, node)
+				rightValue := e.evaluateArithmeticTerm(rightPart, node)
+				result := leftValue - rightValue
+				Trace("arithmetic (no spaces): %s (%d) - %s (%d) = %d", leftPart, leftValue, rightPart, rightValue, result)
+				return result
+			}
+		}
+	}
+
+	// Handle addition expressions like "string-length(text())+3" or "string-length(text()) + 3"
+	if strings.Contains(expr, "+") {
+		// Try with spaces first
+		if strings.Contains(expr, " + ") {
+			parts := strings.Split(expr, " + ")
+			if len(parts) == 2 {
+				leftValue := e.evaluateArithmeticTerm(strings.TrimSpace(parts[0]), node)
+				rightValue := e.evaluateArithmeticTerm(strings.TrimSpace(parts[1]), node)
+				result := leftValue + rightValue
+				Trace("arithmetic (spaced): %s (%d) + %s (%d) = %d", parts[0], leftValue, parts[1], rightValue, result)
+				return result
+			}
+		}
+		// Try without spaces
+		lastPlus := strings.LastIndex(expr, "+")
+		if lastPlus > 0 && lastPlus < len(expr)-1 {
+			leftPart := strings.TrimSpace(expr[:lastPlus])
+			rightPart := strings.TrimSpace(expr[lastPlus+1:])
+			if leftPart != "" {
+				leftValue := e.evaluateArithmeticTerm(leftPart, node)
+				rightValue := e.evaluateArithmeticTerm(rightPart, node)
+				result := leftValue + rightValue
+				Trace("arithmetic (no spaces): %s (%d) + %s (%d) = %d", leftPart, leftValue, rightPart, rightValue, result)
+				return result
+			}
+		}
+	}
+
+	// Single term
+	return e.evaluateArithmeticTerm(expr, node)
+}
+
+// evaluateArithmeticTerm evaluates a single arithmetic term
+func (e *Evaluator) evaluateArithmeticTerm(term string, node *types.Node) int {
+	term = strings.TrimSpace(term)
+
+	// Handle string-length() function
+	if strings.HasPrefix(term, "string-length(") && strings.HasSuffix(term, ")") {
+		argStart := strings.Index(term, "(") + 1
+		argEnd := strings.LastIndex(term, ")")
+		arg := strings.TrimSpace(term[argStart:argEnd])
+
+		if arg == "text()" {
+			result := len(node.TextContent)
+			Trace("string-length(text()): '%s' -> %d", node.TextContent, result)
+			return result
+		} else if strings.HasPrefix(arg, "@") {
+			attrName := strings.TrimPrefix(arg, "@")
+			if value, exists := node.Attributes[attrName]; exists {
+				result := len(value)
+				Trace("string-length(@%s): '%s' -> %d", attrName, value, result)
+				return result
+			}
+		}
+		return 0
+	}
+
+	// Handle simple integers
+	if num, err := strconv.Atoi(term); err == nil {
+		return num
+	}
+
+	return 0
 }
 
 // evaluateSubstringExpression evaluates substring expressions like substring(text(), 1, 5) = 'Hello'
@@ -257,46 +400,6 @@ func (e *Evaluator) xpathSubstring(text string, startPos int, length int) string
 	return text[start:end]
 }
 
-// parseSubstringArgs parses the arguments of a substring function
-func (e *Evaluator) parseSubstringArgs(argsStr string) []string {
-	var args []string
-	current := ""
-	inQuotes := false
-	quoteChar := byte(0)
-	parenDepth := 0
-
-	for i := 0; i < len(argsStr); i++ {
-		c := argsStr[i]
-
-		if !inQuotes && (c == '\'' || c == '"') {
-			inQuotes = true
-			quoteChar = c
-			current += string(c)
-		} else if inQuotes && c == quoteChar {
-			inQuotes = false
-			quoteChar = 0
-			current += string(c)
-		} else if !inQuotes && c == '(' {
-			parenDepth++
-			current += string(c)
-		} else if !inQuotes && c == ')' {
-			parenDepth--
-			current += string(c)
-		} else if !inQuotes && c == ',' && parenDepth == 0 {
-			args = append(args, strings.TrimSpace(current))
-			current = ""
-		} else {
-			current += string(c)
-		}
-	}
-
-	if current != "" {
-		args = append(args, strings.TrimSpace(current))
-	}
-
-	return args
-}
-
 // countChildElements counts child elements matching a selector
 func (e *Evaluator) countChildElements(parent *types.Node, selector string) int {
 	count := 0
@@ -306,6 +409,44 @@ func (e *Evaluator) countChildElements(parent *types.Node, selector string) int 
 		}
 	}
 	return count
+}
+
+// evaluateNotFunction evaluates not() function calls
+func (e *Evaluator) evaluateNotFunction(funcCall string, node *types.Node) bool {
+	start := strings.Index(funcCall, "(")
+	end := strings.LastIndex(funcCall, ")")
+
+	if start == -1 || end == -1 || start >= end {
+		return false
+	}
+
+	args := strings.TrimSpace(funcCall[start+1 : end])
+
+	// Evaluate the expression inside not()
+	result := e.evaluateAtomicCondition(node, args)
+
+	// Return the negation
+	Trace("not() function: '%s' -> %v, negated: %v", args, result, !result)
+	return !result
+}
+
+// evaluateSubstringComparison evaluates substring comparison expressions like substring(text(), string-length(text()) - 3) = 'Text'
+func (e *Evaluator) evaluateSubstringComparison(condition string, node *types.Node) bool {
+	// Split by '=' to get the substring expression and expected value
+	parts := strings.SplitN(condition, "=", 2)
+	if len(parts) != 2 {
+		return false
+	}
+
+	substringExpr := strings.TrimSpace(parts[0])
+	expectedValue := strings.Trim(strings.TrimSpace(parts[1]), "'\"")
+
+	// Evaluate the substring expression
+	actualValue := e.evaluateSubstringFunction(substringExpr, node)
+
+	result := actualValue == expectedValue
+	Trace("substring comparison: '%s' -> '%s' == '%s' -> %v", substringExpr, actualValue, expectedValue, result)
+	return result
 }
 
 // matchesSelector checks if a node matches a simple selector

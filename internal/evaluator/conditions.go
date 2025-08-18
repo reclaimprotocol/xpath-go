@@ -699,6 +699,19 @@ func (e *Evaluator) evaluateAtomicCondition(node *types.Node, condition string) 
 
 	// Simple condition evaluation - no boolean operators allowed here
 
+	// Function calls: not(), contains(), substring(), etc.
+	// Handle both "not(" and "not (" patterns due to parser spacing
+	if (strings.HasPrefix(condition, "not(") || strings.HasPrefix(condition, "not (")) && strings.HasSuffix(condition, ")") {
+		// Normalize the function call by removing extra spaces
+		normalizedCondition := strings.Replace(condition, "not (", "not(", 1)
+		return e.evaluateNotFunction(normalizedCondition, node)
+	}
+
+	// Handle complex substring expressions like substring(text(), string-length(text()) - 3) = 'Text'
+	if strings.HasPrefix(condition, "substring(") && strings.Contains(condition, "=") {
+		return e.evaluateSubstringComparison(condition, node)
+	}
+
 	// Attribute existence: @id (handle spaced tokens like "@ id")
 	if strings.HasPrefix(condition, "@") && !strings.Contains(condition, "=") {
 		attrName := strings.TrimPrefix(condition, "@")

@@ -53,7 +53,8 @@ func (e *Evaluator) applyUnifiedPredicate(nodes []*types.Node, expr string) []*t
 
 	// Handle axis expressions like ancestor::div[10] (check this BEFORE nested elements)
 	// But only for simple axis expressions, not complex ones with functions or operators
-	if e.isSimpleAxisExpression(expr) {
+	// Exclude not() function calls which should be handled by the general evaluator
+	if e.isSimpleAxisExpression(expr) && !strings.HasPrefix(expr, "not (") && !strings.HasPrefix(expr, "not(") {
 		return e.applyAxisExpressionPredicate(nodes, expr)
 	}
 

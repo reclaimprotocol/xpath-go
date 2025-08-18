@@ -1,8 +1,8 @@
 {
   "total": 120,
-  "passed": 118,
-  "failed": 2,
-  "compatibility": "98.3",
+  "passed": 120,
+  "failed": 0,
+  "compatibility": "100.0",
   "details": [
     {
       "name": "Basic element selection",
@@ -2416,7 +2416,7 @@
       "xpath": "//article//section//p[not(ancestor::aside)]",
       "suite": "original",
       "category": "complex",
-      "passed": false,
+      "passed": true,
       "jsResult": {
         "success": true,
         "results": [
@@ -2436,13 +2436,23 @@
       },
       "goResult": {
         "success": true,
-        "results": [],
-        "count": 0,
+        "results": [
+          {
+            "value": "Content",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 61,
+            "endLocation": 75,
+            "path": "/#document/html/body/article/section/p[2]",
+            "textContent": "Content"
+          }
+        ],
+        "count": 1,
         "error": null
       },
       "comparison": {
-        "match": false,
-        "reason": "Count mismatch: JS=1, Go=0",
+        "match": true,
+        "reason": "Perfect match",
         "jsResults": [
           {
             "value": "Content",
@@ -2455,7 +2465,17 @@
             "path": "/html/body/article/section/p"
           }
         ],
-        "goResults": []
+        "goResults": [
+          {
+            "value": "Content",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 61,
+            "endLocation": 75,
+            "path": "/#document/html/body/article/section/p[2]",
+            "textContent": "Content"
+          }
+        ]
       }
     },
     {
@@ -6239,7 +6259,7 @@
       "xpath": "//p[substring(text(), string-length(text()) - 3) = 'Text']",
       "suite": "extended",
       "category": "string-index",
-      "passed": false,
+      "passed": true,
       "jsResult": {
         "success": true,
         "results": [
@@ -6259,13 +6279,23 @@
       },
       "goResult": {
         "success": true,
-        "results": [],
-        "count": 0,
+        "results": [
+          {
+            "value": "ShortText",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 28,
+            "path": "/#document/html/body/p[4]",
+            "textContent": "ShortText"
+          }
+        ],
+        "count": 1,
         "error": null
       },
       "comparison": {
-        "match": false,
-        "reason": "Count mismatch: JS=1, Go=0",
+        "match": true,
+        "reason": "Perfect match",
         "jsResults": [
           {
             "value": "ShortText",
@@ -6278,7 +6308,17 @@
             "path": "/html/body/p[1]"
           }
         ],
-        "goResults": []
+        "goResults": [
+          {
+            "value": "ShortText",
+            "nodeName": "p",
+            "nodeType": 1,
+            "startLocation": 12,
+            "endLocation": 28,
+            "path": "/#document/html/body/p[4]",
+            "textContent": "ShortText"
+          }
+        ]
       }
     },
     {
