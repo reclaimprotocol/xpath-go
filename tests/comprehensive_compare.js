@@ -20,7 +20,8 @@ class ComprehensiveXPathTester {
             trace: options.trace || false,
             singleTest: options.singleTest || null,
             verbose: options.verbose || false,
-            failedOnly: options.failedOnly || false
+            failedOnly: options.failedOnly || false,
+            showData: options.showData || false
         };
     }
 
@@ -117,7 +118,12 @@ class ComprehensiveXPathTester {
                 console.log(`✅ PASS - Results match perfectly`);
                 console.log(`   Found ${result.jsResult.count} matching nodes`);
                 
-                if (this.options.verbose && result.jsResult.count > 0) {
+                if (this.options.showData && result.jsResult.count > 0) {
+                    console.log(`\n   📊 JavaScript Results:`);
+                    console.log(JSON.stringify(result.jsResult.results, null, 2));
+                    console.log(`\n   📊 Go Results:`);
+                    console.log(JSON.stringify(result.goResult.results, null, 2));
+                } else if (this.options.verbose && result.jsResult.count > 0) {
                     console.log(`   Results:`);
                     result.jsResult.results.slice(0, 3).forEach((res, idx) => {
                         console.log(`     ${idx + 1}. <${res.nodeName}>${res.textContent ? `: '${res.textContent}'` : ''} [pos: ${res.startLocation}-${res.endLocation}]`);
@@ -132,7 +138,12 @@ class ComprehensiveXPathTester {
                 console.log(`❌ FAIL - Results differ`);
                 console.log(`   Reason: ${result.comparison.reason}`);
                 
-                if (this.options.verbose || this.options.trace) {
+                if (this.options.showData) {
+                    console.log(`\n   📊 JavaScript Results (${result.jsResult.count}):`);
+                    console.log(JSON.stringify(result.jsResult.results, null, 2));
+                    console.log(`\n   📊 Go Results (${result.goResult.count}):`);
+                    console.log(JSON.stringify(result.goResult.results, null, 2));
+                } else if (this.options.verbose || this.options.trace) {
                     console.log(`   JavaScript Results (${result.jsResult.count}):`);
                     result.jsResult.results.slice(0, 3).forEach((res, idx) => {
                         console.log(`     ${idx + 1}. <${res.nodeName}>${res.textContent ? `: '${res.textContent}'` : ''} [pos: ${res.startLocation}-${res.endLocation}]`);
@@ -643,6 +654,7 @@ function parseArgs() {
         singleTest: null,
         verbose: false,
         failedOnly: false,
+        showData: false,
         help: false
     };
 
@@ -660,6 +672,10 @@ function parseArgs() {
             case '--failed-only':
             case '-f':
                 options.failedOnly = true;
+                break;
+            case '--show-data':
+            case '-d':
+                options.showData = true;
                 break;
             case '--test':
             case '-s':
@@ -697,6 +713,7 @@ Usage: node comprehensive_compare.js [options] [test_identifier]
 Options:
   --trace, -t           Enable Go XPath trace mode for debugging
   --verbose, -v         Show detailed test output and results
+  --show-data, -d       Display returned data from both JS and Go implementations
   --failed-only, -f     Only show failing tests
   --test, -s <id>       Run single test by number or name pattern
   --help, -h            Show this help message
@@ -705,8 +722,10 @@ Examples:
   node comprehensive_compare.js                    # Run all tests
   node comprehensive_compare.js --trace           # Run all tests with trace
   node comprehensive_compare.js --failed-only     # Show only failing tests
+  node comprehensive_compare.js --show-data       # Display full result data from both implementations
   node comprehensive_compare.js --test 62         # Run test #62
   node comprehensive_compare.js --test position   # Run tests matching "position"
+  node comprehensive_compare.js --test 1 -d       # Run test #1 with full data output
   node comprehensive_compare.js -t -v --test 62   # Run test #62 with trace and verbose
   node comprehensive_compare.js substring         # Run tests matching "substring"
 
@@ -725,6 +744,10 @@ if (options.help) {
 
 if (options.trace) {
     console.log('🔍 Trace mode enabled - will show detailed XPath evaluation steps');
+}
+
+if (options.showData) {
+    console.log('📊 Show data mode enabled - will display full result data from both implementations');
 }
 
 if (options.singleTest) {
