@@ -241,6 +241,7 @@ func (e *Evaluator) evaluateAncestorWithPosition(node *types.Node, nodeTest stri
 	Trace("evaluateAncestorWithPosition: elementName='%s', predicate='%s'", elementName, predicate)
 	
 	// Collect all ancestor nodes that match the element name
+	// For ancestor axis with position predicates, order is from closest to farthest
 	var matchingAncestors []*types.Node
 	current := node.Parent
 	for current != nil {
@@ -251,6 +252,9 @@ func (e *Evaluator) evaluateAncestorWithPosition(node *types.Node, nodeTest stri
 	}
 	
 	Trace("found %d matching ancestors for element '%s'", len(matchingAncestors), elementName)
+	for i, ancestor := range matchingAncestors {
+		Trace("  ancestor[%d]: %s", i+1, ancestor.Name)
+	}
 	
 	// Apply positional predicate to the collection
 	filtered := e.applyPositionalPredicate(matchingAncestors, predicate)

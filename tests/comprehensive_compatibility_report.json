@@ -3153,7 +3153,7 @@
       "xpath": "//p[@id='target']/ancestor-or-self::*",
       "suite": "extended",
       "category": "axes",
-      "passed": false,
+      "passed": true,
       "jsResult": {
         "success": true,
         "results": [
@@ -3218,32 +3218,11 @@
         "results": [
           {
             "value": "Content",
-            "nodeName": "p",
+            "nodeName": "html",
             "nodeType": 1,
-            "attributes": {
-              "id": "target"
-            },
-            "startLocation": 30,
-            "endLocation": 56,
-            "path": "/#document/html/body/article/section/p[2]",
-            "textContent": "Content"
-          },
-          {
-            "value": "Content",
-            "nodeName": "section",
-            "nodeType": 1,
-            "startLocation": 21,
-            "endLocation": 66,
-            "path": "/#document/html/body/article/section[2]",
-            "textContent": "Content"
-          },
-          {
-            "value": "Content",
-            "nodeName": "article",
-            "nodeType": 1,
-            "startLocation": 12,
-            "endLocation": 76,
-            "path": "/#document/html/body/article[2]",
+            "startLocation": 0,
+            "endLocation": 90,
+            "path": "/#document/html[2]",
             "textContent": "Content"
           },
           {
@@ -3257,11 +3236,32 @@
           },
           {
             "value": "Content",
-            "nodeName": "html",
+            "nodeName": "article",
             "nodeType": 1,
-            "startLocation": 0,
-            "endLocation": 90,
-            "path": "/#document/html[2]",
+            "startLocation": 12,
+            "endLocation": 76,
+            "path": "/#document/html/body/article[2]",
+            "textContent": "Content"
+          },
+          {
+            "value": "Content",
+            "nodeName": "section",
+            "nodeType": 1,
+            "startLocation": 21,
+            "endLocation": 66,
+            "path": "/#document/html/body/article/section[2]",
+            "textContent": "Content"
+          },
+          {
+            "value": "Content",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "id": "target"
+            },
+            "startLocation": 30,
+            "endLocation": 56,
+            "path": "/#document/html/body/article/section/p[2]",
             "textContent": "Content"
           }
         ],
@@ -3269,8 +3269,8 @@
         "error": null
       },
       "comparison": {
-        "match": false,
-        "reason": "Node name mismatch at index 0: JS=\"html\", Go=\"p\"",
+        "match": true,
+        "reason": "Perfect match",
         "jsResults": [
           {
             "value": "Content",
@@ -3328,32 +3328,11 @@
         "goResults": [
           {
             "value": "Content",
-            "nodeName": "p",
+            "nodeName": "html",
             "nodeType": 1,
-            "attributes": {
-              "id": "target"
-            },
-            "startLocation": 30,
-            "endLocation": 56,
-            "path": "/#document/html/body/article/section/p[2]",
-            "textContent": "Content"
-          },
-          {
-            "value": "Content",
-            "nodeName": "section",
-            "nodeType": 1,
-            "startLocation": 21,
-            "endLocation": 66,
-            "path": "/#document/html/body/article/section[2]",
-            "textContent": "Content"
-          },
-          {
-            "value": "Content",
-            "nodeName": "article",
-            "nodeType": 1,
-            "startLocation": 12,
-            "endLocation": 76,
-            "path": "/#document/html/body/article[2]",
+            "startLocation": 0,
+            "endLocation": 90,
+            "path": "/#document/html[2]",
             "textContent": "Content"
           },
           {
@@ -3367,11 +3346,32 @@
           },
           {
             "value": "Content",
-            "nodeName": "html",
+            "nodeName": "article",
             "nodeType": 1,
-            "startLocation": 0,
-            "endLocation": 90,
-            "path": "/#document/html[2]",
+            "startLocation": 12,
+            "endLocation": 76,
+            "path": "/#document/html/body/article[2]",
+            "textContent": "Content"
+          },
+          {
+            "value": "Content",
+            "nodeName": "section",
+            "nodeType": 1,
+            "startLocation": 21,
+            "endLocation": 66,
+            "path": "/#document/html/body/article/section[2]",
+            "textContent": "Content"
+          },
+          {
+            "value": "Content",
+            "nodeName": "p",
+            "nodeType": 1,
+            "attributes": {
+              "id": "target"
+            },
+            "startLocation": 30,
+            "endLocation": 56,
+            "path": "/#document/html/body/article/section/p[2]",
             "textContent": "Content"
           }
         ]
@@ -8897,7 +8897,7 @@
       "xpath": "//p[@id='target']/ancestor::*[position() = 2]",
       "suite": "extended",
       "category": "axis-edge",
-      "passed": true,
+      "passed": false,
       "jsResult": {
         "success": true,
         "results": [
@@ -8920,11 +8920,11 @@
         "results": [
           {
             "value": "Deep",
-            "nodeName": "section",
+            "nodeName": "body",
             "nodeType": 1,
-            "startLocation": 27,
-            "endLocation": 80,
-            "path": "/#document/html/body/main/article/section[2]",
+            "startLocation": 6,
+            "endLocation": 104,
+            "path": "/#document/html/body[2]",
             "textContent": "Deep"
           }
         ],
@@ -8932,8 +8932,8 @@
         "error": null
       },
       "comparison": {
-        "match": true,
-        "reason": "Perfect match",
+        "match": false,
+        "reason": "Node name mismatch at index 0: JS=\"section\", Go=\"body\"",
         "jsResults": [
           {
             "value": "Deep",
@@ -8949,11 +8949,11 @@
         "goResults": [
           {
             "value": "Deep",
-            "nodeName": "section",
+            "nodeName": "body",
             "nodeType": 1,
-            "startLocation": 27,
-            "endLocation": 80,
-            "path": "/#document/html/body/main/article/section[2]",
+            "startLocation": 6,
+            "endLocation": 104,
+            "path": "/#document/html/body[2]",
             "textContent": "Deep"
           }
         ]
