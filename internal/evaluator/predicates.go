@@ -156,6 +156,19 @@ func (e *Evaluator) applyNotPredicate(nodes []*types.Node, expr string) []*types
 	return filtered
 }
 
+// applyConcatPredicate handles concat() function predicates
+func (e *Evaluator) applyConcatPredicate(nodes []*types.Node, expr string) []*types.Node {
+	var filtered []*types.Node
+
+	for _, node := range nodes {
+		if e.evaluateConcatExpression(expr, node) {
+			filtered = append(filtered, node)
+		}
+	}
+
+	return filtered
+}
+
 // applyAndPredicate handles expressions with 'and' operator
 func (e *Evaluator) applyAndPredicate(nodes []*types.Node, expr string) []*types.Node {
 	var filtered []*types.Node

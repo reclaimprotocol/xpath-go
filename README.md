@@ -394,7 +394,8 @@ This library works as expected for most scenarios with jsdom's XPath implementat
 The following edge cases are considered acceptable for production use:
 
 - **Unicode location tracking**: Character positions may differ by a few bytes for Unicode content
-- **Complex union predicates**: Advanced union expressions with nested predicates may have slight ordering variations
+- **Complex union predicates**: Advanced union expressions with nested predicates may have slight ordering variations  
+- **String concatenation**: The `concat()` function with complex XPath arguments is not fully supported
 - **Function chaining edge cases**: Deeply nested function calls (3+ levels) may have minor evaluation differences
 
 For complete details, see [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md).

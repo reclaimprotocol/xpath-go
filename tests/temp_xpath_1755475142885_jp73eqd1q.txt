@@ -1,0 +1,1 @@
+(//div[@class='a'] | //p[@class='a']) | (//div[@class='b'] | //p[@class='b'])

@@ -1,0 +1,1 @@
+//p[normalize-space(text())='multiple spaces']

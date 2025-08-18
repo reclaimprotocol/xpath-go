@@ -1,0 +1,1 @@
+//form//input[@required]/following-sibling::input[@required]

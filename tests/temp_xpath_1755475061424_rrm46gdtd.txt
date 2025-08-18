@@ -1,0 +1,1 @@
+//span[@class='item'][position() mod 2 = 0]

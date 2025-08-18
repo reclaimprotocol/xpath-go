@@ -1,0 +1,1 @@
+//p[@class='intro']/following-sibling::p[@class='content']

@@ -1,8 +1,8 @@
 {
   "total": 117,
-  "passed": 111,
-  "failed": 6,
-  "compatibility": "94.9",
+  "passed": 112,
+  "failed": 5,
+  "compatibility": "95.7",
   "details": [
     {
       "name": "Basic element selection",
@@ -8591,7 +8591,7 @@
       "xpath": "//div[@data-value = concat(//div[@data-prefix][1]/@data-prefix, //div[@data-suffix][1]/@data-suffix)]",
       "suite": "extended",
       "category": "string-functions",
-      "passed": false,
+      "passed": true,
       "jsResult": {
         "success": true,
         "results": [
@@ -8613,13 +8613,26 @@
       },
       "goResult": {
         "success": true,
-        "results": [],
-        "count": 0,
+        "results": [
+          {
+            "value": "Target",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-value": "test123"
+            },
+            "startLocation": 64,
+            "endLocation": 102,
+            "path": "/#document/html/body/div[3]",
+            "textContent": "Target"
+          }
+        ],
+        "count": 1,
         "error": null
       },
       "comparison": {
-        "match": false,
-        "reason": "Count mismatch: JS=1, Go=0",
+        "match": true,
+        "reason": "Perfect match",
         "jsResults": [
           {
             "value": "Target",
@@ -8634,7 +8647,20 @@
             "path": "/html/body/div[2]"
           }
         ],
-        "goResults": []
+        "goResults": [
+          {
+            "value": "Target",
+            "nodeName": "div",
+            "nodeType": 1,
+            "attributes": {
+              "data-value": "test123"
+            },
+            "startLocation": 64,
+            "endLocation": 102,
+            "path": "/#document/html/body/div[3]",
+            "textContent": "Target"
+          }
+        ]
       }
     },
     {

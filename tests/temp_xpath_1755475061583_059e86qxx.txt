@@ -1,0 +1,1 @@
+//div[substring(@data-text, 4, 4) = 'test']

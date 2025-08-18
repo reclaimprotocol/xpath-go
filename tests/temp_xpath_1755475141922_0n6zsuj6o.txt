@@ -1,0 +1,1 @@
+//a[@href and (@title or starts-with(@href, 'http'))]

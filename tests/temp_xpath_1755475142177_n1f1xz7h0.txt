@@ -1,0 +1,1 @@
+//div[string-length(text()) > 0 and substring(text(), 1, 1) = 'C']
