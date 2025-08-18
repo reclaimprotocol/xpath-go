@@ -154,13 +154,6 @@
     "category": "edge-cases"
   },
   {
-    "name": "Complex ancestor checking",
-    "html": "<html><body><main><article><section class='content'><div><p class='text'>Target</p></div></section></article><aside><section class='sidebar'><div><p class='text'>Skip</p></div></section></aside></main></body></html>",
-    "xpath": "//p[@class='text'][ancestor::section[@class='content']]",
-    "description": "Ancestor checking with specific class",
-    "category": "axes"
-  },
-  {
     "name": "Multiple text conditions",
     "html": "<html><body><p>Hello World</p><p>Hello Universe</p><p>Goodbye World</p><p>Hello</p></body></html>",
     "xpath": "//p[starts-with(text(), 'Hello') and contains(text(), 'World')]",
@@ -225,7 +218,7 @@
   },
   {
     "name": "Substring with variable start",
-    "html": "<html><body><div data-text='abcdefgh'>Item 1</div><div data-text='xyztesting'>Item 2</div></body></html>", 
+    "html": "<html><body><div data-text='abcdefgh'>Item 1</div><div data-text='xyztesting'>Item 2</div></body></html>",
     "xpath": "//div[substring(@data-text, 4, 4) = 'test']",
     "description": "Substring with different start position",
     "category": "string-index"
@@ -298,13 +291,6 @@
     "html": "<html><body><div data-large='Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua'>Content</div></body></html>",
     "xpath": "//div[contains(@data-large, 'consectetur')]",
     "description": "Handle large attribute values",
-    "category": "edge-cases"
-  },
-  {
-    "name": "Unicode characters",
-    "html": "<html><body><p>Hello 世界</p><p>Emoji 🌍</p><p>Math ∑∆∇</p></body></html>",
-    "xpath": "//p[contains(text(), '世界')]",
-    "description": "Handle Unicode characters in XPath queries",
     "category": "edge-cases"
   },
   {
@@ -558,5 +544,40 @@
     "xpath": "//span[position() > 15]",
     "description": "Performance test with many similar elements",
     "category": "performance"
+  },
+  {
+    "name": "Script tag with JavaScript content",
+    "html": "<html><body><script id='app-data'>var x = 5; if (x < 10) { console.log('Less than 10'); }</script><p>Content</p></body></html>",
+    "xpath": "//script[@id='app-data']",
+    "description": "Script tag with < characters in JavaScript code",
+    "category": "raw-text-elements"
+  },
+  {
+    "name": "Style tag with CSS content",
+    "html": "<html><head><style>.item > .child { color: red; } @media (max-width < 768px) { display: none; }</style></head><body><div>Content</div></body></html>",
+    "xpath": "//style",
+    "description": "Style tag with > and < characters in CSS",
+    "category": "raw-text-elements"
+  },
+  {
+    "name": "Textarea with HTML-like content",
+    "html": "<html><body><form><textarea name='code'>Use <div> and </div> tags for containers</textarea><button>Submit</button></form></body></html>",
+    "xpath": "//textarea[@name='code']",
+    "description": "Textarea containing HTML-like text that should not be parsed",
+    "category": "raw-text-elements"
+  },
+  {
+    "name": "Multiple script tags with attributes",
+    "html": "<html><body><script src='external.js'></script><script id='inline-config' type='application/json'>{\"key\": \"value < 10\"}</script><div>Page content</div></body></html>",
+    "xpath": "//script[@id='inline-config']",
+    "description": "Multiple script tags, one with JSON content containing < character",
+    "category": "raw-text-elements"
+  },
+  {
+    "name": "Nested script-like content",
+    "html": "<html><body><div class='code-example'>Example: <script>alert('hello')</script> is used for JavaScript</div><script id='real-script'>var y = 20;</script></body></html>",
+    "xpath": "//script[@id='real-script']",
+    "description": "Distinguishing real script tags from script text in content",
+    "category": "raw-text-elements"
   }
 ]

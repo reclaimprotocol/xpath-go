@@ -167,7 +167,36 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 		return node, nil
 	}
 
-	// Parse child nodes
+	// Handle raw text elements like script, style, textarea, title
+	if p.isRawTextElement(node.Name) {
+		textContent := p.parseRawTextContent(node.Name)
+		
+		// Create a single text node for the raw content
+		if textContent != "" {
+			textNode := &types.Node{
+				Type:        types.TextNode,
+				Name:        "#text",
+				Value:       textContent,
+				TextContent: textContent,
+				Parent:      node,
+				StartPos:    p.pos - len(textContent),
+				EndPos:      p.pos,
+				StartLine:   p.line,
+				StartColumn: p.col,
+				EndLine:     p.line,
+				EndColumn:   p.col,
+			}
+			node.Children = append(node.Children, textNode)
+		}
+		
+		node.TextContent = textContent
+		node.EndPos = p.pos
+		node.EndLine = p.line
+		node.EndColumn = p.col
+		return node, nil
+	}
+
+	// Parse child nodes normally for other elements
 	textContent := ""
 	for p.pos < len(p.content) {
 		if p.pos >= len(p.content) {
@@ -472,4 +501,57 @@ func (p *HTMLParser) isSelfClosingTag(name string) bool {
 		"track": true, "wbr": true,
 	}
 	return selfClosingTags[name]
+}
+
+// isRawTextElement checks if an element should have its content parsed as raw text
+func (p *HTMLParser) isRawTextElement(name string) bool {
+	rawTextElements := map[string]bool{
+		"script":   true,
+		"style":    true,
+		"textarea": true,
+		"title":    true,
+	}
+	return rawTextElements[name]
+}
+
+// parseRawTextContent parses the raw text content of script, style, textarea, etc.
+// It reads everything until it finds the closing tag for the given element
+func (p *HTMLParser) parseRawTextContent(tagName string) string {
+	content := ""
+	closingTag := "</" + strings.ToLower(tagName)
+	
+	for p.pos < len(p.content) {
+		// Look for the closing tag
+		if p.pos+len(closingTag) <= len(p.content) {
+			// Check if we found the closing tag (case-insensitive)
+			potentialClosing := strings.ToLower(p.content[p.pos:p.pos+len(closingTag)])
+			if potentialClosing == closingTag {
+				// Check that the next character is either '>' or whitespace
+				nextPos := p.pos + len(closingTag)
+				if nextPos < len(p.content) {
+					nextChar := p.content[nextPos]
+					if nextChar == '>' || nextChar == ' ' || nextChar == '\t' || nextChar == '\n' || nextChar == '\r' {
+						// Found the closing tag, now skip to the end
+						for p.pos < len(p.content) && p.peek() != '>' {
+							p.advance()
+						}
+						if p.peek() == '>' {
+							p.advance() // Skip '>'
+						}
+						return content
+					}
+				}
+			}
+		}
+		
+		// Add character to content and advance
+		r, size := p.peekRune()
+		if r == 0 {
+			break
+		}
+		content += string(r)
+		p.advanceRune(size)
+	}
+	
+	return content
 }
