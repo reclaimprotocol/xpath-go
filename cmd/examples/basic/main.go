@@ -25,7 +25,7 @@ func main() {
     <div id="content" class="main-content">
         <article>
             <h2>XPath Examples</h2>
-            <p>This library provides <strong>100% jsdom compatibility</strong> with precise location tracking.</p>
+            <p>This library provides <strong>high compatibility</strong> with precise location tracking.</p>
             <p>Here are some example XPath expressions:</p>
             <ul>
                 <li><code>//div[@id='header']</code> - Select header div</li>

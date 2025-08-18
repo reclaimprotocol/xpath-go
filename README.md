@@ -1,6 +1,6 @@
 # xpath-go
 
-🎯 **100% jsdom-compatible XPath library for Go with precise location tracking**
+🎯 **High-compatibility XPath library for Go with precise location tracking**
 
 [![Go Version](https://img.shields.io/badge/Go-1.19%2B-blue.svg)](https://golang.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -9,11 +9,11 @@
 
 ## ✨ Features
 
-- 🎯 **100% jsdom Compatibility** - Perfect matching with jsdom's XPath evaluation (76/76 tests passing)
+- 🎯 **High Compatibility** - Strives for close compatibility with jsdom's XPath evaluation
 - 📍 **Precise Location Tracking** - Character-level positioning in source HTML/XML
 - ⚡ **High Performance** - Optimized evaluation engine with smart caching
 - 🔧 **Production Ready** - Comprehensive error handling and extensive testing
-- 🧪 **Battle Tested** - Verified against jsdom reference implementation
+- 🧪 **Battle Tested** - Extensively tested against reference implementations
 - 📦 **Zero Dependencies** - Pure Go implementation, no external dependencies
 - 🎨 **Developer Friendly** - Rich debugging support with trace logging
 
@@ -60,19 +60,19 @@ go get github.com/reclaimprotocol/xpath-go
 - `attribute::`, `namespace::`, `self::`
 - `descendant-or-self::`, `ancestor-or-self::`
 
-### ✅ Functions (100% Compatible)
+### ✅ Functions (Comprehensive Support)
 - **Node Functions**: `text()`, `node()`, `position()`, `last()`, `count()`
 - **String Functions**: `string()`, `normalize-space()`, `starts-with()`, `contains()`, `substring()`
 - **Boolean Functions**: `boolean()`, `not()`
 - **Number Functions**: `number()`, `string-length()`
 
-### ✅ Operators (100% Compatible)
+### ✅ Operators (Full Support)
 - **Comparison**: `=`, `!=`, `<`, `>`, `<=`, `>=`
 - **Logical**: `and`, `or`, `not()`
 - **Arithmetic**: `+`, `-`, `*`, `div`, `mod`
 - **Union**: `|` (pipe operator)
 
-### ✅ Predicates (100% Compatible)
+### ✅ Predicates (Full Support)
 - Attribute predicates: `[@id='test']`, `[@class and @id]`
 - Position predicates: `[1]`, `[last()]`, `[position()>2]`
 - Content predicates: `[text()='value']`, `[contains(text(), 'substring')]`
@@ -159,9 +159,9 @@ func ByteToCharPos(s string, bytePos int) int {
 }
 ```
 
-### ⚠️ jsdom Compatibility Caveats
+### ⚠️ Compatibility Considerations
 
-While XPath-Go strives for maximum jsdom compatibility, there are some intentional differences in how certain edge cases are handled:
+While XPath-Go aims for high compatibility with web standards and reference implementations, there are some intentional differences and limitations:
 
 #### **Design Choices (Not Bugs)**
 - **HTML Entity Preservation**: Maintains original `&amp;` vs `&` (see above)
@@ -179,13 +179,13 @@ Some advanced XPath features have implementation differences:
 - **Axis Navigation**: Very complex ancestor/descendant chains may have subtle differences
 - **Memory Efficiency**: Large document traversal optimized for Go's memory model
 
-#### **When 100% Compatibility Matters**
-For use cases requiring absolute jsdom compatibility:
-- Use XPath-Go for production performance and Go ecosystem integration
-- Use jsdom for development/testing environments requiring exact compatibility
-- Consider hybrid approaches for complex document processing pipelines
+#### **When Maximum Compatibility Matters**
+For use cases requiring specific compatibility behavior:
+- Test your XPath expressions with your actual use cases
+- XPath-Go prioritizes Go ecosystem integration and performance
+- Consider alternative approaches for very specific edge cases
 
-🎯 **Our goal**: Provide reliable XPath functionality that works well in the Go ecosystem while maintaining practical compatibility with web standards.
+🎯 **Our goal**: Provide reliable, high-performance XPath functionality that works well in the Go ecosystem while maintaining strong compatibility with web standards.
 
 ## 🔍 Advanced Usage
 
@@ -461,10 +461,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- Built for 100% compatibility with [jsdom](https://github.com/jsdom/jsdom)
+- Built with high compatibility goals for [jsdom](https://github.com/jsdom/jsdom) and web standards
 - Inspired by the [W3C XPath 1.0 Specification](https://www.w3.org/TR/xpath/)
 - Thanks to the Go community for excellent tooling and libraries
 
 ---
 
-**🎉 Production Ready**: This library is actively used in production and maintains 100% compatibility with jsdom XPath evaluation.
+**🎉 Production Ready**: This library is actively used in production and provides reliable XPath evaluation for Go applications.

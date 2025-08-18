@@ -161,11 +161,11 @@ Benchmark_LargeDoc-8    	    5000	   156789 ns/op	   32768 B/op	     432 allocs/
 
 ### Feature Comparison
 
-| Library | jsdom Compatibility | Location Tracking | Performance | Memory Usage |
-|---------|-------------------|------------------|-------------|--------------|
-| xpath-go | 100% (76/76 tests) | ✅ Character-level | High | Optimized |
-| antchfx/xpath | ~80% estimated | ❌ No | High | Good |
-| xpath (C bindings) | ~95% estimated | ❌ No | Very High | Low |
+| Library | Compatibility | Location Tracking | Performance | Memory Usage |
+|---------|---------------|------------------|-------------|--------------|
+| xpath-go | High compatibility | ✅ Character-level | High | Optimized |
+| antchfx/xpath | Basic compatibility | ❌ No | High | Good |
+| xpath (C bindings) | Strong compatibility | ❌ No | Very High | Low |
 
 ### Performance Comparison (Approximate)
 
@@ -181,7 +181,7 @@ Complex XPath queries (//div[@class and position()>1]):
 └── libxml2 (C):  ~150,000 ops/sec
 ```
 
-**Note:** xpath-go prioritizes 100% jsdom compatibility and location tracking over raw speed.
+**Note:** xpath-go prioritizes high compatibility and location tracking over raw speed.
 
 ## Optimization Strategies
 

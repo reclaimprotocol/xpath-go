@@ -54,12 +54,12 @@ release:
   header: |
     ## XPath Go v{{.Version}}
     
-    🎯 **100% jsdom Compatibility XPath Library**
+    🎯 **High-Compatibility XPath Library for Go**
     
-    This release brings comprehensive XPath functionality with perfect jsdom compatibility and precise node location tracking.
+    This release brings comprehensive XPath functionality with strong compatibility and precise node location tracking.
     
     ### ✨ Highlights
-    - **jsdom Compatibility**: Perfect matching with jsdom XPath evaluation
+    - **High Compatibility**: Strives for close compatibility with web standards and jsdom
     - **Location Tracking**: Precise character positioning in source HTML/XML
     - **Production Ready**: Comprehensive error handling and performance optimization
     
