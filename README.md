@@ -11,6 +11,7 @@
 
 - 🎯 **High Compatibility** - Strives for close compatibility with jsdom's XPath evaluation
 - 📍 **Precise Location Tracking** - Character-level positioning in source HTML/XML
+- 📄 **Dual Extraction Modes** - Extract full elements or content-only with `contentsOnly` option
 - ⚡ **High Performance** - Optimized evaluation engine with smart caching
 - 🔧 **Production Ready** - Comprehensive error handling and extensive testing
 - 🧪 **Battle Tested** - Extensively tested against reference implementations
@@ -228,12 +229,18 @@ for _, htmlDoc := range documents {
 
 ### Custom Options
 
-Control output format and features:
+Control output format and extraction mode:
 
 ```go
 results, err := xpath.QueryWithOptions("//p", html, xpath.Options{
     IncludeLocation: true,
     OutputFormat:    "values", // "nodes", "values", "paths"
+    ContentsOnly:    false,    // Extract full elements (default)
+})
+
+// Extract only inner content between tags
+results, err := xpath.QueryWithOptions("//div", html, xpath.Options{
+    ContentsOnly: true,  // Extract content-only: <div>content</div> → "content"
 })
 ```
 
@@ -308,6 +315,34 @@ xpath.Query("//div[@id='start']/descendant-or-self::*[@class]", html) // Descend
 xpath.Query("//li[3]/preceding-sibling::li", html)                    // Previous siblings
 ```
 
+### Dual Extraction Modes
+
+Extract either full elements or just their inner content:
+
+```go
+html := `<div class="box">Hello <span>World</span>!</div>`
+
+// Full element extraction (default)
+results, _ := xpath.QueryWithOptions("//div", html, xpath.Options{
+    ContentsOnly: false,
+})
+// StartLocation/EndLocation: <div class="box">Hello <span>World</span>!</div>
+
+// Content-only extraction  
+results, _ := xpath.QueryWithOptions("//div", html, xpath.Options{
+    ContentsOnly: true,
+})
+// StartLocation/EndLocation: Hello <span>World</span>!
+
+// Fine-grained control (both modes provide these)
+fmt.Printf("Full element: %s\n", html[result.ContentStart:result.ContentEnd])
+fmt.Printf("Inner content: %s\n", html[result.ContentStart:result.ContentEnd])
+```
+
+**Use Cases:**
+- **Full elements** (`ContentsOnly: false`): HTML processing, DOM manipulation, complete element extraction
+- **Content only** (`ContentsOnly: true`): Text processing, content analysis, clean text extraction without tags
+
 ## 🧪 Testing
 
 Run the comprehensive test suite:
@@ -363,8 +398,10 @@ type Result struct {
     NodeName      string            // Element name (div, span, etc.)
     NodeType      int               // Node type (1=element, 2=attribute, 3=text)
     Attributes    map[string]string // Element attributes
-    StartLocation int               // Character start position
-    EndLocation   int               // Character end position  
+    StartLocation int               // Character start position (full element or content-only)
+    EndLocation   int               // Character end position (full element or content-only)
+    ContentStart  int               // Start of inner content (after opening tag)
+    ContentEnd    int               // End of inner content (before closing tag)
     Path          string            // Generated XPath path
     TextContent   string            // Text content of node and children
 }
@@ -376,8 +413,15 @@ type Result struct {
 type Options struct {
     IncludeLocation bool   // Include character positions (default: true)
     OutputFormat    string // "nodes", "values", "paths" (default: "nodes")
+    ContentsOnly    bool   // Extract only inner content between tags (default: false)
 }
 ```
+
+**ContentsOnly Mode:**
+- `false` (default): Extract full elements including tags: `<div>content</div>`
+- `true`: Extract only inner content: `content`
+
+Both modes maintain precise position tracking. With `ContentsOnly: true`, `StartLocation`/`EndLocation` point to the content boundaries, while `ContentStart`/`ContentEnd` are always available for fine-grained control.
 
 ## 🔧 Advanced Configuration
 

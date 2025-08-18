@@ -10,6 +10,7 @@ Comprehensive examples demonstrating all features of xpath-go library.
 - [Performance Examples](#performance-examples)
 - [Error Handling Examples](#error-handling-examples)
 - [Location Tracking Examples](#location-tracking-examples)
+- [ContentsOnly Examples](#contentsonly-examples)
 
 ## Basic Examples
 
@@ -644,4 +645,401 @@ function greet(name) {
 }
 ```
 
-This comprehensive examples file demonstrates the full capabilities of the xpath-go library, from basic selections to advanced real-world use cases. Each example is complete and runnable, showing both the power and flexibility of the library.
+## ContentsOnly Examples
+
+### Basic Content Extraction
+
+```go
+func contentsOnlyBasic() {
+    html := `<div class="container">
+        <h1>Page Title</h1>
+        <p>This is a <strong>paragraph</strong> with nested elements.</p>
+        <div class="highlight">Important content here</div>
+    </div>`
+
+    // Full element extraction (default)
+    fmt.Println("=== Full Element Mode ===")
+    results, _ := xpath.QueryWithOptions("//p", html, xpath.Options{
+        ContentsOnly: false,
+    })
+    
+    for _, result := range results {
+        content := html[result.StartLocation:result.EndLocation]
+        fmt.Printf("Full element: %s\n", content)
+        // Output: <p>This is a <strong>paragraph</strong> with nested elements.</p>
+    }
+
+    // Content-only extraction
+    fmt.Println("\n=== Content-Only Mode ===")
+    results, _ = xpath.QueryWithOptions("//p", html, xpath.Options{
+        ContentsOnly: true,
+    })
+    
+    for _, result := range results {
+        content := html[result.StartLocation:result.EndLocation]
+        fmt.Printf("Content only: %s\n", content)
+        // Output: This is a <strong>paragraph</strong> with nested elements.
+    }
+
+    // Fine-grained control (always available)
+    fmt.Println("\n=== Fine-Grained Control ===")
+    results, _ = xpath.Query("//div[@class='highlight']", html)
+    for _, result := range results {
+        fullElement := html[result.StartLocation:result.EndLocation]
+        innerContent := html[result.ContentStart:result.ContentEnd]
+        fmt.Printf("Full element: %s\n", fullElement)
+        fmt.Printf("Inner content: %s\n", innerContent)
+    }
+}
+```
+
+### Text Processing Use Case
+
+```go
+func textProcessingExample() {
+    // Blog post HTML
+    html := `<article class="blog-post">
+        <header>
+            <h1>Understanding XPath in Go</h1>
+            <div class="meta">
+                <span class="author">By John Doe</span>
+                <span class="date">January 15, 2024</span>
+            </div>
+        </header>
+        <div class="content">
+            <p>XPath is a powerful query language for <strong>XML and HTML</strong> documents.</p>
+            <p>With xpath-go, you can <em>easily extract</em> data from web pages.</p>
+            <h2>Key Features</h2>
+            <ul>
+                <li>High compatibility with web standards</li>
+                <li>Precise location tracking</li>
+                <li>Dual extraction modes</li>
+            </ul>
+            <blockquote>
+                "XPath makes web scraping much easier and more reliable."
+            </blockquote>
+        </div>
+    </article>`
+
+    // Extract clean text for content analysis
+    fmt.Println("=== Blog Post Text Analysis ===")
+    
+    // Extract title (content-only)
+    titleResults, _ := xpath.QueryWithOptions("//h1", html, xpath.Options{
+        ContentsOnly: true,
+    })
+    title := html[titleResults[0].StartLocation:titleResults[0].EndLocation]
+    
+    // Extract paragraphs (content-only) 
+    paragraphResults, _ := xpath.QueryWithOptions("//p", html, xpath.Options{
+        ContentsOnly: true,
+    })
+    
+    // Extract list items (content-only)
+    listResults, _ := xpath.QueryWithOptions("//li", html, xpath.Options{
+        ContentsOnly: true,
+    })
+    
+    // Extract quotes (content-only)
+    quoteResults, _ := xpath.QueryWithOptions("//blockquote", html, xpath.Options{
+        ContentsOnly: true,
+    })
+
+    // Display extracted content
+    fmt.Printf("Title: %s\n", title)
+    fmt.Printf("Word count: %d\n", len(strings.Fields(title)))
+    
+    fmt.Println("\nParagraphs:")
+    for i, result := range paragraphResults {
+        content := html[result.StartLocation:result.EndLocation]
+        fmt.Printf("  [%d] %s (words: %d)\n", i+1, content, len(strings.Fields(content)))
+    }
+    
+    fmt.Println("\nKey Points:")
+    for i, result := range listResults {
+        content := html[result.StartLocation:result.EndLocation]
+        fmt.Printf("  • %s\n", content)
+    }
+    
+    fmt.Println("\nQuotes:")
+    for _, result := range quoteResults {
+        content := strings.TrimSpace(html[result.StartLocation:result.EndLocation])
+        fmt.Printf("  \"%s\"\n", content)
+    }
+    
+    // Calculate total word count
+    allText := []string{title}
+    for _, result := range paragraphResults {
+        allText = append(allText, html[result.StartLocation:result.EndLocation])
+    }
+    
+    totalWords := 0
+    for _, text := range allText {
+        totalWords += len(strings.Fields(text))
+    }
+    fmt.Printf("\nTotal word count: %d\n", totalWords)
+}
+```
+
+### Data Extraction Comparison
+
+```go
+func dataExtractionComparison() {
+    // E-commerce product HTML
+    html := `<div class="product-card">
+        <div class="product-image">
+            <img src="laptop.jpg" alt="Gaming Laptop">
+        </div>
+        <div class="product-details">
+            <h3 class="product-name">Gaming Laptop Pro Max</h3>
+            <div class="price-info">
+                <span class="current-price">$1,299.99</span>
+                <span class="original-price">$1,599.99</span>
+                <span class="discount">19% off</span>
+            </div>
+            <div class="specifications">
+                <div class="spec-item">
+                    <span class="spec-label">CPU:</span>
+                    <span class="spec-value">Intel Core i7-12700H</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">RAM:</span>
+                    <span class="spec-value">32GB DDR4</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Storage:</span>
+                    <span class="spec-value">1TB NVMe SSD</span>
+                </div>
+            </div>
+        </div>
+    </div>`
+
+    fmt.Println("=== Data Extraction: Full vs Content-Only ===")
+    
+    // Compare extraction modes for product specifications
+    fmt.Println("\n--- Specification Labels ---")
+    
+    // Full element mode
+    fullResults, _ := xpath.QueryWithOptions("//span[@class='spec-label']", html, xpath.Options{
+        ContentsOnly: false,
+    })
+    fmt.Println("Full element mode:")
+    for _, result := range fullResults {
+        content := html[result.StartLocation:result.EndLocation]
+        fmt.Printf("  %s\n", content)
+    }
+    
+    // Content-only mode  
+    contentResults, _ := xpath.QueryWithOptions("//span[@class='spec-label']", html, xpath.Options{
+        ContentsOnly: true,
+    })
+    fmt.Println("\nContent-only mode:")
+    for _, result := range contentResults {
+        content := html[result.StartLocation:result.EndLocation]
+        fmt.Printf("  %s\n", content)
+    }
+    
+    // Practical application: Build structured data
+    fmt.Println("\n--- Building Structured Data ---")
+    
+    type ProductSpec struct {
+        Label string
+        Value string
+    }
+    
+    var specifications []ProductSpec
+    
+    // Extract labels and values (content-only for clean data)
+    labelResults, _ := xpath.QueryWithOptions("//span[@class='spec-label']", html, xpath.Options{
+        ContentsOnly: true,
+    })
+    valueResults, _ := xpath.QueryWithOptions("//span[@class='spec-value']", html, xpath.Options{
+        ContentsOnly: true,
+    })
+    
+    for i := 0; i < len(labelResults) && i < len(valueResults); i++ {
+        label := strings.TrimSuffix(html[labelResults[i].StartLocation:labelResults[i].EndLocation], ":")
+        value := html[valueResults[i].StartLocation:valueResults[i].EndLocation]
+        
+        specifications = append(specifications, ProductSpec{
+            Label: label,
+            Value: value,
+        })
+    }
+    
+    fmt.Println("Structured specifications:")
+    for _, spec := range specifications {
+        fmt.Printf("  %s: %s\n", spec.Label, spec.Value)
+    }
+}
+```
+
+### HTML Processing vs Text Processing
+
+```go
+func htmlVsTextProcessing() {
+    html := `<div class="email-template">
+        <div class="header">
+            <h1>Welcome to <span class="brand">TechCorp</span>!</h1>
+        </div>
+        <div class="body">
+            <p>Dear <span class="placeholder">{{NAME}}</span>,</p>
+            <p>Thank you for joining our <strong>premium</strong> service.</p>
+            <p>Your account benefits include:</p>
+            <ul>
+                <li>24/7 support</li>
+                <li>Priority access to new features</li>
+                <li>Advanced analytics dashboard</li>
+            </ul>
+            <div class="cta">
+                <a href="{{LOGIN_URL}}" class="button">Get Started</a>
+            </div>
+        </div>
+        <div class="footer">
+            <p>Best regards,<br>The TechCorp Team</p>
+        </div>
+    </div>`
+
+    fmt.Println("=== HTML Processing Use Case ===")
+    // Extract complete HTML structure for email template processing
+    templateResults, _ := xpath.QueryWithOptions("//div[@class='email-template']", html, xpath.Options{
+        ContentsOnly: false,
+    })
+    
+    if len(templateResults) > 0 {
+        fullTemplate := html[templateResults[0].StartLocation:templateResults[0].EndLocation]
+        fmt.Println("Complete HTML template for processing:")
+        fmt.Printf("Length: %d characters\n", len(fullTemplate))
+        fmt.Printf("Contains placeholders: %t\n", strings.Contains(fullTemplate, "{{"))
+        // This full HTML can be processed for template substitution, styling, etc.
+    }
+    
+    fmt.Println("\n=== Text Processing Use Case ===")
+    // Extract clean text content for analysis
+    paragraphs, _ := xpath.QueryWithOptions("//p", html, xpath.Options{
+        ContentsOnly: true,
+    })
+    
+    listItems, _ := xpath.QueryWithOptions("//li", html, xpath.Options{
+        ContentsOnly: true,
+    })
+    
+    fmt.Println("Clean text content for analysis:")
+    
+    fmt.Println("\nParagraphs:")
+    for i, result := range paragraphs {
+        content := html[result.StartLocation:result.EndLocation]
+        fmt.Printf("  [%d] %s\n", i+1, content)
+    }
+    
+    fmt.Println("\nBenefit list:")
+    for i, result := range listItems {
+        content := html[result.StartLocation:result.EndLocation]
+        fmt.Printf("  • %s\n", content)
+    }
+    
+    // Text analysis example
+    fmt.Println("\n--- Text Analysis ---")
+    allTextContent := []string{}
+    
+    for _, result := range paragraphs {
+        content := html[result.StartLocation:result.EndLocation]
+        allTextContent = append(allTextContent, content)
+    }
+    for _, result := range listItems {
+        content := html[result.StartLocation:result.EndLocation]  
+        allTextContent = append(allTextContent, content)
+    }
+    
+    combinedText := strings.Join(allTextContent, " ")
+    wordCount := len(strings.Fields(combinedText))
+    placeholderCount := strings.Count(combinedText, "{{")
+    
+    fmt.Printf("Total words: %d\n", wordCount)
+    fmt.Printf("Placeholders found: %d\n", placeholderCount)
+    fmt.Printf("Average words per section: %.1f\n", float64(wordCount)/float64(len(allTextContent)))
+}
+```
+
+### Edge Cases and Special Elements
+
+```go
+func edgeCasesExample() {
+    html := `<div class="test-cases">
+        <div class="empty"></div>
+        <div class="whitespace-only">   
+        
+        </div>
+        <div class="self-closing">
+            <img src="test.jpg" alt="Test"/>
+            <br/>
+            <hr/>
+        </div>
+        <div class="nested">
+            <p>Outer <span>inner <em>deep</em></span> text</p>
+        </div>
+        <script type="text/javascript">
+            function test() {
+                console.log('Hello World');
+            }
+        </script>
+        <style>
+            .test { color: red; }
+        </style>
+    </div>`
+
+    fmt.Println("=== Edge Cases: ContentsOnly Behavior ===")
+    
+    testCases := []struct {
+        xpath string
+        desc  string
+    }{
+        {"//div[@class='empty']", "Empty elements"},
+        {"//div[@class='whitespace-only']", "Whitespace-only elements"},
+        {"//img", "Self-closing elements"},
+        {"//br", "Void elements"},
+        {"//div[@class='nested']//span", "Nested elements"},
+        {"//script", "Raw text elements"},
+        {"//style", "Style elements"},
+    }
+    
+    for _, tc := range testCases {
+        fmt.Printf("\n--- %s ---\n", tc.desc)
+        fmt.Printf("XPath: %s\n", tc.xpath)
+        
+        // Test both modes
+        fullResults, _ := xpath.QueryWithOptions(tc.xpath, html, xpath.Options{
+            ContentsOnly: false,
+        })
+        
+        contentResults, _ := xpath.QueryWithOptions(tc.xpath, html, xpath.Options{
+            ContentsOnly: true,
+        })
+        
+        if len(fullResults) > 0 && len(contentResults) > 0 {
+            fullContent := html[fullResults[0].StartLocation:fullResults[0].EndLocation]
+            contentOnly := html[contentResults[0].StartLocation:contentResults[0].EndLocation]
+            
+            fmt.Printf("Full: %q\n", truncateString(fullContent, 60))
+            fmt.Printf("Content: %q\n", truncateString(contentOnly, 60))
+            
+            // Show position difference
+            fmt.Printf("Full range: %d-%d (length: %d)\n", 
+                fullResults[0].StartLocation, fullResults[0].EndLocation,
+                fullResults[0].EndLocation-fullResults[0].StartLocation)
+            fmt.Printf("Content range: %d-%d (length: %d)\n", 
+                contentResults[0].StartLocation, contentResults[0].EndLocation,
+                contentResults[0].EndLocation-contentResults[0].StartLocation)
+        }
+    }
+}
+
+func truncateString(s string, maxLen int) string {
+    if len(s) <= maxLen {
+        return s
+    }
+    return s[:maxLen-3] + "..."
+}
+```
+
+This comprehensive examples file demonstrates the full capabilities of the xpath-go library, from basic selections to advanced real-world use cases. Each example is complete and runnable, showing both the power and flexibility of the library, including the new dual extraction modes with the `contentsOnly` option.

@@ -62,6 +62,7 @@ Evaluates XPath with custom options for advanced control.
 results, err := xpath.QueryWithOptions("//p", html, xpath.Options{
     IncludeLocation: false,
     OutputFormat:    "values",
+    ContentsOnly:    true,  // Extract only inner content
 })
 ```
 
@@ -108,6 +109,8 @@ type Result struct {
     Attributes    map[string]string `json:"attributes,omitempty"`
     StartLocation int               `json:"startLocation"`
     EndLocation   int               `json:"endLocation"`
+    ContentStart  int               `json:"contentStart,omitempty"`
+    ContentEnd    int               `json:"contentEnd,omitempty"`
     Path          string            `json:"path"`
     TextContent   string            `json:"textContent"`
 }
@@ -118,8 +121,10 @@ type Result struct {
 - `NodeName`: HTML/XML element name (e.g., "div", "span", "a")
 - `NodeType`: Node type constant (1=element, 2=attribute, 3=text)
 - `Attributes`: Map of element attributes
-- `StartLocation`: Character position where element starts in source
-- `EndLocation`: Character position where element ends in source
+- `StartLocation`: Character position where extraction starts (full element or content-only based on ContentsOnly option)
+- `EndLocation`: Character position where extraction ends (full element or content-only based on ContentsOnly option)
+- `ContentStart`: Start of inner content (after opening tag), always available for fine-grained control
+- `ContentEnd`: End of inner content (before closing tag), always available for fine-grained control  
 - `Path`: Generated XPath path to this node
 - `TextContent`: Combined text content of node and all children
 
@@ -174,17 +179,28 @@ Configuration options for XPath evaluation.
 type Options struct {
     IncludeLocation bool   `json:"include_location"`
     OutputFormat    string `json:"output_format"`
+    ContentsOnly    bool   `json:"contents_only"`
 }
 ```
 
 **Fields:**
 - `IncludeLocation`: Include character position tracking (default: true)
-- `OutputFormat`: Result format - "nodes", "values", or "paths" (default: "nodes")
+- `OutputFormat`: Result format - "nodes", "values", or "paths" (default: "nodes") 
+- `ContentsOnly`: Extract only inner content between tags (default: false)
 
 **Output Formats:**
 - `"nodes"`: Full node information with metadata (default)
 - `"values"`: Only text content/values
 - `"paths"`: Only XPath paths to matched nodes
+
+**Extraction Modes:**
+- `ContentsOnly: false` (default): Extract full elements including tags
+  - `StartLocation`/`EndLocation` point to full element boundaries
+  - Example: `<div>content</div>` → positions include the entire element
+- `ContentsOnly: true`: Extract only inner content between tags
+  - `StartLocation`/`EndLocation` point to content boundaries  
+  - Example: `<div>content</div>` → positions only include "content"
+- `ContentStart`/`ContentEnd` fields are always populated regardless of ContentsOnly setting
 
 ## Error Handling
 
@@ -281,6 +297,83 @@ duration := time.Since(start)
 
 fmt.Printf("Query took %v, found %d results\n", duration, len(results))
 ```
+
+### ContentsOnly Examples
+
+Detailed examples of dual extraction modes:
+
+```go
+html := `<article id="main">
+    <h1>Title</h1>
+    <p>First <strong>bold</strong> paragraph.</p>
+    <div class="box">Nested content</div>
+</article>`
+
+// Full element extraction (default behavior)
+results, _ := xpath.QueryWithOptions("//p", html, xpath.Options{
+    ContentsOnly: false,
+})
+fmt.Printf("Full element: %s\n", html[results[0].StartLocation:results[0].EndLocation])
+// Output: <p>First <strong>bold</strong> paragraph.</p>
+
+// Content-only extraction  
+results, _ = xpath.QueryWithOptions("//p", html, xpath.Options{
+    ContentsOnly: true,
+})
+fmt.Printf("Content only: %s\n", html[results[0].StartLocation:results[0].EndLocation])
+// Output: First <strong>bold</strong> paragraph.
+
+// Fine-grained control (available in both modes)
+fmt.Printf("Inner content: %s\n", html[results[0].ContentStart:results[0].ContentEnd])
+// Output: First <strong>bold</strong> paragraph.
+
+// Multiple elements with different extraction modes
+results, _ = xpath.QueryWithOptions("//article//*", html, xpath.Options{
+    ContentsOnly: true,
+})
+for _, result := range results {
+    fmt.Printf("Element <%s>: %s\n", result.NodeName, 
+        html[result.StartLocation:result.EndLocation])
+}
+// Output:
+// Element <h1>: Title
+// Element <p>: First <strong>bold</strong> paragraph.
+// Element <strong>: bold
+// Element <div>: Nested content
+```
+
+**Common Use Cases:**
+
+1. **HTML Processing** (`ContentsOnly: false`):
+   ```go
+   // Extract complete HTML elements for DOM manipulation
+   results, _ := xpath.QueryWithOptions("//div[@class='component']", html, xpath.Options{
+       ContentsOnly: false,
+   })
+   // Get full HTML: <div class="component">...</div>
+   ```
+
+2. **Text Analysis** (`ContentsOnly: true`):
+   ```go
+   // Extract clean text content for processing
+   results, _ := xpath.QueryWithOptions("//p", html, xpath.Options{
+       ContentsOnly: true,
+   })
+   // Get clean text without tags for NLP, search indexing, etc.
+   ```
+
+3. **Hybrid Processing**:
+   ```go
+   results, _ := xpath.Query("//article", html)
+   for _, result := range results {
+       // Access both full element and content boundaries
+       fullElement := html[result.StartLocation:result.EndLocation]
+       innerContent := html[result.ContentStart:result.ContentEnd]
+       
+       fmt.Printf("Full: %s\n", fullElement)
+       fmt.Printf("Content: %s\n", innerContent)
+   }
+   ```
 
 ## Thread Safety
 

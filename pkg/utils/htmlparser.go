@@ -175,7 +175,7 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 
 	// Handle raw text elements like script, style, textarea, title
 	if p.isRawTextElement(node.Name) {
-		textContent := p.parseRawTextContent(node.Name)
+		textContent, contentEnd := p.parseRawTextContentWithPos(node.Name)
 
 		// Create a single text node for the raw content
 		if textContent != "" {
@@ -185,8 +185,8 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 				Value:       textContent,
 				TextContent: textContent,
 				Parent:      node,
-				StartPos:    p.pos - len(textContent),
-				EndPos:      p.pos,
+				StartPos:    contentStartPos,
+				EndPos:      contentEnd,
 				StartLine:   p.line,
 				StartColumn: p.col,
 				EndLine:     p.line,
@@ -196,10 +196,8 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 		}
 
 		node.TextContent = textContent
-		// For raw text elements, content ends before the closing tag starts
-		contentEndPos := p.pos - len(node.Name) - 3 // Account for "</" and ">"
 		node.ContentStart = contentStartPos
-		node.ContentEnd = contentEndPos
+		node.ContentEnd = contentEnd
 		node.EndPos = p.pos
 		node.EndLine = p.line
 		node.EndColumn = p.col
@@ -531,9 +529,8 @@ func (p *HTMLParser) isRawTextElement(name string) bool {
 	return rawTextElements[name]
 }
 
-// parseRawTextContent parses the raw text content of script, style, textarea, etc.
-// It reads everything until it finds the closing tag for the given element
-func (p *HTMLParser) parseRawTextContent(tagName string) string {
+// parseRawTextContentWithPos parses the raw text content and returns both content and end position
+func (p *HTMLParser) parseRawTextContentWithPos(tagName string) (string, int) {
 	content := ""
 	closingTag := "</" + strings.ToLower(tagName)
 
@@ -548,14 +545,16 @@ func (p *HTMLParser) parseRawTextContent(tagName string) string {
 				if nextPos < len(p.content) {
 					nextChar := p.content[nextPos]
 					if nextChar == '>' || nextChar == ' ' || nextChar == '\t' || nextChar == '\n' || nextChar == '\r' {
-						// Found the closing tag, now skip to the end
+						// Found the closing tag, capture the content end position
+						contentEndPos := p.pos
+						// Skip to the end of the closing tag
 						for p.pos < len(p.content) && p.peek() != '>' {
 							p.advance()
 						}
 						if p.peek() == '>' {
 							p.advance() // Skip '>'
 						}
-						return content
+						return content, contentEndPos
 					}
 				}
 			}
@@ -570,5 +569,5 @@ func (p *HTMLParser) parseRawTextContent(tagName string) string {
 		p.advanceRune(size)
 	}
 
-	return content
+	return content, p.pos
 }
