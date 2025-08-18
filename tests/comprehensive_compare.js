@@ -100,8 +100,16 @@ class ComprehensiveXPathTester {
                 console.log(`Mode: ${modeDesc}`);
             }
             
+            if (testCase.filepath) {
+                console.log(`📁 HTML file: ${testCase.filepath}`);
+            }
+            
             if (this.options.verbose) {
-                console.log(`HTML: ${testCase.html}`);
+                if (testCase.html && !testCase.filepath) {
+                    console.log(`HTML: ${testCase.html}`);
+                } else if (testCase.filepath) {
+                    console.log(`HTML loaded from file: ${testCase.filepath}`);
+                }
             }
 
             if (result.passed) {
@@ -142,12 +150,69 @@ class ComprehensiveXPathTester {
         this.generateReport();
     }
 
+    getHtmlContent(testCase) {
+        // If filepath is specified, load HTML from file
+        if (testCase.filepath) {
+            // Handle both absolute and relative paths
+            let fullPath;
+            if (path.isAbsolute(testCase.filepath)) {
+                fullPath = testCase.filepath;
+            } else {
+                // If filepath starts with 'tests/', remove it since we're already in tests dir
+                const relativePath = testCase.filepath.startsWith('tests/') 
+                    ? testCase.filepath.substring(6) 
+                    : testCase.filepath;
+                fullPath = path.resolve(__dirname, relativePath);
+            }
+            
+            if (!fs.existsSync(fullPath)) {
+                throw new Error(`HTML file not found: ${fullPath}`);
+            }
+            return fs.readFileSync(fullPath, 'utf8');
+        }
+        
+        // Otherwise use inline HTML
+        if (!testCase.html) {
+            throw new Error(`Test case '${testCase.name}' has neither 'html' nor 'filepath' field`);
+        }
+        
+        return testCase.html;
+    }
+
+    getHtmlFilePath(testCase) {
+        // If filepath is specified, return the resolved path
+        if (testCase.filepath) {
+            // Handle both absolute and relative paths
+            let fullPath;
+            if (path.isAbsolute(testCase.filepath)) {
+                fullPath = testCase.filepath;
+            } else {
+                // If filepath starts with 'tests/', remove it since we're already in tests dir
+                const relativePath = testCase.filepath.startsWith('tests/') 
+                    ? testCase.filepath.substring(6) 
+                    : testCase.filepath;
+                fullPath = path.resolve(__dirname, relativePath);
+            }
+            
+            if (!fs.existsSync(fullPath)) {
+                throw new Error(`HTML file not found: ${fullPath}`);
+            }
+            return fullPath;
+        }
+        
+        // Return null if using inline HTML
+        return null;
+    }
+
     async runSingleTest(testCase) {
         // Check if this is a contentsOnly test case
         const contentsOnly = testCase.extractionMode === 'content';
         
-        const jsResult = this.runJavaScriptTest(testCase.xpath, testCase.html, contentsOnly);
-        const goResult = this.runGoTest(testCase.xpath, testCase.html, contentsOnly);
+        // Get HTML content - either from inline html field or from filepath
+        const htmlContent = this.getHtmlContent(testCase);
+        
+        const jsResult = this.runJavaScriptTest(testCase.xpath, htmlContent, contentsOnly);
+        const goResult = this.runGoTest(testCase.xpath, htmlContent, contentsOnly, testCase);
         
         const comparison = this.compareResults(jsResult, goResult, testCase);
 
@@ -234,14 +299,20 @@ class ComprehensiveXPathTester {
         }
     }
 
-    runGoTest(xpath, html, contentsOnly = false) {
+    runGoTest(xpath, html, contentsOnly = false, testCase = null) {
         try {
+            // Check if we can use existing HTML file
+            const existingHtmlFile = testCase ? this.getHtmlFilePath(testCase) : null;
+            
             // Create temporary files
             const timestamp = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            const htmlFile = path.join(__dirname, `temp_html_${timestamp}.html`);
+            const htmlFile = existingHtmlFile || path.join(__dirname, `temp_html_${timestamp}.html`);
             const xpathFile = path.join(__dirname, `temp_xpath_${timestamp}.txt`);
 
-            fs.writeFileSync(htmlFile, html);
+            // Only create HTML file if we don't have an existing one
+            if (!existingHtmlFile) {
+                fs.writeFileSync(htmlFile, html);
+            }
             fs.writeFileSync(xpathFile, xpath);
 
             // Run Go test program
@@ -257,7 +328,9 @@ class ComprehensiveXPathTester {
             });
 
             // Clean up temporary files
-            fs.unlinkSync(htmlFile);
+            if (!existingHtmlFile) {
+                fs.unlinkSync(htmlFile);
+            }
             fs.unlinkSync(xpathFile);
 
             const goResult = JSON.parse(output.trim());
@@ -279,6 +352,18 @@ class ComprehensiveXPathTester {
             };
 
         } catch (error) {
+            // Clean up temporary files on error
+            try {
+                if (!existingHtmlFile && fs.existsSync(htmlFile)) {
+                    fs.unlinkSync(htmlFile);
+                }
+                if (fs.existsSync(xpathFile)) {
+                    fs.unlinkSync(xpathFile);
+                }
+            } catch (cleanupError) {
+                // Ignore cleanup errors
+            }
+            
             return {
                 success: false,
                 results: [],
