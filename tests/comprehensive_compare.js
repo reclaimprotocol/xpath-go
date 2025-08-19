@@ -249,8 +249,9 @@ class ComprehensiveXPathTester {
             const document = dom.window.document;
             const window = dom.window;
             
-            // Store reference to dom for position lookups
+            // Store reference to dom and original HTML for position lookups
             this.currentDom = dom;
+            this.originalHTML = html;
             this.contentsOnly = contentsOnly;
             
             const xpathResult = document.evaluate(
@@ -388,6 +389,7 @@ class ComprehensiveXPathTester {
         // Get positions from JSDOM node locations
         let startLocation = 0;
         let endLocation = 0;
+        let value = node.nodeValue || node.textContent || "";
         
         if (this.currentDom && typeof this.currentDom.nodeLocation === 'function') {
             const location = this.currentDom.nodeLocation(node);
@@ -396,16 +398,25 @@ class ComprehensiveXPathTester {
                     // Use content positions (inner content between tags)
                     startLocation = location.startTag ? location.startTag.endOffset : location.startOffset;
                     endLocation = location.endTag ? location.endTag.startOffset : location.endOffset;
+                    // For content-only mode, value should be just the text content
+                    value = node.textContent || "";
                 } else {
                     // Use full element positions (including tags)
                     startLocation = location.startOffset || 0;
                     endLocation = location.endOffset || startLocation;
+                    // For full mode, value should include the HTML markup
+                    if (node.nodeType === 1 && this.originalHTML) {
+                        // Extract the full HTML including tags from the original source
+                        if (startLocation < this.originalHTML.length && endLocation <= this.originalHTML.length && endLocation > startLocation) {
+                            value = this.originalHTML.substring(startLocation, endLocation);
+                        }
+                    }
                 }
             }
         }
         
         return {
-            value: node.nodeValue || node.textContent || "",
+            value: value,
             nodeName: node.nodeName ? node.nodeName.toLowerCase() : node.name,
             nodeType: node.nodeType,
             attributes: this.getNodeAttributes(node),

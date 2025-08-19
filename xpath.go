@@ -61,7 +61,7 @@ func QueryWithOptions(xpathExpr, content string, opts Options) ([]Result, error)
 	}
 
 	// Convert nodes to results
-	return convertNodesToResults(nodes, opts), nil
+	return convertNodesToResults(nodes, opts, content), nil
 }
 
 // Compile pre-compiles an XPath expression for repeated use
@@ -90,7 +90,7 @@ func (x *XPath) Evaluate(content string) ([]Result, error) {
 	return convertNodesToResults(nodes, Options{
 		IncludeLocation: true,
 		OutputFormat:    "nodes",
-	}), nil
+	}, content), nil
 }
 
 // GetExpression returns the original XPath expression
@@ -99,7 +99,7 @@ func (x *XPath) GetExpression() string {
 }
 
 // convertNodesToResults converts internal nodes to public result format
-func convertNodesToResults(nodes []types.Node, opts Options) []Result {
+func convertNodesToResults(nodes []types.Node, opts Options, originalContent string) []Result {
 	var results []Result
 
 	for _, node := range nodes {
@@ -114,15 +114,23 @@ func convertNodesToResults(nodes []types.Node, opts Options) []Result {
 			ContentEnd:   node.ContentEnd,
 		}
 
-		// Handle contentsOnly option - adjust positions based on extraction mode
+		// Handle contentsOnly option - adjust positions and value based on extraction mode
 		if opts.ContentsOnly {
 			// Use content positions (inner content between tags)
 			result.StartLocation = node.ContentStart
 			result.EndLocation = node.ContentEnd
+			// For content-only mode, value should be just the text content
+			result.Value = node.TextContent
 		} else {
 			// Use full element positions (including tags)
 			result.StartLocation = node.StartPos
 			result.EndLocation = node.EndPos
+			// For full mode, value should include the HTML markup
+			if node.StartPos < len(originalContent) && node.EndPos <= len(originalContent) && node.EndPos > node.StartPos {
+				result.Value = originalContent[node.StartPos:node.EndPos]
+			} else if result.Value == "" && result.TextContent != "" {
+				result.Value = result.TextContent
+			}
 		}
 
 		// Handle different output formats
@@ -134,9 +142,7 @@ func convertNodesToResults(nodes []types.Node, opts Options) []Result {
 		case "paths":
 			result.Value = result.Path
 		default: // "nodes"
-			if result.Value == "" && result.TextContent != "" {
-				result.Value = result.TextContent
-			}
+			// Value is already set above based on extraction mode
 		}
 
 		results = append(results, result)
