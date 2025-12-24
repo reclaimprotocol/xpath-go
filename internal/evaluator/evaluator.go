@@ -13,8 +13,10 @@ import (
 
 // Evaluator handles XPath expression evaluation
 type Evaluator struct {
-	parser     *parser.Parser
-	htmlParser *utils.HTMLParser
+	parser          *parser.Parser
+	htmlParser      *utils.HTMLParser
+	contextPosition int
+	contextSize     int
 }
 
 // NewEvaluator creates a new XPath evaluator

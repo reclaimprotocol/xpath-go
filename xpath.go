@@ -33,6 +33,7 @@ type Options struct {
 	IncludeLocation bool   `json:"include_location"`
 	OutputFormat    string `json:"output_format"` // "nodes", "values", "paths"
 	ContentsOnly    bool   `json:"contents_only"` // Extract only inner content between tags
+	Debug           bool   `json:"debug"`         // Enable verbose debug logging
 }
 
 // Query evaluates an XPath expression against HTML/XML content
@@ -54,6 +55,9 @@ func QueryWithOptions(xpathExpr, content string, opts Options) ([]Result, error)
 	}
 
 	// Create evaluator and evaluate XPath
+	if opts.Debug {
+		EnableTrace()
+	}
 	eval := evaluator.NewEvaluator()
 	nodes, err := eval.Evaluate(xpathExpr, content)
 	if err != nil {
