@@ -22,7 +22,7 @@ func (e *Evaluator) evaluateNormalizeSpaceFunction(funcCall string, node *types.
 	args := strings.TrimSpace(funcCall[start+1 : end])
 
 	var text string
-	if args == "text()" || args == "" {
+	if args == "text()" || args == "." || args == "" {
 		text = node.TextContent
 	} else if strings.HasPrefix(args, "@") {
 		attrName := strings.TrimPrefix(args, "@")

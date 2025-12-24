@@ -47,6 +47,17 @@ func (t *TextExpression) String() string {
 	return "text()"
 }
 
+// DotExpression represents . operator (context node)
+type DotExpression struct{}
+
+func (d *DotExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
+	return node.TextContent
+}
+
+func (d *DotExpression) String() string {
+	return "."
+}
+
 // AttributeExpression represents @attribute access
 type AttributeExpression struct {
 	Name string
@@ -257,6 +268,12 @@ func (p *FunctionParser) parsePrimary() (Expression, error) {
 	// Handle text()
 	if p.match("text()") {
 		return &TextExpression{}, nil
+	}
+
+	// Handle dot (.) operator
+	if p.peek() == '.' {
+		p.pos++
+		return &DotExpression{}, nil
 	}
 
 	// Handle attributes (@attr)

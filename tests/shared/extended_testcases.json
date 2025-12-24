@@ -707,5 +707,26 @@
     "category": "real-world-bookface",
     "filepath": "tests/shared/bookface_test.txt",
     "extractionMode": "content"
+  },
+  {
+    "name": "Text node with dot predicate",
+    "html": "<html><body><p>Keep</p><p>Discard</p></body></html>",
+    "xpath": "//p/text()[. = 'Keep']",
+    "description": "Select text node using dot operator as context node",
+    "category": "text"
+  },
+  {
+    "name": "Text node with multiple dot predicates",
+    "html": "<html><body><p>Hello World</p><p>Hello</p></body></html>",
+    "xpath": "//p/text()[contains(., 'Hello') and . = 'Hello World']",
+    "description": "Select text node using multiple dot operator predicates",
+    "category": "text"
+  },
+  {
+    "name": "Text node with normalized dot predicate",
+    "html": "<html><body><p>  Clean  </p></body></html>",
+    "xpath": "//p/text()[normalize-space(.) = 'Clean']",
+    "description": "Select text node using normalized dot operator",
+    "category": "text"
   }
 ]

@@ -375,7 +375,7 @@ func (e *Evaluator) evaluateContainsExpression(expr string, node *types.Node) bo
 	searchText := strings.Trim(strings.TrimSpace(parts[1]), "\"'")
 
 	var textToSearch string
-	if source == "text()" {
+	if source == "text()" || source == "." {
 		textToSearch = node.TextContent
 	} else if strings.HasPrefix(source, "@") {
 		attrName := strings.TrimPrefix(source, "@")
@@ -425,7 +425,7 @@ func (e *Evaluator) evaluateStartsWithExpression(expr string, node *types.Node) 
 	prefix := strings.Trim(strings.TrimSpace(parts[1]), "\"'")
 
 	var textToCheck string
-	if source == "text()" {
+	if source == "text()" || source == "." {
 		textToCheck = node.TextContent
 	} else if strings.HasPrefix(source, "@") {
 		attrName := strings.TrimPrefix(source, "@")
@@ -476,7 +476,7 @@ func (e *Evaluator) evaluateStringLengthExpression(expr string, node *types.Node
 	source := strings.TrimSpace(args)
 
 	var textToMeasure string
-	if source == "text()" {
+	if source == "text()" || source == "." {
 		textToMeasure = node.TextContent
 	} else if strings.HasPrefix(source, "@") {
 		attrName := strings.TrimPrefix(source, "@")
@@ -811,6 +811,37 @@ func (e *Evaluator) evaluateAtomicCondition(node *types.Node, condition string) 
 				result := node.TextContent == expectedValue
 				Trace("text() = check: '%s' == '%s' -> %v", node.TextContent, expectedValue, result)
 				return result
+			}
+		}
+	}
+
+	// Context node comparison: .='value'
+	if (condition == "." || strings.HasPrefix(condition, ".") || strings.Contains(condition, " . ")) && (strings.Contains(condition, "=") || strings.Contains(condition, "!=")) {
+		// Avoid matching other things that might have dots (like numbers if we had more complex arithmetic here)
+		// and avoid matching text() or functions
+		if !strings.Contains(condition, "(") && !strings.Contains(condition, ")") {
+			if strings.Contains(condition, "!=") {
+				parts := strings.SplitN(condition, "!=", 2)
+				if len(parts) == 2 {
+					left := strings.TrimSpace(parts[0])
+					if left == "." {
+						expectedValue := strings.Trim(strings.TrimSpace(parts[1]), "'\"")
+						result := node.TextContent != expectedValue
+						Trace(". != check: '%s' != '%s' -> %v", node.TextContent, expectedValue, result)
+						return result
+					}
+				}
+			} else if strings.Contains(condition, "=") {
+				parts := strings.SplitN(condition, "=", 2)
+				if len(parts) == 2 {
+					left := strings.TrimSpace(parts[0])
+					if left == "." {
+						expectedValue := strings.Trim(strings.TrimSpace(parts[1]), "'\"")
+						result := node.TextContent == expectedValue
+						Trace(". = check: '%s' == '%s' -> %v", node.TextContent, expectedValue, result)
+						return result
+					}
+				}
 			}
 		}
 	}
