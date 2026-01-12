@@ -1,5 +1,12 @@
 [
   {
+    "name": "User Requested XPath - global nav profile link",
+    "html": "<html><body><a id='global_nav_profile_link' href='/profile'><img alt='Profile Picture' src='profile.jpg'/></a></body></html>",
+    "xpath": "//a[@id='global_nav_profile_link']//img[@alt]",
+    "description": "Test case for user requested XPath: //a[@id='global_nav_profile_link']//img[@alt]",
+    "category": "user-request"
+  },
+  {
     "name": "ContentsOnly - Simple paragraph (full element)",
     "html": "<html><body><p class='test'>Hello World</p></body></html>",
     "xpath": "//p",
