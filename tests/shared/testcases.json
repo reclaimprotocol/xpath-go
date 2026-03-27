@@ -7,7 +7,7 @@
     "category": "basic"
   },
   {
-    "name": "Root element selection", 
+    "name": "Root element selection",
     "html": "<html><head><title>Test</title></head><body><div>Content</div></body></html>",
     "xpath": "/html",
     "description": "Select root html element",
@@ -21,7 +21,7 @@
     "category": "basic"
   },
   {
-    "name": "Attribute selection", 
+    "name": "Attribute selection",
     "html": "<html><body><div id='test' class='highlight'>Content</div><div class='other'>Other</div></body></html>",
     "xpath": "//div[@id='test']",
     "description": "Select div with specific id",

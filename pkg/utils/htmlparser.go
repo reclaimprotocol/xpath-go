@@ -48,7 +48,9 @@ func (p *HTMLParser) Parse(content string) (*types.Node, error) {
 
 		node, err := p.parseNode(root)
 		if err != nil {
-			return nil, err
+			// Skip invalid top level node by advancing one char to avoid infinite loop
+			p.advance()
+			continue
 		}
 		if node != nil {
 			root.Children = append(root.Children, node)
@@ -228,7 +230,9 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 
 		child, err := p.parseNode(node)
 		if err != nil {
-			return nil, err
+			// If a child is invalid, completely ignore this element
+			p.skipToClosingTag(node.Name)
+			return nil, nil
 		}
 		if child != nil {
 			switch child.Type {
@@ -404,6 +408,32 @@ func (p *HTMLParser) parseClosingTag() string {
 	}
 
 	return name
+}
+
+// skipToClosingTag skips to the end of the closing tag for the given element name
+func (p *HTMLParser) skipToClosingTag(tagName string) {
+	if tagName == "" {
+		return
+	}
+	targetName := strings.ToLower(tagName)
+
+	for p.pos < len(p.content) {
+		if p.peek() == '<' && p.pos+1 < len(p.content) && p.content[p.pos+1] == '/' {
+			// Save current position
+			savedPos, savedLine, savedCol := p.pos, p.line, p.col
+
+			closingTag := p.parseClosingTag()
+			if strings.EqualFold(closingTag, targetName) {
+				return // Reached and consumed the closing tag
+			}
+
+			// If it wasn't the right closing tag, restore position and advance by 1
+			p.pos, p.line, p.col = savedPos, savedLine, savedCol
+			p.advance()
+		} else {
+			p.advance()
+		}
+	}
 }
 
 // parseName parses an element or attribute name
