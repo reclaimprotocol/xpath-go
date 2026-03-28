@@ -1,6 +1,6 @@
 {
-  "total": 139,
-  "passed": 139,
+  "total": 140,
+  "passed": 140,
   "failed": 0,
   "compatibility": "100.0",
   "details": [
@@ -213,6 +213,87 @@
             "contentEnd": 48,
             "path": "/#document/html/body/p[2]",
             "textContent": "Top level"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Ignore invalid tree and child element selection",
+      "xpath": "//div[@id=\"main_nav\"]/ul[2]/span",
+      "suite": "original",
+      "category": "basic",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "<span class=\"navbar-text navbar-text-nav custom-user-label\">GADDAMEDI VAMSHI KRISHNA</span>",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {
+              "class": "navbar-text navbar-text-nav custom-user-label"
+            },
+            "textContent": "GADDAMEDI VAMSHI KRISHNA",
+            "startLocation": 249,
+            "endLocation": 340,
+            "path": "/html/body/div/ul[2]/span"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "<span class=\"navbar-text navbar-text-nav custom-user-label\">GADDAMEDI VAMSHI KRISHNA</span>",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {
+              "class": "navbar-text navbar-text-nav custom-user-label"
+            },
+            "startLocation": 249,
+            "endLocation": 340,
+            "contentStart": 309,
+            "contentEnd": 333,
+            "path": "/#document/body/div/ul[2]/span[2]",
+            "textContent": "GADDAMEDI VAMSHI KRISHNA"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "<span class=\"navbar-text navbar-text-nav custom-user-label\">GADDAMEDI VAMSHI KRISHNA</span>",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {
+              "class": "navbar-text navbar-text-nav custom-user-label"
+            },
+            "textContent": "GADDAMEDI VAMSHI KRISHNA",
+            "startLocation": 249,
+            "endLocation": 340,
+            "path": "/html/body/div/ul[2]/span"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "<span class=\"navbar-text navbar-text-nav custom-user-label\">GADDAMEDI VAMSHI KRISHNA</span>",
+            "nodeName": "span",
+            "nodeType": 1,
+            "attributes": {
+              "class": "navbar-text navbar-text-nav custom-user-label"
+            },
+            "startLocation": 249,
+            "endLocation": 340,
+            "contentStart": 309,
+            "contentEnd": 333,
+            "path": "/#document/body/div/ul[2]/span[2]",
+            "textContent": "GADDAMEDI VAMSHI KRISHNA"
           }
         ]
       }
