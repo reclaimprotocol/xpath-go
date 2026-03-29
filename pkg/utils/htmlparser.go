@@ -230,9 +230,9 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 
 		child, err := p.parseNode(node)
 		if err != nil {
-			// If a child is invalid, completely ignore this element
-			p.skipToClosingTag(node.Name)
-			return nil, nil
+			// If a child is invalid, skip just that child and continue with siblings
+			p.skipInvalidElement()
+			continue
 		}
 		if child != nil {
 			switch child.Type {
@@ -410,29 +410,21 @@ func (p *HTMLParser) parseClosingTag() string {
 	return name
 }
 
-// skipToClosingTag skips to the end of the closing tag for the given element name
-func (p *HTMLParser) skipToClosingTag(tagName string) {
-	if tagName == "" {
-		return
-	}
-	targetName := strings.ToLower(tagName)
-
+// skipInvalidElement skips past a single invalid element
+// It advances to the next '<' or whitespace to find the next potential element
+func (p *HTMLParser) skipInvalidElement() {
+	// Skip until we find the end of the current tag ('>') or start of next element
 	for p.pos < len(p.content) {
-		if p.peek() == '<' && p.pos+1 < len(p.content) && p.content[p.pos+1] == '/' {
-			// Save current position
-			savedPos, savedLine, savedCol := p.pos, p.line, p.col
-
-			closingTag := p.parseClosingTag()
-			if strings.EqualFold(closingTag, targetName) {
-				return // Reached and consumed the closing tag
-			}
-
-			// If it wasn't the right closing tag, restore position and advance by 1
-			p.pos, p.line, p.col = savedPos, savedLine, savedCol
-			p.advance()
-		} else {
-			p.advance()
+		c := p.peek()
+		if c == '>' {
+			p.advance() // Skip the '>'
+			return
 		}
+		if c == '<' {
+			// Found start of next element, stop here
+			return
+		}
+		p.advance()
 	}
 }
 

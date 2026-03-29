@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"testing"
 	"github.com/reclaimprotocol/xpath-go/pkg/types"
+	"testing"
 )
 
 func TestParseForgivingHTML(t *testing.T) {
@@ -57,6 +57,61 @@ func TestParseForgivingHTML(t *testing.T) {
 	spanNode := findChild(ulNodes[1], "span")
 	if spanNode == nil {
 		t.Fatalf("Could not find span node inside second ul")
+	}
+}
+
+func TestValidContentLoss(t *testing.T) {
+	// Test case 1: Valid siblings should not be lost due to one malformed element
+	htmlContent := `<ul><li>a</li><li <=""></li><li>c</li></ul>`
+
+	parser := NewHTMLParser()
+	node, err := parser.Parse(htmlContent)
+	if err != nil {
+		t.Fatalf("Expected parsing to succeed, but got error: %v", err)
+	}
+
+	ulNode := findChild(node, "ul")
+	if ulNode == nil {
+		t.Fatalf("Could not find ul node")
+	}
+
+	liNodes := findChildren(ulNode, "li")
+	// We expect to preserve valid content: first <li>a</li> and third <li>c</li>
+	// Currently fails - the entire ul is discarded
+	if len(liNodes) < 2 {
+		t.Errorf("Expected at least 2 valid li nodes, got %d. Valid content was lost!", len(liNodes))
+		t.Logf("UL node has %d children total", len(ulNode.Children))
+	}
+}
+
+func TestWrongResyncPoint(t *testing.T) {
+	// Test case 2: Parser should resync at the correct closing tag, not nested ones
+	htmlContent := `<div><span <=""><div></div><p>keep</p></div>`
+
+	parser := NewHTMLParser()
+	node, err := parser.Parse(htmlContent)
+	if err != nil {
+		t.Fatalf("Expected parsing to succeed, but got error: %v", err)
+	}
+
+	divNode := findChild(node, "div")
+	if divNode == nil {
+		t.Fatalf("Could not find outer div node")
+	}
+
+	// Check if we have the <p>keep</p> element
+	pNode := findChild(divNode, "p")
+	if pNode == nil {
+		t.Errorf("Expected to find <p> element with 'keep' text after recovery")
+		t.Logf("Outer div has %d children", len(divNode.Children))
+		for i, child := range divNode.Children {
+			t.Logf("Child %d: %s (type: %d)", i, child.Name, child.Type)
+		}
+	} else {
+		// Verify the text content
+		if pNode.TextContent != "keep" {
+			t.Errorf("Expected <p> text to be 'keep', got '%s'", pNode.TextContent)
+		}
 	}
 }
 
