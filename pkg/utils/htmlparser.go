@@ -23,6 +23,10 @@ func NewHTMLParser() *HTMLParser {
 
 // Parse parses HTML/XML content into a node tree with location information
 func (p *HTMLParser) Parse(content string) (*types.Node, error) {
+	if isBinaryInput(content) {
+		return nil, fmt.Errorf("binary input is not supported")
+	}
+
 	p.content = content
 	p.pos = 0
 	p.line = 1
@@ -63,6 +67,20 @@ func (p *HTMLParser) Parse(content string) (*types.Node, error) {
 	root.SourceLength = len(content)
 
 	return root, nil
+}
+
+func isBinaryInput(content string) bool {
+	if strings.HasPrefix(content, "\x1f\x8b") || !utf8.ValidString(content) {
+		return true
+	}
+
+	for i := 0; i < len(content); i++ {
+		c := content[i]
+		if (c < ' ' && c != '\t' && c != '\n' && c != '\r' && c != '\f') || c == 0x7f {
+			return true
+		}
+	}
+	return false
 }
 
 // parseNode parses a single node (element, text, comment, etc.)
