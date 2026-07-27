@@ -16,7 +16,7 @@ type HTMLParser struct {
 	col     int
 }
 
-// NewHTMLParser creates a new HTML parser
+// NewHTMLParser creates a parser that reports malformed HTML/XML.
 func NewHTMLParser() *HTMLParser {
 	return &HTMLParser{}
 }
@@ -52,9 +52,7 @@ func (p *HTMLParser) Parse(content string) (*types.Node, error) {
 
 		node, err := p.parseNode(root)
 		if err != nil {
-			// Skip invalid top level node by advancing one char to avoid infinite loop
-			p.advance()
-			continue
+			return nil, err
 		}
 		if node != nil {
 			root.Children = append(root.Children, node)
@@ -248,9 +246,7 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 
 		child, err := p.parseNode(node)
 		if err != nil {
-			// If a child is invalid, skip just that child and continue with siblings
-			p.skipInvalidElement()
-			continue
+			return nil, err
 		}
 		if child != nil {
 			switch child.Type {
@@ -426,24 +422,6 @@ func (p *HTMLParser) parseClosingTag() string {
 	}
 
 	return name
-}
-
-// skipInvalidElement skips past a single invalid element
-// It advances to the next '<' or whitespace to find the next potential element
-func (p *HTMLParser) skipInvalidElement() {
-	// Skip until we find the end of the current tag ('>') or start of next element
-	for p.pos < len(p.content) {
-		c := p.peek()
-		if c == '>' {
-			p.advance() // Skip the '>'
-			return
-		}
-		if c == '<' {
-			// Found start of next element, stop here
-			return
-		}
-		p.advance()
-	}
 }
 
 // parseName parses an element or attribute name
