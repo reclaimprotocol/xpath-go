@@ -16,7 +16,7 @@ type HTMLParser struct {
 	col     int
 }
 
-// NewHTMLParser creates a new HTML parser
+// NewHTMLParser creates a parser that reports malformed HTML/XML.
 func NewHTMLParser() *HTMLParser {
 	return &HTMLParser{}
 }
@@ -52,9 +52,7 @@ func (p *HTMLParser) Parse(content string) (*types.Node, error) {
 
 		node, err := p.parseNode(root)
 		if err != nil {
-			// Skip invalid top level node by advancing one char to avoid infinite loop
-			p.advance()
-			continue
+			return nil, err
 		}
 		if node != nil {
 			root.Children = append(root.Children, node)
@@ -122,7 +120,7 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 
 	// Check for closing tag
 	if p.peek() == '/' {
-		return nil, nil // This is a closing tag, handled by parent
+		return nil, fmt.Errorf("unexpected closing tag at position %d", startPos)
 	}
 
 	// Parse tag name
@@ -145,6 +143,9 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 
 	// Parse attributes
 	for p.pos < len(p.content) && p.peek() != '>' && p.peek() != '/' {
+		if !isWhitespace(p.peek()) {
+			return nil, fmt.Errorf("expected whitespace before attribute at position %d", p.pos)
+		}
 		p.skipWhitespace()
 		if p.peek() == '>' || p.peek() == '/' {
 			break
@@ -160,7 +161,11 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 		if p.peek() == '=' {
 			p.advance() // Skip '='
 			p.skipWhitespace()
-			value = p.parseAttributeValue()
+			var err error
+			value, err = p.parseAttributeValue()
+			if err != nil {
+				return nil, err
+			}
 		}
 
 		lowerName := strings.ToLower(name)
@@ -195,7 +200,10 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 
 	// Handle raw text elements like script, style, textarea, title
 	if p.isRawTextElement(node.Name) {
-		textContent, contentEnd := p.parseRawTextContentWithPos(node.Name)
+		textContent, contentEnd, err := p.parseRawTextContentWithPos(node.Name)
+		if err != nil {
+			return nil, err
+		}
 
 		// Create a single text node for the raw content
 		if textContent != "" {
@@ -226,7 +234,6 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 
 	// Parse child nodes normally for other elements
 	textContent := ""
-	contentEndPos := contentStartPos // Default to start if no content
 
 	for p.pos < len(p.content) {
 		if p.pos >= len(p.content) {
@@ -236,21 +243,26 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 		// Check for closing tag
 		if p.peek() == '<' && p.pos+1 < len(p.content) && p.content[p.pos+1] == '/' {
 			// Mark content end position before closing tag
-			contentEndPos = p.pos
-			closingTag := p.parseClosingTag()
-			if strings.EqualFold(closingTag, node.Name) {
-				break
+			contentEndPos := p.pos
+			closingTag, err := p.parseClosingTag()
+			if err != nil {
+				return nil, err
 			}
-			// If it's not our closing tag, treat as text
-			textContent += "</" + closingTag + ">"
-			continue
+			if strings.EqualFold(closingTag, node.Name) {
+				node.TextContent = textContent
+				node.ContentStart = contentStartPos
+				node.ContentEnd = contentEndPos
+				node.EndPos = p.pos
+				node.EndLine = p.line
+				node.EndColumn = p.col
+				return node, nil
+			}
+			return nil, fmt.Errorf("expected closing tag </%s>, got </%s> at position %d", node.Name, closingTag, contentEndPos)
 		}
 
 		child, err := p.parseNode(node)
 		if err != nil {
-			// If a child is invalid, skip just that child and continue with siblings
-			p.skipInvalidElement()
-			continue
+			return nil, err
 		}
 		if child != nil {
 			switch child.Type {
@@ -264,14 +276,7 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 		}
 	}
 
-	node.TextContent = textContent
-	node.ContentStart = contentStartPos
-	node.ContentEnd = contentEndPos
-	node.EndPos = p.pos
-	node.EndLine = p.line
-	node.EndColumn = p.col
-
-	return node, nil
+	return nil, fmt.Errorf("unterminated element <%s> at position %d", node.Name, startPos)
 }
 
 // parseTextNode parses a text node
@@ -319,13 +324,18 @@ func (p *HTMLParser) parseComment(parent *types.Node, startPos, startLine, start
 	p.pos += 4 // Skip "<!--"
 
 	comment := ""
+	terminated := false
 	for p.pos < len(p.content)-2 {
 		if p.content[p.pos:p.pos+3] == "-->" {
 			p.pos += 3
+			terminated = true
 			break
 		}
 		comment += string(p.content[p.pos])
 		p.advance()
+	}
+	if !terminated {
+		return nil, fmt.Errorf("unterminated comment at position %d", startPos)
 	}
 
 	return &types.Node{
@@ -354,9 +364,10 @@ func (p *HTMLParser) parseDoctype(parent *types.Node, startPos, startLine, start
 	for p.pos < len(p.content) && p.peek() != '>' {
 		p.advance()
 	}
-	if p.peek() == '>' {
-		p.advance() // Skip '>'
+	if p.peek() != '>' {
+		return nil, fmt.Errorf("unterminated DOCTYPE at position %d", startPos)
 	}
+	p.advance() // Skip '>'
 
 	doctypeText := p.content[startDoctype:p.pos]
 
@@ -384,13 +395,18 @@ func (p *HTMLParser) parseProcessingInstruction(parent *types.Node, startPos, st
 	p.pos += 2 // Skip "<?"
 
 	instruction := ""
+	terminated := false
 	for p.pos < len(p.content)-1 {
 		if p.content[p.pos:p.pos+2] == "?>" {
 			p.pos += 2
+			terminated = true
 			break
 		}
 		instruction += string(p.content[p.pos])
 		p.advance()
+	}
+	if !terminated {
+		return nil, fmt.Errorf("unterminated processing instruction at position %d", startPos)
 	}
 
 	return &types.Node{
@@ -408,42 +424,25 @@ func (p *HTMLParser) parseProcessingInstruction(parent *types.Node, startPos, st
 	}, nil
 }
 
-// parseClosingTag parses a closing tag and returns the tag name
-func (p *HTMLParser) parseClosingTag() string {
-	if p.content[p.pos:p.pos+2] != "</" {
-		return ""
+// parseClosingTag parses a closing tag and returns the tag name.
+func (p *HTMLParser) parseClosingTag() (string, error) {
+	startPos := p.pos
+	if p.pos+1 >= len(p.content) || p.content[p.pos:p.pos+2] != "</" {
+		return "", fmt.Errorf("expected closing tag at position %d", p.pos)
 	}
 
 	p.pos += 2 // Skip "</"
 	name := p.parseName()
-
-	// Skip to '>'
-	for p.pos < len(p.content) && p.peek() != '>' {
-		p.advance()
+	if name == "" {
+		return "", fmt.Errorf("expected closing tag name at position %d", p.pos)
 	}
-	if p.peek() == '>' {
-		p.advance()
+	p.skipWhitespace()
+	if p.peek() != '>' {
+		return "", fmt.Errorf("expected '>' for closing tag at position %d", startPos)
 	}
+	p.advance()
 
-	return name
-}
-
-// skipInvalidElement skips past a single invalid element
-// It advances to the next '<' or whitespace to find the next potential element
-func (p *HTMLParser) skipInvalidElement() {
-	// Skip until we find the end of the current tag ('>') or start of next element
-	for p.pos < len(p.content) {
-		c := p.peek()
-		if c == '>' {
-			p.advance() // Skip the '>'
-			return
-		}
-		if c == '<' {
-			// Found start of next element, stop here
-			return
-		}
-		p.advance()
-	}
+	return name, nil
 }
 
 // parseName parses an element or attribute name
@@ -460,9 +459,12 @@ func (p *HTMLParser) parseName() string {
 	return name
 }
 
-// parseAttributeValue parses an attribute value
-func (p *HTMLParser) parseAttributeValue() string {
+// parseAttributeValue parses an attribute value.
+func (p *HTMLParser) parseAttributeValue() (string, error) {
 	p.skipWhitespace()
+	if p.pos >= len(p.content) || p.peek() == '>' || p.peek() == '/' {
+		return "", fmt.Errorf("expected attribute value at position %d", p.pos)
+	}
 
 	if p.peek() == '"' || p.peek() == '\'' {
 		quote := p.peek()
@@ -473,23 +475,30 @@ func (p *HTMLParser) parseAttributeValue() string {
 			value += string(p.peek())
 			p.advance()
 		}
-		if p.peek() == quote {
-			p.advance() // Skip closing quote
+		if p.peek() != quote {
+			return "", fmt.Errorf("unterminated quoted attribute value at position %d", p.pos)
 		}
-		return value
+		p.advance() // Skip closing quote
+		return value, nil
 	}
 
 	// Unquoted value
 	value := ""
 	for p.pos < len(p.content) {
 		c := p.peek()
-		if c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '>' || c == '/' {
+		if isWhitespace(c) || c == '>' || c == '/' {
 			break
+		}
+		if c == '=' || c == '<' || c == '"' || c == '\'' || c == '`' {
+			return "", fmt.Errorf("invalid character %q in unquoted attribute value at position %d", c, p.pos)
 		}
 		value += string(c)
 		p.advance()
 	}
-	return value
+	if value == "" {
+		return "", fmt.Errorf("expected attribute value at position %d", p.pos)
+	}
+	return value, nil
 }
 
 // Helper functions
@@ -536,11 +545,15 @@ func (p *HTMLParser) advanceRune(size int) {
 func (p *HTMLParser) skipWhitespace() {
 	for p.pos < len(p.content) {
 		c := p.peek()
-		if c != ' ' && c != '\t' && c != '\n' && c != '\r' {
+		if !isWhitespace(c) {
 			break
 		}
 		p.advance()
 	}
+}
+
+func isWhitespace(c byte) bool {
+	return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f'
 }
 
 func isNameChar(c byte) bool {
@@ -570,7 +583,7 @@ func (p *HTMLParser) isRawTextElement(name string) bool {
 }
 
 // parseRawTextContentWithPos parses the raw text content and returns both content and end position
-func (p *HTMLParser) parseRawTextContentWithPos(tagName string) (string, int) {
+func (p *HTMLParser) parseRawTextContentWithPos(tagName string) (string, int, error) {
 	content := ""
 	closingTag := "</" + strings.ToLower(tagName)
 
@@ -594,7 +607,7 @@ func (p *HTMLParser) parseRawTextContentWithPos(tagName string) (string, int) {
 						if p.peek() == '>' {
 							p.advance() // Skip '>'
 						}
-						return content, contentEndPos
+						return content, contentEndPos, nil
 					}
 				}
 			}
@@ -609,5 +622,5 @@ func (p *HTMLParser) parseRawTextContentWithPos(tagName string) (string, int) {
 		p.advanceRune(size)
 	}
 
-	return content, p.pos
+	return "", p.pos, fmt.Errorf("unterminated raw text element <%s>", tagName)
 }

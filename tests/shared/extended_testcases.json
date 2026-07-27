@@ -446,13 +446,6 @@
     "category": "edge-cases"
   },
   {
-    "name": "Malformed HTML recovery",
-    "html": "<html><body><div><p>Unclosed paragraph<div>Nested incorrectly</div><span>Text</span></body></html>",
-    "xpath": "//span",
-    "description": "Handle malformed HTML structure",
-    "category": "edge-cases"
-  },
-  {
     "name": "Mixed quotes in attributes",
     "html": "<html><body><div title=\"Double 'quotes'\">First</div><div title='Single \"quotes\"'>Second</div></body></html>",
     "xpath": "//div[contains(@title, 'quotes')]",
