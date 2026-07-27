@@ -33,9 +33,20 @@ func TestQueryRejectsGzipInput(t *testing.T) {
 
 func TestQueryRejectsMalformedHTML(t *testing.T) {
 	testCases := map[string]string{
-		"invalid nested attributes": `<div><span <="">broken</span></div>`,
-		"invalid declaration":       `<div><!x></div>`,
-		"malformed sibling":         `<ul><li>a</li><li <=""></li><li>c</li></ul>`,
+		"invalid nested attributes":           `<div><span <="">broken</span></div>`,
+		"invalid declaration":                 `<div><!x></div>`,
+		"malformed sibling":                   `<ul><li>a</li><li <=""></li><li>c</li></ul>`,
+		"unterminated element":                `<div>`,
+		"mismatched closing tag":              `<div><span></div>`,
+		"unexpected nested closing tag":       `<div></span></div>`,
+		"orphan closing tag":                  `</orphan>`,
+		"unterminated raw text":               `<script>alert(1)`,
+		"unterminated comment":                `<!--comment`,
+		"unterminated doctype":                `<!DOCTYPE html`,
+		"unterminated processing instruction": `<?xml version="1.0"`,
+		"missing attribute value":             `<div a=>`,
+		"invalid unquoted attribute value":    `<div a==b></div>`,
+		"missing attribute whitespace":        `<div a="x"b="y"></div>`,
 	}
 
 	for name, document := range testCases {

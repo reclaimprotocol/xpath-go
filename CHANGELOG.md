@@ -5,13 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.4.3] - 2026-07-27
 
-### Changed
-- HTML parsing now rejects malformed elements instead of silently returning a partial document.
+### Fixed
+- HTML parsing now rejects malformed elements, mismatched or missing closing tags, unterminated special elements, orphan closing tags, and invalid attribute syntax instead of silently returning a partial document.
+- Removed malformed-input recovery paths that could loop indefinitely or attach descendants to the wrong parent.
 
 ### Tests
-- Added unit coverage for malformed HTML and binary input rejection.
+- Added parser and public API coverage for malformed HTML, invalid attributes, unbalanced markup, unterminated constructs, and binary input rejection.
 
 ## [1.3.1] - 2026-03-27
 

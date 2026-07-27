@@ -1,6 +1,6 @@
 {
-  "total": 140,
-  "passed": 140,
+  "total": 139,
+  "passed": 139,
   "failed": 0,
   "compatibility": "100.0",
   "details": [
@@ -9147,77 +9147,6 @@
             "contentEnd": 75,
             "path": "/#document/html/body/div[2]",
             "textContent": "Content"
-          }
-        ]
-      }
-    },
-    {
-      "name": "Malformed HTML recovery",
-      "xpath": "//span",
-      "suite": "extended",
-      "category": "edge-cases",
-      "passed": true,
-      "jsResult": {
-        "success": true,
-        "results": [
-          {
-            "value": "<span>Text</span>",
-            "nodeName": "span",
-            "nodeType": 1,
-            "attributes": {},
-            "textContent": "Text",
-            "startLocation": 67,
-            "endLocation": 84,
-            "path": "/html/body/div/span"
-          }
-        ],
-        "count": 1,
-        "error": null
-      },
-      "goResult": {
-        "success": true,
-        "results": [
-          {
-            "value": "<span>Text</span>",
-            "nodeName": "span",
-            "nodeType": 1,
-            "startLocation": 67,
-            "endLocation": 84,
-            "contentStart": 73,
-            "contentEnd": 77,
-            "path": "/#document/html/body/div/p/span[2]",
-            "textContent": "Text"
-          }
-        ],
-        "count": 1,
-        "error": null
-      },
-      "comparison": {
-        "match": true,
-        "reason": "Perfect match",
-        "jsResults": [
-          {
-            "value": "<span>Text</span>",
-            "nodeName": "span",
-            "nodeType": 1,
-            "attributes": {},
-            "textContent": "Text",
-            "startLocation": 67,
-            "endLocation": 84,
-            "path": "/html/body/div/span"
-          }
-        ],
-        "goResults": [
-          {
-            "value": "<span>Text</span>",
-            "nodeName": "span",
-            "nodeType": 1,
-            "startLocation": 67,
-            "endLocation": 84,
-            "contentStart": 73,
-            "contentEnd": 77,
-            "path": "/#document/html/body/div/p/span[2]",
-            "textContent": "Text"
           }
         ]
       }
