@@ -77,3 +77,59 @@ func TestParseRejectsMalformedInput(t *testing.T) {
 		})
 	}
 }
+
+func TestParseImplicitlyClosesTableRows(t *testing.T) {
+	testCases := []struct {
+		name           string
+		content        string
+		wantRowTexts   []string
+		wantRowSources []string
+	}{
+		{
+			name:           "new row closes current row",
+			content:        `<table><tr><td>first</td></tr><tr><tr><td>third</td></tr></table>`,
+			wantRowTexts:   []string{"first", "", "third"},
+			wantRowSources: []string{`<tr><td>first</td></tr>`, `<tr>`, `<tr><td>third</td></tr>`},
+		},
+		{
+			name:           "table end closes current row",
+			content:        `<table><tr><td>only</td></table>`,
+			wantRowTexts:   []string{"only"},
+			wantRowSources: []string{`<tr><td>only</td>`},
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			parser := NewHTMLParser()
+			document, err := parser.Parse(testCase.content)
+			if err != nil {
+				t.Fatalf("Parse returned an error: %v", err)
+			}
+
+			if len(document.Children) != 1 || document.Children[0].Name != "table" {
+				t.Fatalf("Expected one table root, got %#v", document.Children)
+			}
+
+			table := document.Children[0]
+			if len(table.Children) != len(testCase.wantRowTexts) {
+				t.Fatalf("Expected %d rows, got %d", len(testCase.wantRowTexts), len(table.Children))
+			}
+			for index, wantText := range testCase.wantRowTexts {
+				row := table.Children[index]
+				if row.Name != "tr" {
+					t.Fatalf("Child %d: expected tr, got %q", index, row.Name)
+				}
+				if row.TextContent != wantText {
+					t.Fatalf("Row %d: expected text %q, got %q", index, wantText, row.TextContent)
+				}
+				if row.StartPos < 0 || row.EndPos < row.StartPos || row.EndPos > len(testCase.content) {
+					t.Fatalf("Row %d: invalid original-source range %d:%d", index, row.StartPos, row.EndPos)
+				}
+				if source := testCase.content[row.StartPos:row.EndPos]; source != testCase.wantRowSources[index] {
+					t.Fatalf("Row %d: expected original source %q, got %q", index, testCase.wantRowSources[index], source)
+				}
+			}
+		})
+	}
+}
