@@ -82,11 +82,19 @@ func (e *Evaluator) getPrecedingSiblings(node *types.Node) []*types.Node {
 		return siblings
 	}
 
-	for _, sibling := range node.Parent.Children {
+	index := -1
+	for i, sibling := range node.Parent.Children {
 		if sibling == node {
+			index = i
 			break
 		}
-		siblings = append(siblings, sibling)
+	}
+
+	// preceding-sibling is a reverse axis. Predicates therefore see the
+	// nearest sibling as position 1, even though final node-set results are
+	// returned in document order.
+	for i := index - 1; i >= 0; i-- {
+		siblings = append(siblings, node.Parent.Children[i])
 	}
 
 	return siblings

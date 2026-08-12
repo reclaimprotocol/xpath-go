@@ -240,6 +240,19 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 			break
 		}
 
+		// HTML's tree-construction rules implicitly close the current table row
+		// when another row/section begins or the containing table/section ends.
+		// Leave the triggering tag unconsumed so the parent can process it.
+		if p.shouldImplicitlyCloseTableRow(node.Name) {
+			node.TextContent = textContent
+			node.ContentStart = contentStartPos
+			node.ContentEnd = p.pos
+			node.EndPos = p.pos
+			node.EndLine = p.line
+			node.EndColumn = p.col
+			return node, nil
+		}
+
 		// Check for closing tag
 		if p.peek() == '<' && p.pos+1 < len(p.content) && p.content[p.pos+1] == '/' {
 			// Mark content end position before closing tag
@@ -277,6 +290,57 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 	}
 
 	return nil, fmt.Errorf("unterminated element <%s> at position %d", node.Name, startPos)
+}
+
+// shouldImplicitlyCloseTableRow reports whether the token at the current
+// position closes an open tr according to HTML's "in row" insertion mode.
+func (p *HTMLParser) shouldImplicitlyCloseTableRow(currentName string) bool {
+	if currentName != "tr" {
+		return false
+	}
+
+	tagName, closing, ok := p.peekTagName()
+	if !ok {
+		return false
+	}
+
+	if closing {
+		switch tagName {
+		case "table", "tbody", "tfoot", "thead":
+			return true
+		default:
+			return false
+		}
+	}
+
+	switch tagName {
+	case "caption", "col", "colgroup", "tbody", "tfoot", "thead", "tr":
+		return true
+	default:
+		return false
+	}
+}
+
+// peekTagName inspects an opening or closing tag without advancing the parser.
+func (p *HTMLParser) peekTagName() (name string, closing bool, ok bool) {
+	if p.pos >= len(p.content) || p.content[p.pos] != '<' {
+		return "", false, false
+	}
+
+	position := p.pos + 1
+	if position < len(p.content) && p.content[position] == '/' {
+		closing = true
+		position++
+	}
+	start := position
+	for position < len(p.content) && isNameChar(p.content[position]) {
+		position++
+	}
+	if position == start {
+		return "", false, false
+	}
+
+	return strings.ToLower(p.content[start:position]), closing, true
 }
 
 // parseTextNode parses a text node

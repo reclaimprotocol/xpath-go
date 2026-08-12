@@ -148,6 +148,14 @@ func (e *Evaluator) evaluateStep(step types.XPathStep, contextNode *types.Node) 
 		filtered = e.applyPredicate(filtered, predicate, contextNode)
 	}
 
+	// Reverse axes use reverse document order while evaluating predicates,
+	// but XPath node-set results are exposed in document order.
+	if step.Axis == types.AxisPrecedingSibling {
+		for i, j := 0, len(filtered)-1; i < j; i, j = i+1, j-1 {
+			filtered[i], filtered[j] = filtered[j], filtered[i]
+		}
+	}
+
 	return filtered
 }
 

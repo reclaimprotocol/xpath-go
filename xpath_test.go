@@ -61,3 +61,91 @@ func TestQueryRejectsMalformedHTML(t *testing.T) {
 		})
 	}
 }
+
+func TestQueryRecoversConsecutiveTableRowsLikeJavaScript(t *testing.T) {
+	const document = `<table><tr><th>Full Name</th><td>AKASH</td></tr><tr><tr><th>Date of Birth</th><td>2003-07-12</td></tr></table>`
+
+	testCases := []struct {
+		name       string
+		expression string
+		want       string
+		wantSource string
+	}{
+		{
+			name:       "user XPath selects first matching cell sibling",
+			expression: `//th[normalize-space(text())='Full Name']/following-sibling::td[1]/text()`,
+			want:       "AKASH",
+			wantSource: "AKASH",
+		},
+		{
+			name:       "implicit empty row keeps JavaScript position",
+			expression: `//table//tr[2]`,
+			want:       "",
+			wantSource: `<tr>`,
+		},
+		{
+			name:       "row after implicit close has third position",
+			expression: `//table//tr[3]/th/text()`,
+			want:       "Date of Birth",
+			wantSource: "Date of Birth",
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			results, err := xpath.Query(testCase.expression, document)
+			if err != nil {
+				t.Fatalf("Query returned an error: %v", err)
+			}
+			if len(results) != 1 {
+				t.Fatalf("Expected one result, got %d", len(results))
+			}
+			if results[0].TextContent != testCase.want {
+				t.Fatalf("Expected text %q, got %q", testCase.want, results[0].TextContent)
+			}
+			start, end := results[0].StartLocation, results[0].EndLocation
+			if start < 0 || end < start || end > len(document) {
+				t.Fatalf("Invalid original-source range %d:%d", start, end)
+			}
+			if source := document[start:end]; source != testCase.wantSource {
+				t.Fatalf("Expected original source %q, got %q", testCase.wantSource, source)
+			}
+		})
+	}
+}
+
+func TestSiblingAxisPositionsMatchJavaScript(t *testing.T) {
+	const document = `<table><tr><td>first</td><th>middle</th><td>nearest</td><th>anchor</th><td>next</td><th>skip</th><td>last</td></tr></table>`
+
+	testCases := []struct {
+		name       string
+		expression string
+		want       string
+	}{
+		{
+			name:       "following sibling position uses first matching node",
+			expression: `//th[normalize-space(text())='anchor']/following-sibling::td[1]/text()`,
+			want:       "next",
+		},
+		{
+			name:       "preceding sibling position uses reverse axis order",
+			expression: `//th[normalize-space(text())='anchor']/preceding-sibling::td[1]/text()`,
+			want:       "nearest",
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			results, err := xpath.Query(testCase.expression, document)
+			if err != nil {
+				t.Fatalf("Query returned an error: %v", err)
+			}
+			if len(results) != 1 {
+				t.Fatalf("Expected one result, got %d", len(results))
+			}
+			if results[0].TextContent != testCase.want {
+				t.Fatalf("Expected text %q, got %q", testCase.want, results[0].TextContent)
+			}
+		})
+	}
+}
