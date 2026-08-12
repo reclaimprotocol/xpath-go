@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.4] - 2026-08-13
+
+### Fixed
+- Added browser-compatible implicit closing for table rows when a new row or table boundary is encountered.
+- Corrected reverse-axis indexing so `preceding-sibling::*[1]` selects the nearest matching sibling.
+- Preserved byte locations against the original unrepaired HTML when rows are implicitly closed.
+
+### Tests
+- Added parser and XPath regression coverage for malformed table rows, sibling positions, and original-source location ranges.
+
 ## [1.4.3] - 2026-07-27
 
 ### Fixed
