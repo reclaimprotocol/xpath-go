@@ -107,12 +107,13 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 	// Check for special elements
 	if p.pos+1 < len(p.content) {
 		if p.content[p.pos+1] == '!' {
-			// Check if it's a DOCTYPE declaration
+			if strings.HasPrefix(p.content[p.pos:], "<!--") {
+				return p.parseComment(parent, startPos, startLine, startCol)
+			}
 			if strings.HasPrefix(strings.ToUpper(p.content[p.pos:]), "<!DOCTYPE") {
 				return p.parseDoctype(parent, startPos, startLine, startCol)
 			}
-			// Otherwise it's a comment
-			return p.parseComment(parent, startPos, startLine, startCol)
+			return p.parseBogusComment(parent, startPos, startLine, startCol)
 		}
 		if p.content[p.pos+1] == '?' {
 			return p.parseProcessingInstruction(parent, startPos, startLine, startCol)
@@ -419,6 +420,46 @@ func (p *HTMLParser) parseTextNode(parent *types.Node, startPos, startLine, star
 		Name:        "#text",
 		Value:       text, // Preserve original text with whitespace
 		TextContent: text, // Preserve original text with whitespace
+		Parent:      parent,
+		StartPos:    startPos,
+		EndPos:      p.pos,
+		StartLine:   startLine,
+		StartColumn: startCol,
+		EndLine:     p.line,
+		EndColumn:   p.col,
+	}, nil
+}
+
+// parseBogusComment applies HTML's recovery for an incorrectly opened
+// comment. Everything after "<!" through the next '>' (or EOF) becomes the
+// comment value while the node range remains tied to the original input.
+func (p *HTMLParser) parseBogusComment(parent *types.Node, startPos, startLine, startCol int) (*types.Node, error) {
+	if !strings.HasPrefix(p.content[p.pos:], "<!") {
+		return nil, fmt.Errorf("expected markup declaration at position %d", p.pos)
+	}
+
+	p.advance() // Skip '<'
+	p.advance() // Skip '!'
+
+	var comment strings.Builder
+	for p.pos < len(p.content) && p.peek() != '>' {
+		r, size := p.peekRune()
+		if r == 0 {
+			break
+		}
+		comment.WriteRune(r)
+		p.advanceRune(size)
+	}
+	if p.peek() == '>' {
+		p.advance()
+	}
+
+	value := comment.String()
+	return &types.Node{
+		Type:        types.CommentNode,
+		Name:        "#comment",
+		Value:       value,
+		TextContent: value,
 		Parent:      parent,
 		StartPos:    startPos,
 		EndPos:      p.pos,

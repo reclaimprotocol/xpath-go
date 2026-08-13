@@ -34,7 +34,6 @@ func TestQueryRejectsGzipInput(t *testing.T) {
 func TestQueryRejectsMalformedHTML(t *testing.T) {
 	testCases := map[string]string{
 		"invalid nested attributes":           `<div><span <="">broken</span></div>`,
-		"invalid declaration":                 `<div><!x></div>`,
 		"malformed sibling":                   `<ul><li>a</li><li <=""></li><li>c</li></ul>`,
 		"unterminated element":                `<div>`,
 		"mismatched closing tag":              `<div><span></div>`,
@@ -58,6 +57,30 @@ func TestQueryRejectsMalformedHTML(t *testing.T) {
 				t.Fatalf("Expected wrapped HTML parsing error, got %q", err)
 			}
 		})
+	}
+}
+
+func TestQueryRecoversBogusDeclarationAtReportedOffset(t *testing.T) {
+	const declaration = `<!ENTITY example "value">`
+	document := `<div>` + strings.Repeat("a", 14733) + declaration + `<span id="target">payload</span></div>`
+
+	results, err := xpath.Query(`//span[@id='target']/text()`, document)
+	if err != nil {
+		t.Fatalf("Query returned an error: %v", err)
+	}
+	if len(results) != 1 {
+		t.Fatalf("Expected one result, got %d", len(results))
+	}
+
+	result := results[0]
+	if result.TextContent != "payload" {
+		t.Fatalf("Expected payload, got %q", result.TextContent)
+	}
+	if source := document[result.StartLocation:result.EndLocation]; source != "payload" {
+		t.Fatalf("Expected original source %q, got %q", "payload", source)
+	}
+	if declarationOffset := strings.Index(document, declaration); declarationOffset != 14738 {
+		t.Fatalf("Expected declaration at reported offset 14738, got %d", declarationOffset)
 	}
 }
 

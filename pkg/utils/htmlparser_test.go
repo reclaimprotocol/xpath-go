@@ -5,6 +5,8 @@ import (
 	"compress/gzip"
 	"strings"
 	"testing"
+
+	"github.com/reclaimprotocol/xpath-go/pkg/types"
 )
 
 func TestParseRejectsBinaryInput(t *testing.T) {
@@ -52,7 +54,6 @@ func TestParseRejectsGzipInput(t *testing.T) {
 func TestParseRejectsMalformedInput(t *testing.T) {
 	testCases := map[string]string{
 		"invalid nested attributes":           `<div><span <="">broken</span></div>`,
-		"invalid declaration":                 `<div><!x></div>`,
 		"malformed sibling":                   `<ul><li>a</li><li <=""></li><li>c</li></ul>`,
 		"unterminated element":                `<div>`,
 		"mismatched closing tag":              `<div><span></div>`,
@@ -74,6 +75,70 @@ func TestParseRejectsMalformedInput(t *testing.T) {
 				t.Fatalf("Expected malformed input error, got node %#v", node)
 			}
 		})
+	}
+}
+
+func TestParseRecoversBogusCommentsLikeBrowser(t *testing.T) {
+	testCases := []struct {
+		name        string
+		declaration string
+		wantValue   string
+	}{
+		{name: "unknown declaration", declaration: `<!x>`, wantValue: "x"},
+		{name: "CDATA in HTML", declaration: `<![CDATA[payload]]>`, wantValue: "[CDATA[payload]]"},
+		{name: "entity declaration", declaration: `<!ENTITY example "value">`, wantValue: `ENTITY example "value"`},
+		{name: "empty declaration", declaration: `<!>`, wantValue: ""},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			content := `<div>before` + testCase.declaration + `after<span>tail</span></div>`
+
+			parser := NewHTMLParser()
+			document, err := parser.Parse(content)
+			if err != nil {
+				t.Fatalf("Parse returned an error: %v", err)
+			}
+			if len(document.Children) != 1 {
+				t.Fatalf("Expected one root element, got %#v", document.Children)
+			}
+
+			div := document.Children[0]
+			if div.TextContent != "beforeaftertail" {
+				t.Fatalf("Expected comments to be excluded from text content, got %q", div.TextContent)
+			}
+			if len(div.Children) != 4 || div.Children[1].Type != types.CommentNode {
+				t.Fatalf("Expected text, comment, text, and span children, got %#v", div.Children)
+			}
+
+			comment := div.Children[1]
+			if comment.Value != testCase.wantValue {
+				t.Fatalf("Expected comment value %q, got %q", testCase.wantValue, comment.Value)
+			}
+			if source := content[comment.StartPos:comment.EndPos]; source != testCase.declaration {
+				t.Fatalf("Expected original declaration source %q, got %q", testCase.declaration, source)
+			}
+			if div.Children[3].Name != "span" {
+				t.Fatalf("Expected parsing to continue with span, got %q", div.Children[3].Name)
+			}
+		})
+	}
+}
+
+func TestParseRecoversBogusCommentAtEOF(t *testing.T) {
+	const content = `<!unfinished`
+
+	parser := NewHTMLParser()
+	document, err := parser.Parse(content)
+	if err != nil {
+		t.Fatalf("Parse returned an error: %v", err)
+	}
+	if len(document.Children) != 1 || document.Children[0].Type != types.CommentNode {
+		t.Fatalf("Expected one comment node, got %#v", document.Children)
+	}
+	comment := document.Children[0]
+	if comment.Value != "unfinished" || comment.StartPos != 0 || comment.EndPos != len(content) {
+		t.Fatalf("Expected EOF-terminated comment with original range, got %#v", comment)
 	}
 }
 
