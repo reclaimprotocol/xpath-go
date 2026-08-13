@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.6] - 2026-08-13
+
+### Fixed
+- HTML parsing now ignores stray closing tags for void elements instead of aborting on a mismatched closing tag, matching browser recovery for markup such as `</meta>`.
+- The browser-specific `</br>` exception is recovered as a `br` element.
+- Recovered nodes and subsequent XPath results retain byte positions against the original, unmodified HTML input.
+
+### Tests
+- Added coverage for all supported void-element closing tags, the `</br>` exception, the reported `<head>`/`</meta>` case, and original-source XPath ranges.
+
 ## [1.4.5] - 2026-08-13
 
 ### Fixed
