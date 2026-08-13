@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.7] - 2026-08-13
+
+### Fixed
+- HTML parsing now recovers non-comment `<!...>` declarations as bogus comments instead of aborting with `expected comment`, matching browser tokenization.
+- Bogus comments terminate at the next `>` or EOF, remain excluded from parent text content, and preserve original byte ranges for subsequent XPath results.
+
+### Tests
+- Added Chromium-verified coverage for unknown, CDATA-like, entity, empty, and EOF-terminated declarations.
+- Added a public XPath regression at the reported declaration offset `14738` with exact original-source location assertions.
+
 ## [1.4.6] - 2026-08-13
 
 ### Fixed
