@@ -107,6 +107,93 @@ func TestParseAllowsAdjacentHTMLAttributes(t *testing.T) {
 	}
 }
 
+func TestParseIgnoresMetaClosingTagLikeBrowser(t *testing.T) {
+	const content = `<html><head><meta name="description"content="sample"></meta><title>Page</title></head><body><div id="target">payload</div></body></html>`
+
+	parser := NewHTMLParser()
+	document, err := parser.Parse(content)
+	if err != nil {
+		t.Fatalf("Parse returned an error: %v", err)
+	}
+
+	if len(document.Children) != 1 || document.Children[0].Name != "html" {
+		t.Fatalf("Expected one html root, got %#v", document.Children)
+	}
+	html := document.Children[0]
+	if len(html.Children) != 2 || html.Children[0].Name != "head" || html.Children[1].Name != "body" {
+		t.Fatalf("Expected head and body children, got %#v", html.Children)
+	}
+
+	head := html.Children[0]
+	if len(head.Children) != 2 || head.Children[0].Name != "meta" || head.Children[1].Name != "title" {
+		t.Fatalf("Expected meta and title children, got %#v", head.Children)
+	}
+	meta := head.Children[0]
+	if source := content[meta.StartPos:meta.EndPos]; source != `<meta name="description"content="sample">` {
+		t.Fatalf("Expected original meta source, got %q", source)
+	}
+
+	target := html.Children[1].Children[0]
+	if source := content[target.StartPos:target.EndPos]; source != `<div id="target">payload</div>` {
+		t.Fatalf("Expected original target source, got %q", source)
+	}
+}
+
+func TestParseIgnoresVoidElementClosingTags(t *testing.T) {
+	voidElements := []string{
+		"area", "base", "col", "embed", "hr", "img", "input",
+		"link", "meta", "param", "source", "track", "wbr",
+	}
+
+	for _, tagName := range voidElements {
+		t.Run(tagName, func(t *testing.T) {
+			content := `<div>before</` + tagName + `><span>after</span></div>`
+
+			parser := NewHTMLParser()
+			document, err := parser.Parse(content)
+			if err != nil {
+				t.Fatalf("Parse returned an error: %v", err)
+			}
+			if len(document.Children) != 1 || document.Children[0].TextContent != "beforeafter" {
+				t.Fatalf("Expected void closer to be ignored, got %#v", document.Children)
+			}
+
+			span := document.Children[0].Children[1]
+			if span.Name != "span" {
+				t.Fatalf("Expected span after ignored closer, got %q", span.Name)
+			}
+			if source := content[span.StartPos:span.EndPos]; source != `<span>after</span>` {
+				t.Fatalf("Expected original span source, got %q", source)
+			}
+		})
+	}
+}
+
+func TestParseTreatsBrClosingTagAsStartTagLikeBrowser(t *testing.T) {
+	const content = `<div>before</br><span>after</span></div>`
+
+	parser := NewHTMLParser()
+	document, err := parser.Parse(content)
+	if err != nil {
+		t.Fatalf("Parse returned an error: %v", err)
+	}
+	if len(document.Children) != 1 {
+		t.Fatalf("Expected one root element, got %#v", document.Children)
+	}
+
+	div := document.Children[0]
+	if len(div.Children) != 3 || div.Children[1].Name != "br" || div.Children[2].Name != "span" {
+		t.Fatalf("Expected text, recovered br, and span children, got %#v", div.Children)
+	}
+	br := div.Children[1]
+	if source := content[br.StartPos:br.EndPos]; source != `</br>` {
+		t.Fatalf("Expected recovered br location to reference original token, got %q", source)
+	}
+	if br.ContentStart != br.EndPos || br.ContentEnd != br.EndPos {
+		t.Fatalf("Expected recovered br to have empty content at %d, got %d:%d", br.EndPos, br.ContentStart, br.ContentEnd)
+	}
+}
+
 func TestParseImplicitlyClosesTableRows(t *testing.T) {
 	testCases := []struct {
 		name           string

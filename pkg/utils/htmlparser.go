@@ -88,6 +88,9 @@ func (p *HTMLParser) parseNode(parent *types.Node) (*types.Node, error) {
 	startCol := p.col
 
 	if p.peek() == '<' {
+		if recovered, consumed, err := p.consumeVoidElementClosingTag(parent); consumed || err != nil {
+			return recovered, err
+		}
 		return p.parseElement(parent, startPos, startLine, startCol)
 	}
 
@@ -255,6 +258,16 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 
 		// Check for closing tag
 		if p.peek() == '<' && p.pos+1 < len(p.content) && p.content[p.pos+1] == '/' {
+			if recovered, consumed, err := p.consumeVoidElementClosingTag(node); consumed || err != nil {
+				if err != nil {
+					return nil, err
+				}
+				if recovered != nil {
+					node.Children = append(node.Children, recovered)
+				}
+				continue
+			}
+
 			// Mark content end position before closing tag
 			contentEndPos := p.pos
 			closingTag, err := p.parseClosingTag()
@@ -290,6 +303,43 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 	}
 
 	return nil, fmt.Errorf("unterminated element <%s> at position %d", node.Name, startPos)
+}
+
+// consumeVoidElementClosingTag applies browser recovery for end tags belonging
+// to HTML void elements. Browsers ignore these tokens except for </br>, which
+// creates a br element. Any recovered node retains the original token's range.
+func (p *HTMLParser) consumeVoidElementClosingTag(parent *types.Node) (*types.Node, bool, error) {
+	tagName, closing, ok := p.peekTagName()
+	if !ok || !closing || !p.isSelfClosingTag(tagName) {
+		return nil, false, nil
+	}
+
+	startPos := p.pos
+	startLine := p.line
+	startColumn := p.col
+	if _, err := p.parseClosingTag(); err != nil {
+		return nil, true, err
+	}
+	if tagName != "br" {
+		return nil, true, nil
+	}
+
+	return &types.Node{
+		Type:           types.ElementNode,
+		Name:           "br",
+		Attributes:     make(map[string]string),
+		AttributeOrder: []string{},
+		Children:       []*types.Node{},
+		Parent:         parent,
+		StartPos:       startPos,
+		EndPos:         p.pos,
+		ContentStart:   p.pos,
+		ContentEnd:     p.pos,
+		StartLine:      startLine,
+		StartColumn:    startColumn,
+		EndLine:        p.line,
+		EndColumn:      p.col,
+	}, true, nil
 }
 
 // shouldImplicitlyCloseTableRow reports whether the token at the current

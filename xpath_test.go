@@ -82,6 +82,47 @@ func TestQueryAdjacentHTMLAttributesPreservesOriginalLocations(t *testing.T) {
 	}
 }
 
+func TestQueryIgnoresMetaClosingTagAndPreservesOriginalLocations(t *testing.T) {
+	const document = `<html><head><meta name="description"content="sample"></meta><title>Page</title></head><body><div id="target">payload</div></body></html>`
+	const expression = `//div[@id='target']/text()`
+
+	results, err := xpath.Query(expression, document)
+	if err != nil {
+		t.Fatalf("Query returned an error: %v", err)
+	}
+	if len(results) != 1 {
+		t.Fatalf("Expected one result, got %d", len(results))
+	}
+
+	result := results[0]
+	if result.TextContent != "payload" {
+		t.Fatalf("Expected payload, got %q", result.TextContent)
+	}
+	if source := document[result.StartLocation:result.EndLocation]; source != "payload" {
+		t.Fatalf("Expected original source %q, got %q", "payload", source)
+	}
+}
+
+func TestQueryRecoversBrClosingTagWithOriginalLocation(t *testing.T) {
+	const document = `<div>before</br><span>after</span></div>`
+
+	results, err := xpath.Query(`//br`, document)
+	if err != nil {
+		t.Fatalf("Query returned an error: %v", err)
+	}
+	if len(results) != 1 {
+		t.Fatalf("Expected one result, got %d", len(results))
+	}
+
+	result := results[0]
+	if result.NodeName != "br" || result.Value != `</br>` {
+		t.Fatalf("Expected recovered br backed by original source, got %#v", result)
+	}
+	if source := document[result.StartLocation:result.EndLocation]; source != `</br>` {
+		t.Fatalf("Expected original source %q, got %q", `</br>`, source)
+	}
+}
+
 func TestQueryRecoversConsecutiveTableRowsLikeJavaScript(t *testing.T) {
 	const document = `<table><tr><th>Full Name</th><td>AKASH</td></tr><tr><tr><th>Date of Birth</th><td>2003-07-12</td></tr></table>`
 
