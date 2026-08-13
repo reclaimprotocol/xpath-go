@@ -8,7 +8,7 @@ import (
 
 const (
 	// Version represents the current version of the library.
-	Version = "1.4.4"
+	Version = "1.4.5"
 
 	// APIVersion represents the API version for compatibility tracking.
 	APIVersion = "v1"

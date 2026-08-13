@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.5] - 2026-08-13
+
+### Fixed
+- HTML parsing now tolerates adjacent attributes without separating whitespace, matching browser behavior for markup such as `id="target"class="primary"`.
+- Original byte positions remain tied to the unmodified input while parsing adjacent attributes.
+
+### Tests
+- Added parser and public XPath regression coverage for adjacent quoted and boolean attributes and exact original-source ranges.
+
 ## [1.4.4] - 2026-08-13
 
 ### Fixed
