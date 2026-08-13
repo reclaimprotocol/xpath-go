@@ -143,9 +143,9 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 
 	// Parse attributes
 	for p.pos < len(p.content) && p.peek() != '>' && p.peek() != '/' {
-		if !isWhitespace(p.peek()) {
-			return nil, fmt.Errorf("expected whitespace before attribute at position %d", p.pos)
-		}
+		// Browsers tolerate a missing space after a quoted attribute value, for
+		// example id="target"class="primary". Parsing directly from the original
+		// input keeps every node's byte positions unchanged.
 		p.skipWhitespace()
 		if p.peek() == '>' || p.peek() == '/' {
 			break

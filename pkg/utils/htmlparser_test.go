@@ -64,7 +64,6 @@ func TestParseRejectsMalformedInput(t *testing.T) {
 		"unterminated processing instruction": `<?xml version="1.0"`,
 		"missing attribute value":             `<div a=>`,
 		"invalid unquoted attribute value":    `<div a==b></div>`,
-		"missing attribute whitespace":        `<div a="x"b="y"></div>`,
 	}
 
 	for name, content := range testCases {
@@ -75,6 +74,36 @@ func TestParseRejectsMalformedInput(t *testing.T) {
 				t.Fatalf("Expected malformed input error, got node %#v", node)
 			}
 		})
+	}
+}
+
+func TestParseAllowsAdjacentHTMLAttributes(t *testing.T) {
+	const content = `<div id="target"class='primary'disabled data-value="42">payload</div>`
+
+	parser := NewHTMLParser()
+	document, err := parser.Parse(content)
+	if err != nil {
+		t.Fatalf("Parse returned an error: %v", err)
+	}
+	if len(document.Children) != 1 {
+		t.Fatalf("Expected one root element, got %d", len(document.Children))
+	}
+
+	element := document.Children[0]
+	wantAttributes := map[string]string{
+		"id":         "target",
+		"class":      "primary",
+		"disabled":   "",
+		"data-value": "42",
+	}
+	for name, wantValue := range wantAttributes {
+		if value, ok := element.Attributes[name]; !ok || value != wantValue {
+			t.Errorf("Attribute %q: expected %q, got %q (present=%t)", name, wantValue, value, ok)
+		}
+	}
+
+	if source := content[element.StartPos:element.EndPos]; source != content {
+		t.Fatalf("Expected original source %q, got %q", content, source)
 	}
 }
 

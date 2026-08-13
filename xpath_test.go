@@ -46,7 +46,6 @@ func TestQueryRejectsMalformedHTML(t *testing.T) {
 		"unterminated processing instruction": `<?xml version="1.0"`,
 		"missing attribute value":             `<div a=>`,
 		"invalid unquoted attribute value":    `<div a==b></div>`,
-		"missing attribute whitespace":        `<div a="x"b="y"></div>`,
 	}
 
 	for name, document := range testCases {
@@ -59,6 +58,27 @@ func TestQueryRejectsMalformedHTML(t *testing.T) {
 				t.Fatalf("Expected wrapped HTML parsing error, got %q", err)
 			}
 		})
+	}
+}
+
+func TestQueryAdjacentHTMLAttributesPreservesOriginalLocations(t *testing.T) {
+	const document = `<section><div id="target"class='primary'data-value="42">payload</div></section>`
+	const expression = `//div[@id='target'][@class='primary'][@data-value='42']/text()`
+
+	results, err := xpath.Query(expression, document)
+	if err != nil {
+		t.Fatalf("Query returned an error: %v", err)
+	}
+	if len(results) != 1 {
+		t.Fatalf("Expected one result, got %d", len(results))
+	}
+
+	result := results[0]
+	if result.TextContent != "payload" {
+		t.Fatalf("Expected payload, got %q", result.TextContent)
+	}
+	if source := document[result.StartLocation:result.EndLocation]; source != "payload" {
+		t.Fatalf("Expected original source %q, got %q", "payload", source)
 	}
 }
 
