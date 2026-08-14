@@ -13,6 +13,9 @@ type Result struct {
 	Value         string            `json:"value"`
 	NodeName      string            `json:"nodeName"`
 	NodeType      int               `json:"nodeType"`
+	NamespaceURI  string            `json:"namespaceURI,omitempty"`
+	LocalName     string            `json:"localName,omitempty"`
+	Prefix        string            `json:"prefix,omitempty"`
 	Attributes    map[string]string `json:"attributes,omitempty"`
 	StartLocation int               `json:"startLocation"`
 	EndLocation   int               `json:"endLocation"`
@@ -30,10 +33,11 @@ type XPath struct {
 
 // Options for XPath evaluation
 type Options struct {
-	IncludeLocation bool   `json:"include_location"`
-	OutputFormat    string `json:"output_format"` // "nodes", "values", "paths"
-	ContentsOnly    bool   `json:"contents_only"` // Extract only inner content between tags
-	Debug           bool   `json:"debug"`         // Enable verbose debug logging
+	IncludeLocation  bool   `json:"include_location"`
+	OutputFormat     string `json:"output_format"`     // "nodes", "values", "paths"
+	ContentsOnly     bool   `json:"contents_only"`     // Extract only inner content between tags
+	Debug            bool   `json:"debug"`             // Enable verbose debug logging
+	ScriptingEnabled bool   `json:"scripting_enabled"` // Parse noscript contents as RAWTEXT when true
 }
 
 // Query evaluates an XPath expression against HTML/XML content
@@ -50,15 +54,12 @@ func QueryWithOptions(xpathExpr, content string, opts Options) ([]Result, error)
 	if strings.TrimSpace(xpathExpr) == "" {
 		return nil, fmt.Errorf("xpath expression cannot be empty")
 	}
-	if strings.TrimSpace(content) == "" {
-		return nil, fmt.Errorf("content cannot be empty")
-	}
-
 	// Create evaluator and evaluate XPath
 	if opts.Debug {
 		EnableTrace()
 	}
 	eval := evaluator.NewEvaluator()
+	eval.SetScriptingEnabled(opts.ScriptingEnabled)
 	nodes, err := eval.Evaluate(xpathExpr, content)
 	if err != nil {
 		return nil, err
@@ -82,10 +83,6 @@ func Compile(xpathExpr string) (*XPath, error) {
 
 // Evaluate uses a pre-compiled XPath expression
 func (x *XPath) Evaluate(content string) ([]Result, error) {
-	if strings.TrimSpace(content) == "" {
-		return nil, fmt.Errorf("content cannot be empty")
-	}
-
 	nodes, err := x.evaluator.Evaluate(x.expression, content)
 	if err != nil {
 		return nil, err
@@ -111,6 +108,9 @@ func convertNodesToResults(nodes []types.Node, opts Options, originalContent str
 			Value:        node.Value,
 			NodeName:     node.Name,
 			NodeType:     int(node.Type),
+			NamespaceURI: node.NamespaceURI,
+			LocalName:    node.LocalName,
+			Prefix:       node.Prefix,
 			Attributes:   node.Attributes,
 			Path:         generateNodePath(&node),
 			TextContent:  node.TextContent,
@@ -120,9 +120,16 @@ func convertNodesToResults(nodes []types.Node, opts Options, originalContent str
 
 		// Handle contentsOnly option - adjust positions and value based on extraction mode
 		if opts.ContentsOnly {
-			// Use content positions (inner content between tags)
-			result.StartLocation = node.ContentStart
-			result.EndLocation = node.ContentEnd
+			// Only elements have an inner source range. For non-container nodes
+			// such as text, comments, and processing instructions, retain the
+			// node's full source range while exposing its DOM text value.
+			if node.Type == types.ElementNode {
+				result.StartLocation = node.ContentStart
+				result.EndLocation = node.ContentEnd
+			} else {
+				result.StartLocation = node.StartPos
+				result.EndLocation = node.EndPos
+			}
 			// For content-only mode, value should be just the text content
 			result.Value = node.TextContent
 		} else {
@@ -130,7 +137,11 @@ func convertNodesToResults(nodes []types.Node, opts Options, originalContent str
 			result.StartLocation = node.StartPos
 			result.EndLocation = node.EndPos
 			// For full mode, value should include the HTML markup
-			if node.StartPos < len(originalContent) && node.EndPos <= len(originalContent) && node.EndPos > node.StartPos {
+			if node.Type == types.DocumentTypeNode {
+				// Browser DocumentType.nodeValue and textContent are null/empty;
+				// its source range remains available through the location fields.
+				result.Value = ""
+			} else if node.StartPos < len(originalContent) && node.EndPos <= len(originalContent) && node.EndPos > node.StartPos {
 				result.Value = originalContent[node.StartPos:node.EndPos]
 			} else if result.Value == "" && result.TextContent != "" {
 				result.Value = result.TextContent

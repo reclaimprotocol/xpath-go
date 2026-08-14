@@ -13,10 +13,14 @@ import (
 
 // Evaluator handles XPath expression evaluation
 type Evaluator struct {
-	parser          *parser.Parser
-	htmlParser      *utils.HTMLParser
-	contextPosition int
-	contextSize     int
+	parser           *parser.Parser
+	htmlParser       *utils.HTMLParser
+	contextPosition  int
+	contextSize      int
+	axisOrder        []*types.Node
+	axisIndex        map[*types.Node]int
+	axisSubtreeEnd   map[*types.Node]int
+	axisMatchIndexes map[string][]int
 }
 
 // NewEvaluator creates a new XPath evaluator
@@ -25,6 +29,12 @@ func NewEvaluator() *Evaluator {
 		parser:     parser.NewParser(),
 		htmlParser: utils.NewHTMLParser(),
 	}
+}
+
+// SetScriptingEnabled configures whole-document noscript parsing for the next
+// and subsequent evaluations performed by this evaluator.
+func (e *Evaluator) SetScriptingEnabled(enabled bool) {
+	e.htmlParser.SetScriptingEnabled(enabled)
 }
 
 // Evaluate evaluates an XPath expression against HTML/XML content
@@ -40,6 +50,7 @@ func (e *Evaluator) Evaluate(xpathExpr, content string) ([]types.Node, error) {
 	if err != nil {
 		return nil, fmt.Errorf("HTML parsing failed: %w", err)
 	}
+	e.prepareAxisOrder(documentNode)
 
 	// Evaluate XPath against document
 	return e.evaluateSteps(parsedXPath, documentNode)
@@ -61,7 +72,13 @@ func (e *Evaluator) evaluateSteps(xpath *types.ParsedXPath, document *types.Node
 			// Add results while avoiding duplicates
 			for _, result := range results {
 				// Create unique key based on node properties
-				key := fmt.Sprintf("%d:%s:%d:%d", result.Type, result.Name, result.StartPos, result.EndPos)
+				// Attribute nodes do not have independent source offsets. Include
+				// their owning element identity so equal-named attributes on two
+				// selected elements are not collapsed by a union expression.
+				key := fmt.Sprintf("%p:%d:%s:%d:%d", result.Origin, result.Type, result.Name, result.StartPos, result.EndPos)
+				if result.Type == types.AttributeNode {
+					key = fmt.Sprintf("attr:%p:%s:%s", result.Parent, result.NamespaceURI, result.LocalName)
+				}
 				if !seenNodes[key] {
 					seenNodes[key] = true
 					allResults = append(allResults, result)
@@ -70,7 +87,7 @@ func (e *Evaluator) evaluateSteps(xpath *types.ParsedXPath, document *types.Node
 		}
 
 		// Sort results by document order (StartPos) for JavaScript compatibility
-		e.sortNodesByDocumentOrder(allResults)
+		e.sortNodesByDocumentOrder(allResults, document)
 
 		return allResults, nil
 	}
@@ -98,10 +115,13 @@ func (e *Evaluator) evaluateSteps(xpath *types.ParsedXPath, document *types.Node
 	}
 
 	// Convert to result format
+	e.sortNodePointersByTreeOrder(currentNodes, document)
 	var results []types.Node
 	for _, node := range currentNodes {
 		if node != nil {
-			results = append(results, *node)
+			result := *node
+			result.Origin = node
+			results = append(results, result)
 		}
 	}
 
@@ -110,6 +130,20 @@ func (e *Evaluator) evaluateSteps(xpath *types.ParsedXPath, document *types.Node
 
 // evaluateStep evaluates a single XPath step
 func (e *Evaluator) evaluateStep(step types.XPathStep, contextNode *types.Node) []*types.Node {
+	if (step.Axis == types.AxisFollowing || step.Axis == types.AxisPreceding) && len(step.Predicates) > 0 {
+		if position, last, ok := simpleAxisPosition(step.Predicates[0].Expression); ok {
+			candidate := e.positionalAxisNode(contextNode, step.Axis, step.NodeTest, position, last)
+			if candidate == nil {
+				return nil
+			}
+			filtered := []*types.Node{candidate}
+			for _, predicate := range step.Predicates[1:] {
+				filtered = e.applyPredicate(filtered, predicate, contextNode)
+			}
+			return filtered
+		}
+	}
+
 	var candidates []*types.Node
 
 	// Apply axis to get candidate nodes
@@ -132,6 +166,10 @@ func (e *Evaluator) evaluateStep(step types.XPathStep, contextNode *types.Node) 
 		candidates = e.getFollowingSiblings(contextNode)
 	case types.AxisPrecedingSibling:
 		candidates = e.getPrecedingSiblings(contextNode)
+	case types.AxisFollowing:
+		candidates = e.getFollowingNodes(contextNode)
+	case types.AxisPreceding:
+		candidates = e.getPrecedingNodes(contextNode)
 	case types.AxisAttribute:
 		candidates = e.getAttributeNodes(contextNode)
 	case types.AxisSelf:
@@ -150,13 +188,25 @@ func (e *Evaluator) evaluateStep(step types.XPathStep, contextNode *types.Node) 
 
 	// Reverse axes use reverse document order while evaluating predicates,
 	// but XPath node-set results are exposed in document order.
-	if step.Axis == types.AxisPrecedingSibling {
+	if step.Axis == types.AxisPrecedingSibling || step.Axis == types.AxisPreceding {
 		for i, j := 0, len(filtered)-1; i < j; i, j = i+1, j-1 {
 			filtered[i], filtered[j] = filtered[j], filtered[i]
 		}
 	}
 
 	return filtered
+}
+
+func simpleAxisPosition(expression string) (position int, last bool, ok bool) {
+	expression = strings.TrimSpace(expression)
+	if expression == "last()" {
+		return 0, true, true
+	}
+	position, err := strconv.Atoi(expression)
+	if err != nil || position < 1 {
+		return 0, false, false
+	}
+	return position, false, true
 }
 
 // applyNodeTest filters nodes based on node test
@@ -185,6 +235,31 @@ func (e *Evaluator) applyNodeTest(nodes []*types.Node, nodeTest string) []*types
 			}
 		}
 		return textNodes
+	}
+
+	if nodeTest == "comment()" {
+		var comments []*types.Node
+		for _, node := range nodes {
+			if node.Type == types.CommentNode {
+				comments = append(comments, node)
+			}
+		}
+		return comments
+	}
+
+	if nodeTest == "processing-instruction()" || strings.HasPrefix(nodeTest, "processing-instruction(") {
+		target := ""
+		if nodeTest != "processing-instruction()" {
+			target = strings.TrimSuffix(strings.TrimPrefix(nodeTest, "processing-instruction("), ")")
+			target = strings.Trim(target, `"'`)
+		}
+		var instructions []*types.Node
+		for _, node := range nodes {
+			if node.Type == types.ProcessingInstructionNode && (target == "" || node.Name == target) {
+				instructions = append(instructions, node)
+			}
+		}
+		return instructions
 	}
 
 	// For attribute nodes, match by attribute name
@@ -225,39 +300,11 @@ func (e *Evaluator) applyPredicate(nodes []*types.Node, predicate types.XPathPre
 	return e.RoutePredicateExpression(nodes, expr)
 }
 
-// applyPositionalPredicate handles numeric position predicates like [1], [2], [last()]
-func (e *Evaluator) applyPositionalPredicate(nodes []*types.Node, expr string) []*types.Node {
-	expr = strings.TrimSpace(expr)
-
-	// Handle numeric positions like [1], [2], [10]
-	if pos, err := strconv.Atoi(expr); err == nil {
-		if pos > 0 && pos <= len(nodes) {
-			return []*types.Node{nodes[pos-1]}
-		}
-		return []*types.Node{}
-	}
-
-	// Handle last() function
-	if expr == "last()" {
-		if len(nodes) > 0 {
-			return []*types.Node{nodes[len(nodes)-1]}
-		}
-		return []*types.Node{}
-	}
-
-	// Fallback
-	return []*types.Node{}
-}
-
 // sortNodesByDocumentOrder sorts nodes by their document position
-func (e *Evaluator) sortNodesByDocumentOrder(nodes []types.Node) {
-	sort.Slice(nodes, func(i, j int) bool {
-		// Sort by start position (document order)
-		if nodes[i].StartPos != nodes[j].StartPos {
-			return nodes[i].StartPos < nodes[j].StartPos
-		}
-		// If start positions are equal, sort by end position
-		return nodes[i].EndPos < nodes[j].EndPos
+func (e *Evaluator) sortNodesByDocumentOrder(nodes []types.Node, document *types.Node) {
+	order, attributeBase, attributeRanks := treeOrderMaps(document)
+	sort.SliceStable(nodes, func(i, j int) bool {
+		return treeOrderForNode(&nodes[i], order, attributeBase, attributeRanks) < treeOrderForNode(&nodes[j], order, attributeBase, attributeRanks)
 	})
 }
 

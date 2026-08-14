@@ -95,7 +95,8 @@ func (c *PredicateClassifier) hasFunctionCalls() bool {
 	functions := []string{
 		"contains(", "starts-with(", "string-length(", "normalize-space(",
 		"substring(", "not(", "not (", "text()", "position()", "last()", "count(",
-		"true()", "false()", "concat(",
+		"true()", "false()", "concat(", "name(", "local-name(", "namespace-uri(",
+		"string(", "number(", "boolean(",
 	}
 
 	for _, fn := range functions {
@@ -129,7 +130,8 @@ func (c *PredicateClassifier) isFunctionCall() bool {
 	functions := []string{
 		"contains(", "starts-with(", "string-length(", "normalize-space(",
 		"substring(", "not(", "not (", "position()", "last()", "count(",
-		"true()", "false()", "concat(",
+		"true()", "false()", "concat(", "name(", "local-name(", "namespace-uri(",
+		"string(", "number(", "boolean(",
 	}
 
 	for _, fn := range functions {

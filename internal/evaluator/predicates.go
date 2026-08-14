@@ -30,28 +30,10 @@ func (e *Evaluator) applyUnifiedPredicate(nodes []*types.Node, expr string) []*t
 		return []*types.Node{}
 	}
 
-	// Handle expressions that need context (position, last, arithmetic)
-	if strings.Contains(expr, "position()") || strings.Contains(expr, "last()") ||
-		strings.Contains(expr, " mod ") || strings.Contains(expr, " div ") ||
-		strings.Contains(expr, "+") || strings.Contains(expr, "-") ||
-		strings.Contains(expr, "*") || strings.Contains(expr, "/") {
-		return e.applyPositionContextPredicate(nodes, expr)
-	}
-
-	// For all other expressions, use the general ExpressionEvaluator
-	var filtered []*types.Node
-	ee := NewExpressionEvaluator(e)
-
-	for _, node := range nodes {
-		// General evaluation
-		result, err := ee.EvaluateComparison(expr, node)
-		if err == nil && result {
-			filtered = append(filtered, node)
-		}
-	}
-
-	Trace("applyUnifiedPredicate: expr='%s', filtered nodes=%d", expr, len(filtered))
-	return filtered
+	// Every predicate has a position and size context. Typed expressions such
+	// as [number(@rank)] need that context even though their source contains no
+	// explicit position() call.
+	return e.applyPositionContextPredicate(nodes, expr)
 }
 
 // applyPositionContextPredicate handles position-aware predicates with proper context

@@ -22,21 +22,35 @@ const (
 type Node struct {
 	Type           NodeType          `json:"type"`
 	Name           string            `json:"name"`
+	NamespaceURI   string            `json:"namespace_uri,omitempty"`
 	Value          string            `json:"value,omitempty"`
 	TextContent    string            `json:"text_content,omitempty"`
 	Attributes     map[string]string `json:"attributes,omitempty"`
 	AttributeOrder []string          `json:"-"` // Track document order of attributes
-	Children       []*Node           `json:"children,omitempty"`
-	Parent         *Node             `json:"-"` // Avoid circular JSON
-	StartPos       int               `json:"start_pos"`
-	EndPos         int               `json:"end_pos"`
-	ContentStart   int               `json:"content_start,omitempty"` // Start of inner content (after opening tag)
-	ContentEnd     int               `json:"content_end,omitempty"`   // End of inner content (before closing tag)
-	StartLine      int               `json:"start_line"`
-	StartColumn    int               `json:"start_column"`
-	EndLine        int               `json:"end_line"`
-	EndColumn      int               `json:"end_column"`
-	SourceLength   int               `json:"source_length"`
+	// Attribute namespace metadata is keyed by the qualified spelling retained
+	// in Attributes/AttributeOrder. This preserves the existing public map while
+	// allowing generated XPath AttributeNodes to expose DOM namespace identity.
+	AttributeNamespaces map[string]string `json:"attribute_namespaces,omitempty"`
+	AttributeLocalNames map[string]string `json:"attribute_local_names,omitempty"`
+	AttributePrefixes   map[string]string `json:"attribute_prefixes,omitempty"`
+	LocalName           string            `json:"local_name,omitempty"`
+	Prefix              string            `json:"prefix,omitempty"`
+	Children            []*Node           `json:"children,omitempty"`
+	// TemplateContent is the inert document fragment owned by an HTML template
+	// element. Template contents are not DOM children of the template itself and
+	// are consequently outside whole-document XPath traversal.
+	TemplateContent *Node `json:"template_content,omitempty"`
+	Parent          *Node `json:"-"` // Avoid circular JSON
+	Origin          *Node `json:"-"` // Evaluator identity retained across value results
+	StartPos        int   `json:"start_pos"`
+	EndPos          int   `json:"end_pos"`
+	ContentStart    int   `json:"content_start,omitempty"` // Start of inner content (after opening tag)
+	ContentEnd      int   `json:"content_end,omitempty"`   // End of inner content (before closing tag)
+	StartLine       int   `json:"start_line"`
+	StartColumn     int   `json:"start_column"`
+	EndLine         int   `json:"end_line"`
+	EndColumn       int   `json:"end_column"`
+	SourceLength    int   `json:"source_length"`
 }
 
 // LocationInfo holds detailed position information

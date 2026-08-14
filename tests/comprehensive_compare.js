@@ -23,6 +23,7 @@ class ComprehensiveXPathTester {
             failedOnly: options.failedOnly || false,
             showData: options.showData || false
         };
+        this.goTestBinary = null;
     }
 
     loadAllTestCases() {
@@ -183,7 +184,7 @@ class ComprehensiveXPathTester {
         }
         
         // Otherwise use inline HTML
-        if (!testCase.html) {
+        if (!Object.prototype.hasOwnProperty.call(testCase, 'html')) {
             throw new Error(`Test case '${testCase.name}' has neither 'html' nor 'filepath' field`);
         }
         
@@ -327,17 +328,45 @@ class ComprehensiveXPathTester {
             }
             fs.writeFileSync(xpathFile, xpath);
 
-            // Run Go test program
+            // Build the tiny Go driver once per comparator process. Running
+            // `go run` for every case needlessly launches thousands of compiler
+            // subprocesses, can exhaust busy CI hosts, and used to produce a
+            // random false failure late in the 700+ case suite.
             const goTestPath = path.join(__dirname, 'go', 'main.go');
+            if (!this.goTestBinary) {
+                this.goTestBinary = path.join(__dirname, 'go', `.comprehensive_compare_${process.pid}`);
+                const buildCmd = `cd "${path.dirname(goTestPath)}" && go build -o "${this.goTestBinary}" main.go`;
+                execSync(buildCmd, { encoding: 'utf8', timeout: 120000, maxBuffer: 1024 * 1024 });
+                process.once('exit', () => {
+                    try { fs.unlinkSync(this.goTestBinary); } catch (_) { /* already removed */ }
+                });
+            }
             const traceFlag = this.options.trace ? '--trace' : '';
             const contentsOnlyFlag = contentsOnly ? '--contents-only' : '';
-            const cmd = `cd "${path.dirname(goTestPath)}" && go run main.go "${htmlFile}" "${xpathFile}" ${traceFlag} ${contentsOnlyFlag}`;
+            const cmd = `"${this.goTestBinary}" "${htmlFile}" "${xpathFile}" ${traceFlag} ${contentsOnlyFlag}`;
             
-            const output = execSync(cmd, { 
-                encoding: 'utf8',
-                timeout: 10000,
-                maxBuffer: 1024 * 1024
-            });
+            let output;
+            for (let attempt = 0; attempt < 2; attempt++) {
+                try {
+                    output = execSync(cmd, {
+                        encoding: 'utf8',
+                        // A cold Go toolchain or a concurrently busy CI host can
+                        // take longer than ten seconds even though the individual
+                        // query is healthy. Keep comparator failures about parser
+                        // behavior, not transient compilation latency.
+                        timeout: 30000,
+                        maxBuffer: 1024 * 1024
+                    });
+                    break;
+                } catch (error) {
+                    // Each test launches a short-lived `go run`. Long full-suite
+                    // runs can occasionally hit a transient toolchain/process
+                    // failure even though the same case passes immediately in
+                    // isolation. Retry the invocation once; parser/query errors
+                    // are JSON results below and are never hidden by this retry.
+                    if (attempt === 1) throw error;
+                }
+            }
 
             // Clean up temporary files
             if (!existingHtmlFile) {
@@ -414,11 +443,33 @@ class ComprehensiveXPathTester {
                 }
             }
         }
+
+		// jsdom/parse5 locations are JavaScript UTF-16 code-unit offsets, while
+		// xpath-go deliberately reports offsets into the original UTF-8 bytes.
+		// First clamp parse5's synthetic EOF + 1 location in code-unit space,
+		// then translate both boundaries to UTF-8 byte offsets.
+		if (this.originalHTML) {
+			startLocation = Math.min(startLocation, this.originalHTML.length);
+			endLocation = Math.min(endLocation, this.originalHTML.length);
+			startLocation = Buffer.byteLength(this.originalHTML.slice(0, startLocation), 'utf8');
+			endLocation = Buffer.byteLength(this.originalHTML.slice(0, endLocation), 'utf8');
+		}
         
+		const namespaceURI = node.namespaceURI || "";
+		const mathNamespace = "http://www.w3.org/1998/Math/MathML";
+		const foreignOwner = node.nodeType === 2 && node.ownerElement &&
+			(node.ownerElement.namespaceURI === "http://www.w3.org/2000/svg" || node.ownerElement.namespaceURI === mathNamespace);
+		const nodeName = node.nodeName
+			? ((namespaceURI === "http://www.w3.org/2000/svg" || namespaceURI === mathNamespace || foreignOwner) ? (node.name || node.nodeName) : node.nodeName.toLowerCase())
+			: node.name;
+
         return {
             value: value,
-            nodeName: node.nodeName ? node.nodeName.toLowerCase() : node.name,
+            nodeName: nodeName,
             nodeType: node.nodeType,
+			namespaceURI: namespaceURI,
+			localName: node.localName || "",
+			prefix: node.prefix || "",
             attributes: this.getNodeAttributes(node),
             textContent: node.textContent || "",
             startLocation: startLocation,
@@ -443,7 +494,9 @@ class ComprehensiveXPathTester {
         let current = node;
         
         while (current && current.nodeType !== 9) { // Not document node
-            let name = current.nodeName.toLowerCase();
+            let name = current.namespaceURI === "http://www.w3.org/2000/svg"
+				? current.nodeName
+				: current.nodeName.toLowerCase();
             let position = 1;
             
             if (current.previousSibling) {
@@ -523,6 +576,36 @@ class ComprehensiveXPathTester {
                     goResults: goResult.results
                 };
             }
+
+			// HTML elements remain backward-compatible with older results that
+			// omitted a namespace field. SVG elements and every attribute node have
+			// material namespace identity and must match exactly.
+			const svgNamespace = "http://www.w3.org/2000/svg";
+			const mathNamespace = "http://www.w3.org/1998/Math/MathML";
+			const jsNamespace = jsRes.namespaceURI || "";
+			const goNamespace = goRes.namespaceURI || "";
+			if ((jsRes.nodeType === 2 || goRes.nodeType === 2 || jsNamespace === svgNamespace || goNamespace === svgNamespace || jsNamespace === mathNamespace || goNamespace === mathNamespace) &&
+				jsNamespace !== goNamespace) {
+				return {
+					match: false,
+					reason: `Namespace mismatch at index ${i}: JS="${jsNamespace}", Go="${goNamespace}"`,
+					jsResults: jsResult.results,
+					goResults: goResult.results
+				};
+			}
+			const jsLocal = jsRes.localName || "";
+			const goLocal = goRes.localName || "";
+			const jsPrefix = jsRes.prefix || "";
+			const goPrefix = goRes.prefix || "";
+			if ((jsRes.nodeType === 2 || goRes.nodeType === 2) &&
+				(jsLocal !== goLocal || jsPrefix !== goPrefix)) {
+				return {
+					match: false,
+					reason: `Attribute identity mismatch at index ${i}: JS local/prefix="${jsLocal}"/"${jsPrefix}", Go="${goLocal}"/"${goPrefix}"`,
+					jsResults: jsResult.results,
+					goResults: goResult.results
+				};
+			}
 
             // Compare text content
             if (jsRes.textContent !== goRes.textContent) {

@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 
@@ -26,30 +27,7 @@ type BooleanExpression struct {
 }
 
 func (b *BooleanExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
-	leftVal := b.Left.Evaluate(node, evaluator)
-
-	switch b.Operator {
-	case "or":
-		if isTruthy(leftVal) {
-			return "true"
-		}
-		rightVal := b.Right.Evaluate(node, evaluator)
-		if isTruthy(rightVal) {
-			return "true"
-		}
-		return "false"
-	case "and":
-		if !isTruthy(leftVal) {
-			return "false"
-		}
-		rightVal := b.Right.Evaluate(node, evaluator)
-		if isTruthy(rightVal) {
-			return "true"
-		}
-		return "false"
-	}
-
-	return "false"
+	return evaluateXPathValue(b, node, evaluator).legacyString()
 }
 
 func (b *BooleanExpression) String() string {
@@ -64,57 +42,7 @@ type ComparisonExpression struct {
 }
 
 func (c *ComparisonExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
-	leftVal := strings.TrimPrefix(c.Left.Evaluate(node, evaluator), NodeSetPrefix)
-	rightVal := strings.TrimPrefix(c.Right.Evaluate(node, evaluator), NodeSetPrefix)
-	Trace("Compare: '%s' %s '%s'", leftVal, c.Operator, rightVal)
-
-	// Try numeric comparison first
-	leftNum, err1 := strconv.ParseFloat(leftVal, 64)
-	rightNum, err2 := strconv.ParseFloat(rightVal, 64)
-
-	if err1 == nil && err2 == nil {
-		switch c.Operator {
-		case "=":
-			if leftNum == rightNum {
-				return "true"
-			}
-		case "!=":
-			if leftNum != rightNum {
-				return "true"
-			}
-		case "<":
-			if leftNum < rightNum {
-				return "true"
-			}
-		case ">":
-			if leftNum > rightNum {
-				return "true"
-			}
-		case "<=":
-			if leftNum <= rightNum {
-				return "true"
-			}
-		case ">=":
-			if leftNum >= rightNum {
-				return "true"
-			}
-		}
-		return "false"
-	}
-
-	// String comparison
-	switch c.Operator {
-	case "=":
-		if leftVal == rightVal {
-			return "true"
-		}
-	case "!=":
-		if leftVal != rightVal {
-			return "true"
-		}
-	}
-
-	return "false"
+	return evaluateXPathValue(c, node, evaluator).legacyString()
 }
 
 func (c *ComparisonExpression) String() string {
@@ -127,16 +55,7 @@ type ElementExpression struct {
 }
 
 func (e *ElementExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
-	if e.Name == "." {
-		return NodeSetPrefix + node.TextContent
-	}
-
-	for _, child := range node.Children {
-		if child.Type == types.ElementNode && (e.Name == "*" || child.Name == e.Name) {
-			return NodeSetPrefix + child.TextContent
-		}
-	}
-	return ""
+	return evaluateXPathValue(e, node, evaluator).legacyString()
 }
 
 func (e *ElementExpression) String() string {
@@ -150,11 +69,7 @@ type AxisExpression struct {
 }
 
 func (a *AxisExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
-	// For axis navigation in expressions, it returns true if any node matches
-	if evaluator.evaluateAxisExpression(node, fmt.Sprintf("%s::%s", a.Axis, a.NodeTest)) {
-		return "true"
-	}
-	return "false"
+	return evaluateXPathValue(a, node, evaluator).legacyString()
 }
 
 func (a *AxisExpression) String() string {
@@ -175,79 +90,7 @@ type PathExpression struct {
 }
 
 func (p *PathExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
-	var currentNodes []*types.Node
-	if p.IsAbsolute {
-		// Start from document root
-		root := node
-		for root.Parent != nil {
-			root = root.Parent
-		}
-		if p.IsDeep {
-			currentNodes = evaluator.getDescendantNodes(root, true)
-		} else {
-			currentNodes = []*types.Node{root}
-		}
-	} else {
-		currentNodes = []*types.Node{node}
-	}
-
-	for _, step := range p.Steps {
-		var nextNodes []*types.Node
-		for _, n := range currentNodes {
-			// Handle attribute step
-			if strings.HasPrefix(step.Name, "@") {
-				attrName := strings.TrimPrefix(step.Name, "@")
-				if val, exists := n.Attributes[attrName]; exists {
-					return NodeSetPrefix + val
-				}
-				continue
-			}
-
-			// Handle child axis for element step
-			candidates := evaluator.getChildNodes(n)
-
-			// Filter by name
-			var matchingNodes []*types.Node
-			for _, child := range candidates {
-				if child.Type == types.ElementNode && (step.Name == "*" || child.Name == step.Name) {
-					matchingNodes = append(matchingNodes, child)
-				}
-			}
-
-			// Apply predicates sequentially
-			currentStepNodes := matchingNodes
-			for _, predicate := range step.Predicates {
-				var filtered []*types.Node
-				for i, m := range currentStepNodes {
-					evaluator.contextPosition = i + 1
-					evaluator.contextSize = len(currentStepNodes)
-					if evaluator.evaluateSimpleCondition(m, predicate) {
-						filtered = append(filtered, m)
-					}
-				}
-				currentStepNodes = filtered
-			}
-
-			nextNodes = append(nextNodes, currentStepNodes...)
-		}
-		if len(nextNodes) == 0 && !strings.HasPrefix(step.Name, "@") {
-			return ""
-		}
-		currentNodes = nextNodes
-	}
-
-	if len(currentNodes) > 0 {
-		// Return the string value of the first node with a NodeSet marker
-		first := currentNodes[0]
-		val := ""
-		if first.Type == types.TextNode {
-			val = first.Value
-		} else {
-			val = first.TextContent
-		}
-		return NodeSetPrefix + val
-	}
-	return ""
+	return evaluateXPathValue(p, node, evaluator).legacyString()
 }
 
 func (p *PathExpression) String() string {
@@ -335,36 +178,320 @@ type ArithmeticExpression struct {
 	Right    Expression
 }
 
-func (a *ArithmeticExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
-	leftVal := strings.TrimPrefix(a.Left.Evaluate(node, evaluator), NodeSetPrefix)
-	rightVal := strings.TrimPrefix(a.Right.Evaluate(node, evaluator), NodeSetPrefix)
+// UnaryExpression represents XPath's recursive unary minus expression.
+type UnaryExpression struct {
+	Operand Expression
+}
 
-	left, _ := strconv.ParseFloat(leftVal, 64)
-	right, _ := strconv.ParseFloat(rightVal, 64)
+func (u *UnaryExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
+	return evaluateXPathValue(u, node, evaluator).legacyString()
+}
 
-	var result float64
-	switch a.Operator {
-	case "+":
-		result = left + right
-	case "-":
-		result = left - right
-	case "*":
-		result = left * right
-	case "div":
-		if right != 0 {
-			result = left / right
-		}
-	case "mod":
-		if right != 0 {
-			result = float64(int(left) % int(right))
-		}
+func (u *UnaryExpression) String() string { return "-" + u.Operand.String() }
+
+// UnionExpression retains all members of both node sets. Conversions such as
+// string(A | B) use the first member in recovered DOM document order.
+type UnionExpression struct {
+	Operands []Expression
+}
+
+func (u *UnionExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
+	return evaluateXPathValue(u, node, evaluator).legacyString()
+}
+
+func (u *UnionExpression) String() string {
+	parts := make([]string, 0, len(u.Operands))
+	for _, operand := range u.Operands {
+		parts = append(parts, operand.String())
 	}
+	return strings.Join(parts, " | ")
+}
 
-	return strconv.FormatFloat(result, 'f', -1, 64)
+func (a *ArithmeticExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
+	return evaluateXPathValue(a, node, evaluator).legacyString()
 }
 
 func (a *ArithmeticExpression) String() string {
 	return fmt.Sprintf("(%s %s %s)", a.Left.String(), a.Operator, a.Right.String())
+}
+
+func evaluateXPathValue(expression Expression, node *types.Node, evaluator *Evaluator) xpathValue {
+	switch expr := expression.(type) {
+	case *BooleanExpression:
+		left := evaluateXPathValue(expr.Left, node, evaluator)
+		if expr.Operator == "or" {
+			if left.toBoolean() {
+				return booleanValue(true)
+			}
+			return booleanValue(evaluateXPathValue(expr.Right, node, evaluator).toBoolean())
+		}
+		if expr.Operator == "and" {
+			if !left.toBoolean() {
+				return booleanValue(false)
+			}
+			return booleanValue(evaluateXPathValue(expr.Right, node, evaluator).toBoolean())
+		}
+		return booleanValue(false)
+
+	case *ComparisonExpression:
+		left := evaluateXPathValue(expr.Left, node, evaluator)
+		right := evaluateXPathValue(expr.Right, node, evaluator)
+		return booleanValue(compareTypedXPathValues(left, expr.Operator, right))
+
+	case *ElementExpression:
+		if expr.Name == "." {
+			return nodeSetValue(node)
+		}
+		nodes := make([]*types.Node, 0)
+		for _, child := range node.Children {
+			if child.Type == types.ElementNode && (expr.Name == "*" || child.Name == expr.Name) {
+				nodes = append(nodes, child)
+			}
+		}
+		return nodeSetValue(nodes...)
+
+	case *AxisExpression:
+		return nodeSetValue(evaluator.evaluateAxisNodes(node, expr.Axis, expr.NodeTest)...)
+
+	case *PathExpression:
+		return nodeSetValue(evaluatePathNodes(expr, node, evaluator)...)
+
+	case *FunctionExpression:
+		return evaluator.evaluateFunctionValue(expr.Function, node)
+
+	case *LiteralExpression:
+		return stringValue(expr.Value)
+
+	case *NumberExpression:
+		return numberValue(expr.Value)
+
+	case *AttributeExpression:
+		attributes := evaluator.getAttributeNodes(node)
+		nodes := make([]*types.Node, 0, len(attributes))
+		for _, attribute := range attributes {
+			if expr.Name == "*" || attribute.Name == expr.Name {
+				nodes = append(nodes, attribute)
+			}
+		}
+		return nodeSetValue(nodes...)
+
+	case *ArithmeticExpression:
+		left := evaluateXPathValue(expr.Left, node, evaluator).toNumber()
+		right := evaluateXPathValue(expr.Right, node, evaluator).toNumber()
+		result := math.NaN()
+		switch expr.Operator {
+		case "+":
+			result = left + right
+		case "-":
+			result = left - right
+		case "*":
+			result = left * right
+		case "div":
+			result = left / right
+		case "mod":
+			result = math.Mod(left, right)
+		}
+		return numberValue(result)
+
+	case *UnaryExpression:
+		return numberValue(-evaluateXPathValue(expr.Operand, node, evaluator).toNumber())
+
+	case *UnionExpression:
+		var nodes []*types.Node
+		type unionIdentity struct {
+			node      *types.Node
+			owner     *types.Node
+			namespace string
+			localName string
+			attribute bool
+		}
+		seen := make(map[unionIdentity]struct{})
+		for _, operand := range expr.Operands {
+			value := evaluateXPathValue(operand, node, evaluator)
+			if value.kind != nodeSetXPathValue {
+				return xpathValue{kind: invalidXPathValue}
+			}
+			for _, candidate := range value.nodes {
+				identity := unionIdentity{node: candidate}
+				if candidate.Type == types.AttributeNode {
+					localName := candidate.LocalName
+					if localName == "" {
+						localName = candidate.Name
+					}
+					identity = unionIdentity{owner: candidate.Parent, namespace: candidate.NamespaceURI, localName: localName, attribute: true}
+				} else if candidate.Origin != nil {
+					identity.node = candidate.Origin
+				}
+				if _, exists := seen[identity]; exists {
+					continue
+				}
+				seen[identity] = struct{}{}
+				nodes = append(nodes, candidate)
+			}
+		}
+		root := node
+		for root.Parent != nil {
+			root = root.Parent
+		}
+		evaluator.sortNodePointersByTreeOrder(nodes, root)
+		return nodeSetValue(nodes...)
+	}
+	return xpathValue{kind: invalidXPathValue}
+}
+
+func (evaluator *Evaluator) evaluateAxisNodes(node *types.Node, axis, nodeTest string) []*types.Node {
+	var candidates []*types.Node
+	switch axis {
+	case "parent":
+		if node.Parent != nil {
+			candidates = []*types.Node{node.Parent}
+		}
+	case "ancestor":
+		candidates = evaluator.getAncestorNodes(node, false)
+	case "ancestor-or-self":
+		candidates = evaluator.getAncestorNodes(node, true)
+		for left, right := 0, len(candidates)-1; left < right; left, right = left+1, right-1 {
+			candidates[left], candidates[right] = candidates[right], candidates[left]
+		}
+	case "following-sibling":
+		candidates = evaluator.getFollowingSiblings(node)
+	case "preceding-sibling":
+		candidates = evaluator.getPrecedingSiblings(node)
+	case "following", "preceding":
+		root := node
+		if node.Type == types.AttributeNode && node.Parent != nil {
+			root = node.Parent
+		}
+		for root.Parent != nil {
+			root = root.Parent
+		}
+		if len(evaluator.axisOrder) == 0 || evaluator.axisIndex[axisTreeIdentity(root)] == 0 && evaluator.axisOrder[0] != axisTreeIdentity(root) {
+			evaluator.prepareAxisOrder(root)
+		}
+		if axis == "following" {
+			candidates = evaluator.getFollowingNodes(node)
+		} else {
+			candidates = evaluator.getPrecedingNodes(node)
+		}
+	case "self":
+		candidates = []*types.Node{node}
+	case "child":
+		candidates = evaluator.getChildNodes(node)
+	case "descendant":
+		candidates = evaluator.getDescendantNodes(node, false)
+	case "descendant-or-self":
+		candidates = evaluator.getDescendantNodes(node, true)
+	case "attribute":
+		candidates = evaluator.getAttributeNodes(node)
+	}
+	baseTest, predicates := splitAxisNodeTest(nodeTest)
+	result := make([]*types.Node, 0, len(candidates))
+	for _, candidate := range candidates {
+		if evaluator.matchesNodeTest(candidate, baseTest) {
+			result = append(result, candidate)
+		}
+	}
+	for _, predicate := range predicates {
+		result = evaluator.applyUnifiedPredicate(result, predicate)
+	}
+	root := node
+	if node.Type == types.AttributeNode && node.Parent != nil {
+		root = node.Parent
+	}
+	for root.Parent != nil {
+		root = root.Parent
+	}
+	evaluator.sortNodePointersByTreeOrder(result, root)
+	return result
+}
+
+func splitAxisNodeTest(nodeTest string) (string, []string) {
+	start := strings.IndexByte(nodeTest, '[')
+	if start < 0 {
+		return nodeTest, nil
+	}
+	base := strings.TrimSpace(nodeTest[:start])
+	var predicates []string
+	for position := start; position < len(nodeTest); {
+		if nodeTest[position] != '[' {
+			position++
+			continue
+		}
+		contentStart, depth := position+1, 1
+		position++
+		for position < len(nodeTest) && depth > 0 {
+			switch nodeTest[position] {
+			case '[':
+				depth++
+			case ']':
+				depth--
+			}
+			position++
+		}
+		if depth == 0 {
+			predicates = append(predicates, nodeTest[contentStart:position-1])
+		}
+	}
+	return base, predicates
+}
+
+func evaluatePathNodes(path *PathExpression, node *types.Node, evaluator *Evaluator) []*types.Node {
+	oldPosition, oldSize := evaluator.contextPosition, evaluator.contextSize
+	defer func() {
+		evaluator.contextPosition, evaluator.contextSize = oldPosition, oldSize
+	}()
+	var currentNodes []*types.Node
+	if path.IsAbsolute {
+		root := node
+		for root.Parent != nil {
+			root = root.Parent
+		}
+		if path.IsDeep {
+			currentNodes = evaluator.getDescendantNodes(root, true)
+		} else {
+			currentNodes = []*types.Node{root}
+		}
+	} else {
+		currentNodes = []*types.Node{node}
+	}
+
+	for _, step := range path.Steps {
+		var nextNodes []*types.Node
+		for _, current := range currentNodes {
+			if strings.HasPrefix(step.Name, "@") {
+				name := strings.TrimPrefix(step.Name, "@")
+				for _, attribute := range evaluator.getAttributeNodes(current) {
+					if name == "*" || attribute.Name == name {
+						nextNodes = append(nextNodes, attribute)
+					}
+				}
+				continue
+			}
+			matching := make([]*types.Node, 0)
+			for _, child := range evaluator.getChildNodes(current) {
+				if child.Type == types.ElementNode && (step.Name == "*" || child.Name == step.Name) {
+					matching = append(matching, child)
+				}
+			}
+			for _, predicate := range step.Predicates {
+				filtered := make([]*types.Node, 0, len(matching))
+				for index, candidate := range matching {
+					evaluator.contextPosition = index + 1
+					evaluator.contextSize = len(matching)
+					if evaluator.evaluateSimpleCondition(candidate, predicate) {
+						filtered = append(filtered, candidate)
+					}
+				}
+				matching = filtered
+			}
+			nextNodes = append(nextNodes, matching...)
+		}
+		currentNodes = nextNodes
+		if len(currentNodes) == 0 {
+			break
+		}
+	}
+	return currentNodes
 }
 
 // isTruthy implements XPath truthiness rules

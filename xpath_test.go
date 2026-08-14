@@ -31,32 +31,20 @@ func TestQueryRejectsGzipInput(t *testing.T) {
 	}
 }
 
-func TestQueryRejectsMalformedHTML(t *testing.T) {
-	testCases := map[string]string{
-		"invalid nested attributes":           `<div><span <="">broken</span></div>`,
-		"malformed sibling":                   `<ul><li>a</li><li <=""></li><li>c</li></ul>`,
-		"unterminated element":                `<div>`,
-		"mismatched closing tag":              `<div><span></div>`,
-		"unexpected nested closing tag":       `<div></span></div>`,
-		"orphan closing tag":                  `</orphan>`,
-		"unterminated raw text":               `<script>alert(1)`,
-		"unterminated comment":                `<!--comment`,
-		"unterminated doctype":                `<!DOCTYPE html`,
-		"unterminated processing instruction": `<?xml version="1.0"`,
-		"missing attribute value":             `<div a=>`,
-		"invalid unquoted attribute value":    `<div a==b></div>`,
+func TestQueryRecoversUnterminatedElementInImplicitDocument(t *testing.T) {
+	results, err := xpath.Query(`/html/body/div`, `<div>`)
+	if err != nil || len(results) != 1 || results[0].StartLocation != 0 || results[0].EndLocation != 5 {
+		t.Fatalf("Implicit document element EOF recovery mismatch: %#v err=%v", results, err)
 	}
+}
 
-	for name, document := range testCases {
-		t.Run(name, func(t *testing.T) {
-			results, err := xpath.Query("//*", document)
-			if err == nil {
-				t.Fatalf("Expected malformed HTML error, got %d results", len(results))
-			}
-			if !strings.Contains(err.Error(), "HTML parsing failed") {
-				t.Fatalf("Expected wrapped HTML parsing error, got %q", err)
-			}
-		})
+func TestQueryIgnoresRootOrphanClosingTagLikeBrowser(t *testing.T) {
+	results, err := xpath.Query("//*", `</orphan>`)
+	if err != nil {
+		t.Fatalf("Root orphan end tag must be ignored: %v", err)
+	}
+	if len(results) != 3 || results[0].NodeName != "html" || results[1].NodeName != "head" || results[2].NodeName != "body" {
+		t.Fatalf("Root orphan end tag should emit only the implicit document skeleton: %#v", results)
 	}
 }
 
@@ -81,6 +69,41 @@ func TestQueryRecoversBogusDeclarationAtReportedOffset(t *testing.T) {
 	}
 	if declarationOffset := strings.Index(document, declaration); declarationOffset != 14738 {
 		t.Fatalf("Expected declaration at reported offset 14738, got %d", declarationOffset)
+	}
+}
+
+func TestQueryContinuesAfterRecoveredCommentsWithOriginalLocations(t *testing.T) {
+	tokens := []string{
+		`<!-->`,
+		`<!--->`,
+		`<!--foo--!>`,
+		`<!--foo<!--bar-->`,
+		`<?xml version="1.0"?>`,
+	}
+
+	for _, token := range tokens {
+		t.Run(token, func(t *testing.T) {
+			document := `<div>before` + token + `after<span id="target">payload</span></div>`
+			results, err := xpath.Query(`//span[@id='target']/text()`, document)
+			if err != nil {
+				t.Fatalf("Query returned an error: %v", err)
+			}
+			if len(results) != 1 {
+				t.Fatalf("Expected one result, got %d", len(results))
+			}
+
+			result := results[0]
+			if result.TextContent != "payload" {
+				t.Fatalf("Expected payload, got %q", result.TextContent)
+			}
+			if source := document[result.StartLocation:result.EndLocation]; source != "payload" {
+				t.Fatalf("Expected original source %q, got %q", "payload", source)
+			}
+			wantStart := strings.Index(document, "payload")
+			if result.StartLocation != wantStart || result.EndLocation != wantStart+len("payload") {
+				t.Fatalf("Expected original range %d:%d, got %d:%d", wantStart, wantStart+len("payload"), result.StartLocation, result.EndLocation)
+			}
+		})
 	}
 }
 

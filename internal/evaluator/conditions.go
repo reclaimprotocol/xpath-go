@@ -27,97 +27,27 @@ func (e *Evaluator) evaluateSimpleCondition(node *types.Node, condition string) 
 	return result
 }
 
-// Legacy simple condition evaluation - kept for compatibility
-
-// evaluateAxisExpression evaluates axis expressions like parent::div, ancestor::table
-func (e *Evaluator) evaluateAxisExpression(node *types.Node, axisExpr string) bool {
-	parts := strings.Split(axisExpr, "::")
-	if len(parts) != 2 {
-		return false
-	}
-
-	axis := strings.TrimSpace(parts[0])
-	nodeTest := strings.TrimSpace(parts[1])
-
-	switch axis {
-	case "parent":
-		if node.Parent != nil {
-			return e.matchesNodeTest(node.Parent, nodeTest)
-		}
-		return false
-
-	case "ancestor":
-		// Check if nodeTest has a positional predicate
-		if strings.Contains(nodeTest, "[") && e.hasPositionalPredicate(nodeTest) {
-			return e.evaluateAncestorWithPosition(node, nodeTest)
-		}
-
-		// Standard ancestor evaluation - any matching ancestor
-		current := node.Parent
-		for current != nil {
-			if e.matchesNodeTest(current, nodeTest) {
-				return true
-			}
-			current = current.Parent
-		}
-		return false
-
-	case "ancestor-or-self":
-		// Check self first
-		if e.matchesNodeTest(node, nodeTest) {
-			return true
-		}
-		// Then check ancestors
-		current := node.Parent
-		for current != nil {
-			if e.matchesNodeTest(current, nodeTest) {
-				return true
-			}
-			current = current.Parent
-		}
-		return false
-
-	case "following-sibling":
-		if node.Parent == nil {
-			return false
-		}
-		found := false
-		for _, sibling := range node.Parent.Children {
-			if found && e.matchesNodeTest(sibling, nodeTest) {
-				return true
-			}
-			if sibling == node {
-				found = true
-			}
-		}
-		return false
-
-	case "preceding-sibling":
-		if node.Parent == nil {
-			return false
-		}
-		for _, sibling := range node.Parent.Children {
-			if sibling == node {
-				break
-			}
-			if e.matchesNodeTest(sibling, nodeTest) {
-				return true
-			}
-		}
-		return false
-
-	case "self":
-		return e.matchesNodeTest(node, nodeTest)
-
-	default:
-		return false
-	}
-}
-
 // matchesNodeTest checks if a node matches a node test
 func (e *Evaluator) matchesNodeTest(node *types.Node, nodeTest string) bool {
 	if nodeTest == "*" {
 		return node.Type == types.ElementNode
+	}
+	if nodeTest == "node()" || nodeTest == "node" {
+		return true
+	}
+	if nodeTest == "text()" {
+		return node.Type == types.TextNode
+	}
+	if nodeTest == "comment()" {
+		return node.Type == types.CommentNode
+	}
+	if nodeTest == "processing-instruction()" || strings.HasPrefix(nodeTest, "processing-instruction(") {
+		target := ""
+		if nodeTest != "processing-instruction()" {
+			target = strings.TrimSuffix(strings.TrimPrefix(nodeTest, "processing-instruction("), ")")
+			target = strings.Trim(target, `"'`)
+		}
+		return node.Type == types.ProcessingInstructionNode && (target == "" || node.Name == target)
 	}
 
 	if strings.Contains(nodeTest, "[") {
@@ -184,56 +114,4 @@ func (e *Evaluator) isPositionalPredicate(predicate string) bool {
 	}
 
 	return false
-}
-
-// hasPositionalPredicate checks if a nodeTest contains a positional predicate
-func (e *Evaluator) hasPositionalPredicate(nodeTest string) bool {
-	idx := strings.Index(nodeTest, "[")
-	if idx == -1 {
-		return false
-	}
-
-	predicate := strings.TrimSpace(nodeTest[idx+1:])
-	predicate = strings.TrimSuffix(predicate, "]")
-
-	return e.isPositionalPredicate(predicate)
-}
-
-// evaluateAncestorWithPosition evaluates ancestor axis with positional predicates
-func (e *Evaluator) evaluateAncestorWithPosition(node *types.Node, nodeTest string) bool {
-	// Parse nodeTest to extract element name and predicate
-	idx := strings.Index(nodeTest, "[")
-	if idx == -1 {
-		return false
-	}
-
-	elementName := strings.TrimSpace(nodeTest[:idx])
-	predicate := strings.TrimSpace(nodeTest[idx+1:])
-	predicate = strings.TrimSuffix(predicate, "]")
-
-	Trace("evaluateAncestorWithPosition: elementName='%s', predicate='%s'", elementName, predicate)
-
-	// Collect all ancestor nodes that match the element name
-	// For ancestor axis with position predicates, order is from closest to farthest
-	var matchingAncestors []*types.Node
-	current := node.Parent
-	for current != nil {
-		if elementName == "*" || current.Name == elementName {
-			matchingAncestors = append(matchingAncestors, current)
-		}
-		current = current.Parent
-	}
-
-	Trace("found %d matching ancestors for element '%s'", len(matchingAncestors), elementName)
-	for i, ancestor := range matchingAncestors {
-		Trace("  ancestor[%d]: %s", i+1, ancestor.Name)
-	}
-
-	// Apply positional predicate to the collection
-	filtered := e.applyPositionalPredicate(matchingAncestors, predicate)
-
-	Trace("after position filtering: %d nodes remain", len(filtered))
-
-	// Return true if any nodes remain after position filtering
-	return len(filtered) > 0
 }

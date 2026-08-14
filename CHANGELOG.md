@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-08-14
+
+### Added
+- Added browser-style whole-document construction with implicit `html`, `head`, and `body` nodes, retained-head routing, EOF recovery, and minimal frameset handling.
+- Added HTML template content fragments with nested template modes, table integration, formatting/form isolation, and document-XPath isolation.
+- Added SVG and MathML foreign-content namespaces, integration points, breakout recovery, adjusted names, and namespaced attribute metadata.
+- Added HTML processing-instruction nodes and XPath `processing-instruction()` and `comment()` node tests.
+- Added XPath `following::` and `preceding::` axes with DOM-order semantics and reverse-axis predicate positioning.
+- Added typed XPath node-set, string, number, and boolean evaluation, including `string()`, `number()`, `boolean()`, strict coercion/comparison rules, unions in function arguments, IEEE special values, and numeric predicates.
+
+### Changed
+- Whole-document parsing now follows the browser document model: ordinary root content is placed beneath implicit HTML wrappers and empty input produces an empty document skeleton.
+- XPath node-set comparisons, conversions, unions, and axis results now preserve type, identity, and recovered DOM order instead of relying on first-value string coercion.
+- Public parser nodes now expose template content and foreign attribute namespace/local-name/prefix metadata.
+
+### Fixed
+- Expanded browser recovery for malformed start/end tags, paragraphs, lists, buttons, forms, formatting/adoption cases, tables, selects, comments, doctypes, character references, and incomplete or mismatched markup.
+- Corrected text-state handling for RCDATA, raw text, script escapes, plaintext, and initial-newline suppression in `pre` and `listing`.
+- Preserved original UTF-8 byte ranges and UTF-16-aware line/column tracking across recovered, reconstructed, foreign, and template trees.
+- Fixed attribute union identity, reverse-axis conversion order, predicate context restoration, comparison precedence, strict function arity, and overflow/`NaN`/infinity behavior.
+
+### Tests
+- Expanded the browser compatibility comparator to 878/878 passing cases.
+- Added an independent 18/18 typed XPath conversion oracle plus parser, evaluator, public API, reuse, recovery, and scaling regressions.
+- Verified the legacy `v1.4.7` test surface, the full Go suite, race detector, vet, lint, formatting, and diff checks.
+
+### Compatibility notes
+- Scripting-enabled parsing is outside this release's compatibility claim; the public default remains scripting-disabled.
+- See `docs/COMPATIBILITY.md` for the validated scope and explicitly deferred XPath/XML capabilities.
+
 ## [1.4.7] - 2026-08-13
 
 ### Fixed

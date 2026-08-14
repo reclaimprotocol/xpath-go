@@ -63,14 +63,62 @@ func (p *Parser) Parse(expression string) (*types.ParsedXPath, error) {
 	if err := p.tokenize(); err != nil {
 		return nil, fmt.Errorf("tokenization failed: %w", err)
 	}
+	if err := validateTypedConversionArities(p.tokens); err != nil {
+		return nil, fmt.Errorf("parsing failed: %w", err)
+	}
 
 	// Parse tokens into steps
 	parsed, err := p.parseExpression()
 	if err != nil {
 		return nil, fmt.Errorf("parsing failed: %w", err)
 	}
+	if p.currentToken().Type != TokenEOF {
+		return nil, fmt.Errorf("parsing failed: unexpected token %q at position %d", p.currentToken().Value, p.currentToken().Pos)
+	}
 
 	return parsed, nil
+}
+
+func validateTypedConversionArities(tokens []Token) error {
+	for index, token := range tokens {
+		if token.Type != TokenFunction || token.Value != "string" && token.Value != "number" && token.Value != "boolean" {
+			continue
+		}
+		if index+1 >= len(tokens) || tokens[index+1].Type != TokenLeftParen {
+			continue
+		}
+		depth, arguments, hasArgument := 0, 0, false
+		for cursor := index + 1; cursor < len(tokens); cursor++ {
+			switch tokens[cursor].Type {
+			case TokenLeftParen:
+				depth++
+			case TokenRightParen:
+				depth--
+				if depth == 0 {
+					if hasArgument {
+						arguments++
+					}
+					if token.Value == "boolean" && arguments != 1 {
+						return fmt.Errorf("boolean() expects exactly one argument at position %d", token.Pos)
+					}
+					if token.Value != "boolean" && arguments > 1 {
+						return fmt.Errorf("%s() expects zero or one argument at position %d", token.Value, token.Pos)
+					}
+					cursor = len(tokens)
+				}
+			case TokenComma:
+				if depth == 1 {
+					arguments++
+					hasArgument = false
+				}
+			default:
+				if depth == 1 {
+					hasArgument = true
+				}
+			}
+		}
+	}
+	return nil
 }
 
 // tokenize breaks down the XPath expression into tokens
@@ -209,8 +257,14 @@ func (p *Parser) tokenize() error {
 				continue
 			}
 
-			// Check if it's a function
-			if pos < len(expr) && expr[pos] == '(' {
+			// Check if it's a function. XPath whitespace separates tokens, so
+			// node-type tests such as "comment ( )" are equivalent to
+			// "comment()".
+			functionParen := pos
+			for functionParen < len(expr) && isWhitespace(expr[functionParen]) {
+				functionParen++
+			}
+			if functionParen < len(expr) && expr[functionParen] == '(' {
 				p.tokens = append(p.tokens, Token{TokenFunction, name, start})
 				continue
 			}
@@ -467,11 +521,26 @@ func (p *Parser) parseLocationStep() (*types.XPathStep, error) {
 		step.NodeTest = p.currentToken().Value
 		p.advance()
 	} else if p.currentToken().Type == TokenFunction {
-		step.NodeTest = p.currentToken().Value + "()"
+		functionName := p.currentToken().Value
+		step.NodeTest = functionName + "()"
 		p.advance()
 		if p.currentToken().Type == TokenLeftParen {
 			p.advance()
-			if p.currentToken().Type == TokenRightParen {
+			if functionName == "processing-instruction" {
+				if p.currentToken().Type == TokenLiteral {
+					step.NodeTest = functionName + "(" + p.currentToken().Value + ")"
+					p.advance()
+				}
+				if p.currentToken().Type != TokenRightParen {
+					return nil, fmt.Errorf("processing-instruction node test expects zero arguments or one literal at position %d", p.currentToken().Pos)
+				}
+				p.advance()
+			} else if functionName == "comment" {
+				if p.currentToken().Type != TokenRightParen {
+					return nil, fmt.Errorf("comment node test expects zero arguments at position %d", p.currentToken().Pos)
+				}
+				p.advance()
+			} else if p.currentToken().Type == TokenRightParen {
 				p.advance()
 			}
 		}

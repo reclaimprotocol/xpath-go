@@ -60,7 +60,7 @@ func (p *FunctionParser) parseOr() (Expression, error) {
 }
 
 func (p *FunctionParser) parseAnd() (Expression, error) {
-	left, err := p.parseComparison()
+	left, err := p.parseEquality()
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func (p *FunctionParser) parseAnd() (Expression, error) {
 	for {
 		p.skipWhitespace()
 		if p.match("and") {
-			right, err := p.parseComparison()
+			right, err := p.parseEquality()
 			if err != nil {
 				return nil, err
 			}
@@ -80,8 +80,8 @@ func (p *FunctionParser) parseAnd() (Expression, error) {
 	return left, nil
 }
 
-func (p *FunctionParser) parseComparison() (Expression, error) {
-	left, err := p.parseArithmetic()
+func (p *FunctionParser) parseEquality() (Expression, error) {
+	left, err := p.parseRelational()
 	if err != nil {
 		return nil, err
 	}
@@ -93,18 +93,10 @@ func (p *FunctionParser) parseComparison() (Expression, error) {
 			op = "="
 		} else if p.match("!=") {
 			op = "!="
-		} else if p.match("<=") {
-			op = "<="
-		} else if p.match(">=") {
-			op = ">="
-		} else if p.match("<") {
-			op = "<"
-		} else if p.match(">") {
-			op = ">"
 		}
 
 		if op != "" {
-			right, err := p.parseArithmetic()
+			right, err := p.parseRelational()
 			if err != nil {
 				return nil, err
 			}
@@ -112,6 +104,36 @@ func (p *FunctionParser) parseComparison() (Expression, error) {
 		} else {
 			break
 		}
+	}
+	return left, nil
+}
+
+func (p *FunctionParser) parseRelational() (Expression, error) {
+	left, err := p.parseArithmetic()
+	if err != nil {
+		return nil, err
+	}
+	for {
+		p.skipWhitespace()
+		op := ""
+		switch {
+		case p.match("<="):
+			op = "<="
+		case p.match(">="):
+			op = ">="
+		case p.match("<"):
+			op = "<"
+		case p.match(">"):
+			op = ">"
+		}
+		if op == "" {
+			break
+		}
+		right, err := p.parseArithmetic()
+		if err != nil {
+			return nil, err
+		}
+		left = &ComparisonExpression{Left: left, Operator: op, Right: right}
 	}
 	return left, nil
 }
@@ -145,7 +167,7 @@ func (p *FunctionParser) parseArithmetic() (Expression, error) {
 }
 
 func (p *FunctionParser) parseTerm() (Expression, error) {
-	left, err := p.parsePrimary()
+	left, err := p.parseUnary()
 	if err != nil {
 		return nil, err
 	}
@@ -162,7 +184,7 @@ func (p *FunctionParser) parseTerm() (Expression, error) {
 		}
 
 		if op != "" {
-			right, err := p.parsePrimary()
+			right, err := p.parseUnary()
 			if err != nil {
 				return nil, err
 			}
@@ -172,6 +194,43 @@ func (p *FunctionParser) parseTerm() (Expression, error) {
 		}
 	}
 	return left, nil
+}
+
+func (p *FunctionParser) parseUnary() (Expression, error) {
+	p.skipWhitespace()
+	if p.match("-") {
+		operand, err := p.parseUnary()
+		if err != nil {
+			return nil, err
+		}
+		return &UnaryExpression{Operand: operand}, nil
+	}
+	return p.parseUnion()
+}
+
+func (p *FunctionParser) parseUnion() (Expression, error) {
+	first, err := p.parsePrimary()
+	if err != nil {
+		return nil, err
+	}
+	operands := []Expression{first}
+	for {
+		p.skipWhitespace()
+		if p.pos >= len(p.input) || p.peek() != '|' {
+			break
+		}
+		p.pos++
+		p.skipWhitespace()
+		next, err := p.parsePrimary()
+		if err != nil {
+			return nil, err
+		}
+		operands = append(operands, next)
+	}
+	if len(operands) == 1 {
+		return first, nil
+	}
+	return &UnionExpression{Operands: operands}, nil
 }
 
 func (p *FunctionParser) parsePrimary() (Expression, error) {
@@ -398,6 +457,10 @@ func (p *FunctionParser) parseFunction() (Expression, error) {
 		}
 	}
 
+	if err := validateFunctionArity(name, len(args)); err != nil {
+		return nil, err
+	}
+
 	return &FunctionExpression{
 		Function: &FunctionCall{
 			Name:      name,
@@ -406,6 +469,20 @@ func (p *FunctionParser) parseFunction() (Expression, error) {
 			EndPos:    p.pos,
 		},
 	}, nil
+}
+
+func validateFunctionArity(name string, arguments int) error {
+	switch name {
+	case "string", "number":
+		if arguments > 1 {
+			return fmt.Errorf("%s() expects zero or one argument, got %d", name, arguments)
+		}
+	case "boolean":
+		if arguments != 1 {
+			return fmt.Errorf("boolean() expects exactly one argument, got %d", arguments)
+		}
+	}
+	return nil
 }
 
 // parseNumber parses a numeric literal
@@ -417,7 +494,9 @@ func (p *FunctionParser) parseNumber() (Expression, error) {
 
 	val, err := strconv.ParseFloat(p.input[start:p.pos], 64)
 	if err != nil {
-		return nil, err
+		if rangeErr, ok := err.(*strconv.NumError); !ok || rangeErr.Err != strconv.ErrRange {
+			return nil, err
+		}
 	}
 
 	return &NumberExpression{Value: val}, nil

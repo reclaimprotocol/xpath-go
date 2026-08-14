@@ -7,8 +7,159 @@ import (
 	"github.com/reclaimprotocol/xpath-go/pkg/types"
 )
 
-// evaluateFunction evaluates a function call using the new parser
+// evaluateFunction preserves the expression evaluator's legacy string-facing
+// API while all semantic decisions use typed XPath values internally.
 func (e *Evaluator) evaluateFunction(fn *FunctionCall, node *types.Node) string {
+	return e.evaluateFunctionValue(fn, node).legacyString()
+}
+
+func (e *Evaluator) evaluateFunctionValue(fn *FunctionCall, node *types.Node) xpathValue {
+	switch fn.Name {
+	case "string":
+		if len(fn.Arguments) == 0 {
+			return stringValue(nodeStringValue(node))
+		}
+		if len(fn.Arguments) != 1 {
+			return xpathValue{kind: invalidXPathValue}
+		}
+		return stringValue(evaluateXPathValue(fn.Arguments[0], node, e).toString())
+
+	case "number":
+		if len(fn.Arguments) == 0 {
+			return numberValue(parseXPathNumber(nodeStringValue(node)))
+		}
+		if len(fn.Arguments) != 1 {
+			return xpathValue{kind: invalidXPathValue}
+		}
+		return numberValue(evaluateXPathValue(fn.Arguments[0], node, e).toNumber())
+
+	case "boolean":
+		if len(fn.Arguments) != 1 {
+			return xpathValue{kind: invalidXPathValue}
+		}
+		return booleanValue(evaluateXPathValue(fn.Arguments[0], node, e).toBoolean())
+
+	case "true":
+		return booleanValue(true)
+	case "false":
+		return booleanValue(false)
+	case "not":
+		if len(fn.Arguments) != 1 {
+			return booleanValue(false)
+		}
+		return booleanValue(!evaluateXPathValue(fn.Arguments[0], node, e).toBoolean())
+
+	case "text":
+		if len(fn.Arguments) != 0 {
+			return nodeSetValue()
+		}
+		children := make([]*types.Node, 0)
+		for _, child := range node.Children {
+			if child.Type == types.TextNode {
+				children = append(children, child)
+			}
+		}
+		return nodeSetValue(children...)
+
+	case "count":
+		if len(fn.Arguments) != 1 {
+			return numberValue(0)
+		}
+		value := evaluateXPathValue(fn.Arguments[0], node, e)
+		if value.kind != nodeSetXPathValue {
+			return numberValue(0)
+		}
+		return numberValue(float64(len(value.nodes)))
+
+	case "position":
+		return numberValue(float64(e.contextPosition))
+	case "last":
+		return numberValue(float64(e.contextSize))
+
+	case "string-length":
+		if len(fn.Arguments) > 1 {
+			return numberValue(0)
+		}
+		value := nodeStringValue(node)
+		if len(fn.Arguments) == 1 {
+			value = evaluateXPathValue(fn.Arguments[0], node, e).toString()
+		}
+		return numberValue(float64(xpathStringLength(value)))
+
+	case "normalize-space":
+		if len(fn.Arguments) > 1 {
+			return stringValue("")
+		}
+		value := nodeStringValue(node)
+		if len(fn.Arguments) == 1 {
+			value = evaluateXPathValue(fn.Arguments[0], node, e).toString()
+		}
+		return stringValue(strings.Join(strings.Fields(value), " "))
+
+	case "contains":
+		if len(fn.Arguments) != 2 {
+			return booleanValue(false)
+		}
+		return booleanValue(strings.Contains(
+			evaluateXPathValue(fn.Arguments[0], node, e).toString(),
+			evaluateXPathValue(fn.Arguments[1], node, e).toString(),
+		))
+
+	case "starts-with":
+		if len(fn.Arguments) != 2 {
+			return booleanValue(false)
+		}
+		return booleanValue(strings.HasPrefix(
+			evaluateXPathValue(fn.Arguments[0], node, e).toString(),
+			evaluateXPathValue(fn.Arguments[1], node, e).toString(),
+		))
+
+	case "concat":
+		var result strings.Builder
+		for _, argument := range fn.Arguments {
+			result.WriteString(evaluateXPathValue(argument, node, e).toString())
+		}
+		return stringValue(result.String())
+
+	case "node":
+		return booleanValue(len(node.Children) > 0)
+	case "comment":
+		for _, child := range node.Children {
+			if child.Type == types.CommentNode {
+				return booleanValue(true)
+			}
+		}
+		return booleanValue(false)
+
+	case "local-name":
+		if len(fn.Arguments) != 0 || node.Type != types.ElementNode && node.Type != types.AttributeNode && node.Type != types.ProcessingInstructionNode {
+			return stringValue("")
+		}
+		if node.LocalName != "" {
+			return stringValue(node.LocalName)
+		}
+		return stringValue(node.Name)
+	case "name":
+		if len(fn.Arguments) != 0 || node.Type != types.ElementNode && node.Type != types.AttributeNode && node.Type != types.ProcessingInstructionNode {
+			return stringValue("")
+		}
+		return stringValue(node.Name)
+	case "namespace-uri":
+		if len(fn.Arguments) != 0 {
+			return stringValue("")
+		}
+		return stringValue(node.NamespaceURI)
+	}
+
+	// Substring retains its existing bounded implementation for this batch;
+	// its result is a string and its rounding/Unicode completion is tracked as
+	// a separate compatibility capability.
+	return stringValue(e.evaluateFunctionLegacy(fn, node))
+}
+
+// evaluateFunctionLegacy contains implementations not yet migrated away from
+// the original string-facing evaluator.
+func (e *Evaluator) evaluateFunctionLegacy(fn *FunctionCall, node *types.Node) string {
 	Trace("evaluateFunction: %s with %d arguments", fn.Name, len(fn.Arguments))
 
 	// For all function evaluations, if an argument is a node-set, its string value
@@ -137,6 +288,17 @@ func (e *Evaluator) evaluateFunction(fn *FunctionCall, node *types.Node) string 
 		}
 		return "false"
 
+	case "comment":
+		if len(fn.Arguments) != 0 {
+			return "false"
+		}
+		for _, child := range node.Children {
+			if child.Type == types.CommentNode {
+				return "true"
+			}
+		}
+		return "false"
+
 	case "count":
 		if len(fn.Arguments) != 1 {
 			return "0"
@@ -210,7 +372,41 @@ func (e *Evaluator) evaluateFunction(fn *FunctionCall, node *types.Node) string 
 		return strconv.Itoa(e.contextSize)
 
 	case "text":
-		return node.TextContent
+		// text() selects immediate text-node children. It does not use the
+		// element's aggregate string-value, which also includes descendant text.
+		for _, child := range node.Children {
+			if child.Type == types.TextNode {
+				return NodeSetPrefix + child.TextContent
+			}
+		}
+		return ""
+
+	case "local-name":
+		if len(fn.Arguments) != 0 {
+			return ""
+		}
+		if node.Type != types.ElementNode && node.Type != types.AttributeNode && node.Type != types.ProcessingInstructionNode {
+			return ""
+		}
+		if node.LocalName != "" {
+			return node.LocalName
+		}
+		return node.Name
+
+	case "name":
+		if len(fn.Arguments) != 0 {
+			return ""
+		}
+		if node.Type != types.ElementNode && node.Type != types.AttributeNode && node.Type != types.ProcessingInstructionNode {
+			return ""
+		}
+		return node.Name
+
+	case "namespace-uri":
+		if len(fn.Arguments) != 0 {
+			return ""
+		}
+		return node.NamespaceURI
 
 	case "true":
 		return "true"

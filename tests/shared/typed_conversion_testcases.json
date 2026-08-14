@@ -1,0 +1,110 @@
+[
+  {
+    "name": "string zero arguments uses the context string-value without normalizing whitespace",
+    "html": "<main><div id='context'>  alpha <span>beta</span>\n gamma  </div><div id='normalized'>alpha beta gamma</div></main>",
+    "xpath": "//div[string()='  alpha beta\n gamma  ']",
+    "want_ids": ["context"]
+  },
+  {
+    "name": "string of a node-set uses its first node in document order",
+    "html": "<main><div id='ordered'><z>first</z><a>second</a></div><div id='other'><a>second</a><z>first</z></div></main>",
+    "xpath": "//div[string(*)='first']",
+    "want_ids": ["ordered"]
+  },
+  {
+    "name": "string of empty and missing attributes is the empty string",
+    "html": "<main><input id='both' empty=''><input id='missing'></main>",
+    "xpath": "//input[string(@empty)='' and string(@missing)='']",
+    "want_ids": ["both", "missing"]
+  },
+  {
+    "name": "number zero arguments converts the context string-value",
+    "html": "<main><div id='one'> \t01\n</div><div id='two'>2</div></main>",
+    "xpath": "//div[number()=1]",
+    "want_ids": ["one"]
+  },
+  {
+    "name": "number one argument trims XPath whitespace",
+    "html": "<main><div id='match'></div></main>",
+    "xpath": "//div[number(' \t01\n')=1]",
+    "want_ids": ["match"]
+  },
+  {
+    "name": "invalid numeric strings and missing attributes become NaN",
+    "html": "<main><div id='invalid' value='not-a-number'></div><div id='missing'></div></main>",
+    "xpath": "//div[number(@value)!=number(@value)]",
+    "want_ids": ["invalid", "missing"]
+  },
+  {
+    "name": "number converts boolean values to zero and one",
+    "html": "<main><div id='match'></div></main>",
+    "xpath": "//div[number(true())=1 and number(false())=0]",
+    "want_ids": ["match"]
+  },
+  {
+    "name": "boolean distinguishes an empty attribute node-set from a missing one",
+    "html": "<main><input id='empty' empty=''><input id='missing'></main>",
+    "xpath": "//input[boolean(@empty) and not(boolean(@missing))]",
+    "want_ids": ["empty"]
+  },
+  {
+    "name": "boolean applies XPath rules to strings numbers and NaN",
+    "html": "<main><div id='match'></div></main>",
+    "xpath": "//div[not(boolean('')) and boolean('0') and not(boolean(0)) and not(boolean(number('bad')))]",
+    "want_ids": ["match"]
+  },
+  {
+    "name": "nested conversions retain their result types",
+    "html": "<main><div id='match'></div></main>",
+    "xpath": "//div[string(number(' 001.0 '))='1' and boolean(string(false()))]",
+    "want_ids": ["match"]
+  },
+  {
+    "name": "string equality does not coerce numeric-looking strings",
+    "html": "<main><div id='match'></div></main>",
+    "xpath": "//div[not('01'='1') and number('01')=number('1')]",
+    "want_ids": ["match"]
+  },
+  {
+    "name": "node-set equality uses string comparison against strings and numeric comparison against numbers",
+    "html": "<main><div id='match' code='01'></div><div id='other' code='2'></div></main>",
+    "xpath": "//div[not(@code='1') and @code=1]",
+    "want_ids": ["match"]
+  },
+  {
+    "name": "a numeric predicate result selects the matching context position",
+    "html": "<ol><li id='first' pick='2'>first</li><li id='second' pick='2'>second</li><li id='third' pick='2'>third</li></ol>",
+    "xpath": "//li[number(@pick)]",
+    "want_ids": ["second"]
+  },
+  {
+    "name": "node-set equality and inequality are independent existential comparisons",
+    "html": "<main><case id='match'><left>a</left><left>b</left><right>a</right><right>c</right></case></main>",
+    "xpath": "//case[left=right and left!=right]",
+    "want_ids": ["match"]
+  },
+  {
+    "name": "boolean comparison takes precedence over string conversion",
+    "html": "<main><div id='match'></div></main>",
+    "xpath": "//div['false'=true()]",
+    "want_ids": ["match"]
+  },
+  {
+    "name": "string of a union uses the first node in document order rather than union operand order",
+    "html": "<main id='match'><z>first</z><a>second</a></main>",
+    "xpath": "//main[string(//a | //z)='first']",
+    "want_ids": ["match"]
+  },
+  {
+    "name": "nested conversions accept a union node-set",
+    "html": "<main id='match'><z><b> 01 </b></z><a>2</a></main>",
+    "xpath": "//main[number(string((//a | //b)))=1]",
+    "want_ids": ["match"]
+  },
+  {
+    "name": "relational node-set comparison is existential and numeric",
+    "html": "<main><case id='match'><left>10</left><left>1</left><right>2</right></case></main>",
+    "xpath": "//case[left < right]",
+    "want_ids": ["match"]
+  }
+]
