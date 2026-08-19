@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1] - 2026-08-19
+
+### Fixed
+- HTML parsing now ignores any end tag whose name has no matching element in scope instead of aborting with `unexpected closing tag`, matching the browser "in body" generic end-tag rule. This recovers stray closing tags inside table and template content, where the "in table" anything-else and "in template" any-other-end-tag entries route to the same ignore rule. Previously such documents failed the whole parse and broke XPath extraction.
+
+### Tests
+- Added stray end-tag recovery regressions: a stray closing tag inside table content, outside table scope across the table boundary, inside a table cell (merged surrounding text), and a full-page portal layout asserting a nested span text query recovers.
+- Added jsdom comparator cases for all four scenarios (845/845 passing).
+- Added adjacent-attribute recovery regressions at a reported position with long attribute prefixes.
+
 ## [1.5.0] - 2026-08-14
 
 ### Added
