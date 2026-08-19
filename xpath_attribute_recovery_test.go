@@ -104,6 +104,45 @@ func TestQueryMalformedStartTagRecoveryPreservesOriginalLocations(t *testing.T) 
 	}
 }
 
+func TestQueryMalformedAdjacentAttributeAtReportedPosition(t *testing.T) {
+	const malformedAttributePosition = 1446
+	const openingPrefix = `<div data-prefix="`
+	const adjacentAttributes = `id="target"class="primary">payload</div>`
+
+	paddingLength := malformedAttributePosition - len(openingPrefix) - 1 // closing quote
+	if paddingLength < 0 {
+		t.Fatalf("test setup: prefix is longer than reported position")
+	}
+	document := openingPrefix + strings.Repeat("p", paddingLength) + `"` + adjacentAttributes
+	if got := strings.Index(document, `id="target"class`); got != malformedAttributePosition {
+		t.Fatalf("test setup: adjacent attribute starts at %d, want %d", got, malformedAttributePosition)
+	}
+
+	elements, err := xpath.Query(`//div[@id='target'][@class='primary']`, document)
+	if err != nil {
+		t.Fatalf("public XPath recovery failed: %v", err)
+	}
+	if len(elements) != 1 || elements[0].Attributes["id"] != "target" || elements[0].Attributes["class"] != "primary" {
+		t.Fatalf("expected recovered adjacent attributes, got %#v", elements)
+	}
+	if elements[0].StartLocation != 0 || elements[0].EndLocation != len(document) {
+		t.Fatalf("expected recovered div byte range 0:%d, got %d:%d", len(document), elements[0].StartLocation, elements[0].EndLocation)
+	}
+
+	results, err := xpath.Query(`//div[@id='target'][@class='primary']/text()`, document)
+	if err != nil {
+		t.Fatalf("public XPath payload recovery failed: %v", err)
+	}
+	if len(results) != 1 || results[0].TextContent != "payload" {
+		t.Fatalf("expected recovered payload text, got %#v", results)
+	}
+	result := results[0]
+	wantStart := strings.Index(document, "payload")
+	if result.StartLocation != wantStart || result.EndLocation != wantStart+len("payload") {
+		t.Fatalf("expected payload byte range %d:%d, got %d:%d", wantStart, wantStart+len("payload"), result.StartLocation, result.EndLocation)
+	}
+}
+
 func TestQueryIgnoredStartTagAtEOFUsesBrowserLocation(t *testing.T) {
 	for _, document := range []string{"before<div", "before<div id=", "before<div id='target"} {
 		t.Run(document, func(t *testing.T) {

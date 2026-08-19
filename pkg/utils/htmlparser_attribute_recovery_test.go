@@ -2,6 +2,7 @@ package utils
 
 import (
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/reclaimprotocol/xpath-go/pkg/types"
@@ -128,6 +129,43 @@ func TestParseRecoversMalformedStartTagAttributesLikeBrowser(t *testing.T) {
 				t.Fatalf("Expected exact original source %q, got %q", testCase.wantSource, source)
 			}
 		})
+	}
+}
+
+func TestParseRecoversAdjacentAttributesAfterLongPrefixAtReportedPosition(t *testing.T) {
+	const malformedAttributePosition = 1446
+	const openingPrefix = `<div data-prefix="`
+	const adjacentAttributes = `id="target"class="primary">payload</div>`
+
+	paddingLength := malformedAttributePosition - len(openingPrefix) - 1 // closing quote
+	if paddingLength < 0 {
+		t.Fatalf("test setup: prefix is longer than reported position")
+	}
+	content := openingPrefix + strings.Repeat("p", paddingLength) + `"` + adjacentAttributes
+	if got := strings.Index(content, `id="target"class`); got != malformedAttributePosition {
+		t.Fatalf("test setup: adjacent attribute starts at %d, want %d", got, malformedAttributePosition)
+	}
+
+	document, err := NewHTMLParser().Parse(content)
+	if err != nil {
+		t.Fatalf("browser-compatible adjacent-attribute recovery failed: %v", err)
+	}
+	elements := parsedBodyChildren(document)
+	if len(elements) != 1 || elements[0].Name != "div" {
+		t.Fatalf("expected one recovered div, got %#v", elements)
+	}
+	div := elements[0]
+	if div.Attributes["id"] != "target" || div.Attributes["class"] != "primary" || div.TextContent != "payload" {
+		t.Fatalf("recovered long-prefix attributes/text mismatch: %#v", div)
+	}
+	if got := div.Attributes["data-prefix"]; got != strings.Repeat("p", paddingLength) {
+		t.Fatalf("long-prefix value mismatch: got length %d, want %d", len(got), paddingLength)
+	}
+	if !reflect.DeepEqual(div.AttributeOrder, []string{"data-prefix", "id", "class"}) {
+		t.Fatalf("recovered attribute order mismatch: %#v", div.AttributeOrder)
+	}
+	if source := content[div.StartPos:div.EndPos]; source != content {
+		t.Fatalf("recovery must preserve the original node byte range, got %d:%d", div.StartPos, div.EndPos)
 	}
 }
 
