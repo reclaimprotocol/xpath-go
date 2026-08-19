@@ -864,7 +864,16 @@ func (p *HTMLParser) parseNode(parent *types.Node) (*types.Node, error) {
 				}
 				return syntheticParagraph(parent), nil
 			}
-			return nil, fmt.Errorf("unexpected closing tag </%s> at position %d", name, tokenStart)
+			// Any other end tag whose name has no matching element in scope is a
+			// parse error whose token is ignored (HTML5 "in body" generic end-tag
+			// rule, which the "in table" anything-else and "in template" any-other
+			// end-tag entries route into). This parser reaches this branch only
+			// when no element with that name is open in the current recursion
+			// chain, and any matching ancestor above a scope boundary (table, td,
+			// th, caption, template, select) is not in scope, so ignoring always
+			// matches the spec's "not in scope" branch.
+			p.extendPreviousTextRange(parent, tokenStart)
+			return nil, nil
 		}
 		return p.parseElement(parent, startPos, startLine, startCol)
 	}

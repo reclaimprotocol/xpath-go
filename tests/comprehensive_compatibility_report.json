@@ -1,6 +1,6 @@
 {
-  "total": 878,
-  "passed": 878,
+  "total": 882,
+  "passed": 882,
   "failed": 0,
   "compatibility": "100.0",
   "details": [
@@ -94256,6 +94256,316 @@
             "endLocation": 16,
             "path": "/#document/html/body/pre/#text[2]",
             "textContent": "\nx"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Stray end tag inside table ignored - cell parses",
+      "xpath": "//table/tbody/tr/td",
+      "suite": "extended",
+      "category": "end-tag-recovery",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "<td>x</td>",
+            "nodeName": "td",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "localName": "td",
+            "prefix": "",
+            "attributes": {},
+            "textContent": "x",
+            "startLocation": 11,
+            "endLocation": 21,
+            "path": "/html/body/table/tbody/tr/td"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "<td>x</td>",
+            "nodeName": "td",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "startLocation": 11,
+            "endLocation": 21,
+            "contentStart": 15,
+            "contentEnd": 16,
+            "path": "/#document/html/body/table/tbody/tr/td[2]",
+            "textContent": "x"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "<td>x</td>",
+            "nodeName": "td",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "localName": "td",
+            "prefix": "",
+            "attributes": {},
+            "textContent": "x",
+            "startLocation": 11,
+            "endLocation": 21,
+            "path": "/html/body/table/tbody/tr/td"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "<td>x</td>",
+            "nodeName": "td",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "startLocation": 11,
+            "endLocation": 21,
+            "contentStart": 15,
+            "contentEnd": 16,
+            "path": "/#document/html/body/table/tbody/tr/td[2]",
+            "textContent": "x"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Stray end tag outside table scope ignored - div keeps table",
+      "xpath": "//div/table/tbody/tr/td",
+      "suite": "extended",
+      "category": "end-tag-recovery",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "<td>x</td>",
+            "nodeName": "td",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "localName": "td",
+            "prefix": "",
+            "attributes": {},
+            "textContent": "x",
+            "startLocation": 16,
+            "endLocation": 26,
+            "path": "/html/body/div/table/tbody/tr/td"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "<td>x</td>",
+            "nodeName": "td",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "startLocation": 16,
+            "endLocation": 26,
+            "contentStart": 20,
+            "contentEnd": 21,
+            "path": "/#document/html/body/div/table/tbody/tr/td[2]",
+            "textContent": "x"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "<td>x</td>",
+            "nodeName": "td",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "localName": "td",
+            "prefix": "",
+            "attributes": {},
+            "textContent": "x",
+            "startLocation": 16,
+            "endLocation": 26,
+            "path": "/html/body/div/table/tbody/tr/td"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "<td>x</td>",
+            "nodeName": "td",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "startLocation": 16,
+            "endLocation": 26,
+            "contentStart": 20,
+            "contentEnd": 21,
+            "path": "/#document/html/body/div/table/tbody/tr/td[2]",
+            "textContent": "x"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Stray end tag inside cell ignored - merged text",
+      "xpath": "//table/tbody/tr/td",
+      "suite": "extended",
+      "category": "end-tag-recovery",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "<td>x</div>y</td>",
+            "nodeName": "td",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "localName": "td",
+            "prefix": "",
+            "attributes": {},
+            "textContent": "xy",
+            "startLocation": 11,
+            "endLocation": 28,
+            "path": "/html/body/table/tbody/tr/td"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "<td>x</div>y</td>",
+            "nodeName": "td",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "startLocation": 11,
+            "endLocation": 28,
+            "contentStart": 15,
+            "contentEnd": 23,
+            "path": "/#document/html/body/table/tbody/tr/td[2]",
+            "textContent": "xy"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "<td>x</div>y</td>",
+            "nodeName": "td",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "localName": "td",
+            "prefix": "",
+            "attributes": {},
+            "textContent": "xy",
+            "startLocation": 11,
+            "endLocation": 28,
+            "path": "/html/body/table/tbody/tr/td"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "<td>x</div>y</td>",
+            "nodeName": "td",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "startLocation": 11,
+            "endLocation": 28,
+            "contentStart": 15,
+            "contentEnd": 23,
+            "path": "/#document/html/body/table/tbody/tr/td[2]",
+            "textContent": "xy"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Portal page stray closing div recovers nested span text",
+      "xpath": "//span[@id='lblFullName']/text()",
+      "suite": "extended",
+      "category": "end-tag-recovery",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Student Name",
+            "nodeName": "#text",
+            "nodeType": 3,
+            "namespaceURI": "",
+            "localName": "",
+            "prefix": "",
+            "attributes": {},
+            "textContent": "Student Name",
+            "startLocation": 439,
+            "endLocation": 451,
+            "path": "/html/body/div/div/div/div/div[2]/span/#text"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Student Name",
+            "nodeName": "#text",
+            "nodeType": 3,
+            "startLocation": 439,
+            "endLocation": 451,
+            "path": "/#document/html/body/div/div/div/div/div[2]/span/#text[2]",
+            "textContent": "Student Name"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Student Name",
+            "nodeName": "#text",
+            "nodeType": 3,
+            "namespaceURI": "",
+            "localName": "",
+            "prefix": "",
+            "attributes": {},
+            "textContent": "Student Name",
+            "startLocation": 439,
+            "endLocation": 451,
+            "path": "/html/body/div/div/div/div/div[2]/span/#text"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Student Name",
+            "nodeName": "#text",
+            "nodeType": 3,
+            "startLocation": 439,
+            "endLocation": 451,
+            "path": "/#document/html/body/div/div/div/div/div[2]/span/#text[2]",
+            "textContent": "Student Name"
           }
         ]
       }

@@ -5905,5 +5905,33 @@
     "xpath": "//pre | //pre/node()",
     "description": "Emit the comment as a distinct node and start the following newline-x range after it without a phantom node for the stripped LF",
     "category": "html-preformatted-text"
+  },
+  {
+    "name": "Stray end tag inside table ignored - cell parses",
+    "html": "<table><tr><td>x</td></tr></div></table>",
+    "xpath": "//table/tbody/tr/td",
+    "description": "HTML5 in-table/in-body: end tag with no matching element in scope is a parse error; ignore the token. jsdom drops </div>; Go must not fail the whole parse.",
+    "category": "end-tag-recovery"
+  },
+  {
+    "name": "Stray end tag outside table scope ignored - div keeps table",
+    "html": "<div><table><tr><td>x</td></tr></div></table>",
+    "xpath": "//div/table/tbody/tr/td",
+    "description": "Table is an ordinary-scope boundary; the open div is not in scope so </div> is ignored.",
+    "category": "end-tag-recovery"
+  },
+  {
+    "name": "Stray end tag inside cell ignored - merged text",
+    "html": "<table><tr><td>x</div>y</td></tr></table>",
+    "xpath": "//table/tbody/tr/td",
+    "description": "Stray </div> inside cell content is ignored; surrounding text merges to xy.",
+    "category": "end-tag-recovery"
+  },
+  {
+    "name": "Portal page stray closing div recovers nested span text",
+    "html": "<html><body><div class=\"wrapper\"><header class=\"main-header\"><span class=\"logo-mini\">V</span></header><aside class=\"main-sidebar\"><div class=\"sidebar\"><table class=\"nav\"><tr><td>Menu</td></tr></div></table></div></aside><div class=\"content-wrapper\"><div id=\"showBox\" class=\"row\"><div class=\"card\"><div class=\"card-header\" data-background-color='pink'><i class=\"material-icons\">person</i></div><div class=\"card-body\"><span id=\"lblFullName\">Student Name</span></div></div></div></div><footer class=\"main-footer\"><strong>All rights reserved.</strong></footer></div></body></html>",
+    "xpath": "//span[@id='lblFullName']/text()",
+    "description": "Full-page layout with a stray </div> in a sidebar table must still extract nested span text.",
+    "category": "end-tag-recovery"
   }
 ]
