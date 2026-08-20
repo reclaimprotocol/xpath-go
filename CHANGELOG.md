@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-08-21
+
+### Added
+- Added charset-aware XPath evaluation for raw response bodies through `QueryBytes`, `QueryBytesWithOptions`, and compiled-expression byte APIs.
+- Added WHATWG-compatible charset labels, including Windows-1252 aliases, Shift_JIS, UTF-16, and stateful encodings.
+- XPath text and attribute matching now uses decoded Unicode while result locations continue to index the original response bytes.
+
+### Changed
+- Compiled XPath evaluations use call-scoped evaluators so compiled expressions can be shared safely across concurrent documents and options.
+- Source mapping now grows with actual mapping complexity instead of preallocating from response size.
+- Stateful decoder boundaries use field-specific raw offsets so adjacent node ranges exclude shift bytes while element content ranges retain all encoded bytes between tags.
+
+### Tests
+- Added raw-byte charset regressions covering ISO-8859-1/Windows-1252, Shift_JIS, UTF-16, BOM handling, malformed input, templates, stateful boundaries, and public API paths.
+- Added five alternate-charset Go-versus-jsdom cases to the comprehensive comparator.
+- Verified the full Go suite, race detector, vet, the charset oracle, and comprehensive compatibility coverage.
+
 ## [1.5.1] - 2026-08-19
 
 ### Fixed

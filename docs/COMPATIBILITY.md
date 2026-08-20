@@ -105,9 +105,11 @@ The generated report is
   used as an authoritative oracle for scripting-sensitive `noscript` cases,
   and no further scripting-enabled support is planned in this compatibility
   effort.
-- **Locations are UTF-8 byte offsets by design:** callers expecting JavaScript
-  UTF-16 code-unit positions must convert them. Synthetic nodes may have no
-  direct source range.
+- **Locations are original-source byte offsets by design:** for the default
+  UTF-8 path these are UTF-8 byte offsets; with `Options.Charset` they index the
+  encoded response bytes before decoding. Callers expecting JavaScript UTF-16
+  code-unit positions must convert them. Synthetic nodes may have no direct
+  source range.
 
 These boundaries should be treated as scope constraints when adding fixtures or
 evaluating production expressions; passing the current suite does not override

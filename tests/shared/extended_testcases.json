@@ -5933,5 +5933,50 @@
     "xpath": "//span[@id='lblFullName']/text()",
     "description": "Full-page layout with a stray </div> in a sidebar table must still extract nested span text.",
     "category": "end-tag-recovery"
+  },
+  {
+    "name": "Charset decoding - ISO-8859-1 text and attribute XPath",
+    "htmlBase64": "PHA+Y2Fm6TwvcD48ZGl2IHRpdGxlPSJTZfFvciI+Sm9z6TwvZGl2Pg==",
+    "charset": "iso-8859-1",
+    "xpath": "//div[contains(text(), 'José') and @title='Señor']",
+    "expectedRawLocations": [{"start": 11, "end": 40}],
+    "description": "Decode raw Latin-1 bytes before evaluating non-ASCII text and attributes while preserving the div's original byte range.",
+    "category": "charset-decoding"
+  },
+  {
+    "name": "Charset decoding - Windows-1252 smart-quote attribute",
+    "htmlBase64": "PGRpdiB0aXRsZT0ik0hvbGGUIj5vazwvZGl2Pg==",
+    "charset": "windows-1252",
+    "xpath": "//div[@title='“Hola”']/text()",
+    "expectedRawLocations": [{"start": 20, "end": 22}],
+    "description": "Decode Windows-1252 smart quotes for attribute matching and retain the selected text node's raw byte range.",
+    "category": "charset-decoding"
+  },
+  {
+    "name": "Charset decoding - ISO-8859-1 WHATWG alias maps C1 euro",
+    "htmlBase64": "PHA+gDwvcD4=",
+    "charset": "ISO-8859-1",
+    "xpath": "//p[text()='€']",
+    "expectedRawLocations": [{"start": 0, "end": 8}],
+    "description": "Apply the WHATWG ISO-8859-1 alias to Windows-1252 so byte 0x80 evaluates as the euro sign.",
+    "category": "charset-decoding"
+  },
+  {
+    "name": "Charset decoding - Shift_JIS multibyte XPath and offsets",
+    "htmlBase64": "PHA+kU88L3A+PHNwYW4gdGl0bGU9Io/ulfEiPoKgPC9zcGFuPg==",
+    "charset": "shift_jis",
+    "xpath": "//span[@title='情報' and text()='あ']",
+    "expectedRawLocations": [{"start": 9, "end": 37}],
+    "description": "Evaluate Japanese multibyte text and attributes after unrelated multibyte content while remapping the span to raw Shift_JIS bytes.",
+    "category": "charset-decoding"
+  },
+  {
+    "name": "Charset decoding - UTF-16LE BOM XPath and offsets",
+    "htmlBase64": "//48AHAAPgBNUjwALwBwAD4APABzAHAAYQBuACAAdABpAHQAbABlAD0AIgDFYDFYIgA+AEIwPAAvAHMAcABhAG4APgA=",
+    "charset": "utf-16le",
+    "xpath": "//span[@title='情報' and text()='あ']",
+    "expectedRawLocations": [{"start": 18, "end": 68}],
+    "description": "Strip a UTF-16LE BOM for logical XPath evaluation and report the selected span in original two-byte code-unit offsets.",
+    "category": "charset-decoding"
   }
 ]

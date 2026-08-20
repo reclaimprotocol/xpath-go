@@ -16,7 +16,7 @@ type TestResult struct {
 
 func main() {
 	if len(os.Args) < 3 {
-		fmt.Fprintf(os.Stderr, "Usage: %s <html_file> <xpath_file> [--trace] [--contents-only]\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Usage: %s <html_file> <xpath_file> [--trace] [--contents-only] [--charset <label>]\n", os.Args[0])
 		os.Exit(1)
 	}
 
@@ -26,6 +26,7 @@ func main() {
 	// Check for options
 	traceMode := false
 	contentsOnly := false
+	charset := ""
 
 	for i := 3; i < len(os.Args); i++ {
 		switch os.Args[i] {
@@ -33,6 +34,13 @@ func main() {
 			traceMode = true
 		case "--contents-only":
 			contentsOnly = true
+		case "--charset":
+			if i+1 >= len(os.Args) {
+				fmt.Fprintln(os.Stderr, "--charset requires a label")
+				os.Exit(2)
+			}
+			charset = os.Args[i+1]
+			i++
 		}
 	}
 
@@ -71,8 +79,6 @@ func main() {
 	}
 
 	xpathExpr := string(xpathContent)
-	html := string(htmlContent)
-
 	// Execute XPath query with panic recovery
 	var results []xpath.Result
 	var xpathErr error
@@ -83,10 +89,11 @@ func main() {
 				xpathErr = fmt.Errorf("panic during XPath execution: %v", r)
 			}
 		}()
-		results, xpathErr = xpath.QueryWithOptions(xpathExpr, html, xpath.Options{
+		results, xpathErr = xpath.QueryBytesWithOptions(xpathExpr, htmlContent, xpath.Options{
 			IncludeLocation: true,
 			OutputFormat:    "nodes",
 			ContentsOnly:    contentsOnly,
+			Charset:         charset,
 		})
 	}()
 

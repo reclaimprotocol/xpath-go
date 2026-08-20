@@ -28,7 +28,6 @@ type Result struct {
 // XPath represents a compiled XPath expression
 type XPath struct {
 	expression string
-	evaluator  *evaluator.Evaluator
 }
 
 // Options for XPath evaluation
@@ -38,6 +37,10 @@ type Options struct {
 	ContentsOnly     bool   `json:"contents_only"`     // Extract only inner content between tags
 	Debug            bool   `json:"debug"`             // Enable verbose debug logging
 	ScriptingEnabled bool   `json:"scripting_enabled"` // Parse noscript contents as RAWTEXT when true
+	// Charset is the response-body character set used for HTML parsing and
+	// XPath evaluation. Empty means tolerant UTF-8; labels use HTML/WHATWG
+	// aliases (for example, ISO-8859-1 resolves to Windows-1252).
+	Charset string `json:"charset"`
 }
 
 // Query evaluates an XPath expression against HTML/XML content
@@ -50,9 +53,29 @@ func Query(xpathExpr, content string) ([]Result, error) {
 
 // QueryWithOptions evaluates XPath with custom options
 func QueryWithOptions(xpathExpr, content string, opts Options) ([]Result, error) {
+	return QueryBytesWithOptions(xpathExpr, []byte(content), opts)
+}
+
+// QueryBytes evaluates an XPath expression against raw response bytes. It is
+// equivalent to Query(string(content)), but makes byte-oriented usage explicit.
+func QueryBytes(xpathExpr string, content []byte) ([]Result, error) {
+	return QueryBytesWithOptions(xpathExpr, content, Options{
+		IncludeLocation: true,
+		OutputFormat:    "nodes",
+	})
+}
+
+// QueryBytesWithOptions evaluates an XPath expression against raw response
+// bytes. XPath sees a decoded Unicode DOM while Result locations and full-node
+// values continue to refer to the original byte stream.
+func QueryBytesWithOptions(xpathExpr string, content []byte, opts Options) ([]Result, error) {
 	// Input validation
 	if strings.TrimSpace(xpathExpr) == "" {
 		return nil, fmt.Errorf("xpath expression cannot be empty")
+	}
+	decodedContent, mapper, err := decodeForXPath(content, opts.Charset)
+	if err != nil {
+		return nil, err
 	}
 	// Create evaluator and evaluate XPath
 	if opts.Debug {
@@ -60,13 +83,13 @@ func QueryWithOptions(xpathExpr, content string, opts Options) ([]Result, error)
 	}
 	eval := evaluator.NewEvaluator()
 	eval.SetScriptingEnabled(opts.ScriptingEnabled)
-	nodes, err := eval.Evaluate(xpathExpr, content)
+	nodes, err := eval.EvaluateWithDocument(xpathExpr, decodedContent, mapper.remapDocumentLocations)
 	if err != nil {
 		return nil, err
 	}
 
 	// Convert nodes to results
-	return convertNodesToResults(nodes, opts, content), nil
+	return convertNodesToResults(nodes, opts, string(content)), nil
 }
 
 // Compile pre-compiles an XPath expression for repeated use
@@ -77,21 +100,47 @@ func Compile(xpathExpr string) (*XPath, error) {
 
 	return &XPath{
 		expression: xpathExpr,
-		evaluator:  evaluator.NewEvaluator(),
 	}, nil
 }
 
 // Evaluate uses a pre-compiled XPath expression
 func (x *XPath) Evaluate(content string) ([]Result, error) {
-	nodes, err := x.evaluator.Evaluate(x.expression, content)
+	return x.EvaluateWithOptions(content, Options{
+		IncludeLocation: true,
+		OutputFormat:    "nodes",
+	})
+}
+
+// EvaluateWithOptions evaluates a pre-compiled XPath expression using the
+// supplied response-body decoding options.
+func (x *XPath) EvaluateWithOptions(content string, opts Options) ([]Result, error) {
+	return x.EvaluateBytesWithOptions([]byte(content), opts)
+}
+
+// EvaluateBytesWithOptions evaluates a pre-compiled XPath expression against
+// raw response bytes. See QueryBytesWithOptions for the location contract.
+func (x *XPath) EvaluateBytesWithOptions(content []byte, opts Options) ([]Result, error) {
+	if x == nil {
+		return nil, fmt.Errorf("XPath is nil")
+	}
+	decodedContent, mapper, err := decodeForXPath(content, opts.Charset)
+	if err != nil {
+		return nil, err
+	}
+	if opts.Debug {
+		EnableTrace()
+	}
+	// Evaluator owns mutable parser, tree-builder, and axis state. Keep it
+	// scoped to this call so a compiled expression remains safe to share
+	// between concurrent evaluations with different options/documents.
+	eval := evaluator.NewEvaluator()
+	eval.SetScriptingEnabled(opts.ScriptingEnabled)
+	nodes, err := eval.EvaluateWithDocument(x.expression, decodedContent, mapper.remapDocumentLocations)
 	if err != nil {
 		return nil, err
 	}
 
-	return convertNodesToResults(nodes, Options{
-		IncludeLocation: true,
-		OutputFormat:    "nodes",
-	}, content), nil
+	return convertNodesToResults(nodes, opts, string(content)), nil
 }
 
 // GetExpression returns the original XPath expression

@@ -2,7 +2,7 @@
 
 🎯 **High-compatibility XPath library for Go with precise location tracking**
 
-[![Go Version](https://img.shields.io/badge/Go-1.19%2B-blue.svg)](https://golang.org)
+[![Go Version](https://img.shields.io/badge/Go-1.24.6%2B-blue.svg)](https://golang.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Go Report Card](https://goreportcard.com/badge/github.com/reclaimprotocol/xpath-go)](https://goreportcard.com/report/github.com/reclaimprotocol/xpath-go)
 [![Coverage](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg)](https://github.com/reclaimprotocol/xpath-go)
@@ -11,12 +11,13 @@
 ## ✨ Features
 
 - 🎯 **High Compatibility** - Strives for close compatibility with jsdom's XPath evaluation
-- 📍 **Precise Location Tracking** - Character-level positioning in source HTML/XML
+- 📍 **Precise Location Tracking** - Raw-byte positioning in source HTML/XML
+- 🌐 **Response Charset Decoding** - WHATWG labels with raw-byte location preservation
 - 📄 **Dual Extraction Modes** - Extract full elements or content-only with `contentsOnly` option
 - ⚡ **High Performance** - Optimized evaluation engine with smart caching
 - 🔧 **Production Ready** - Comprehensive error handling and extensive testing
 - 🧪 **Battle Tested** - Extensively tested against reference implementations
-- 📦 **Zero Dependencies** - Pure Go implementation, no external dependencies
+- 📦 **Minimal Dependencies** - Uses Go's maintained `x/text` encoding tables
 - 🎨 **Developer Friendly** - Rich debugging support with trace logging
 
 ## 🚀 Quick Start
@@ -350,6 +351,10 @@ func Query(xpathExpr, content string) ([]Result, error)
 // Query with custom options
 func QueryWithOptions(xpathExpr, content string, opts Options) ([]Result, error)
 
+// Byte-oriented response-body evaluation
+func QueryBytes(xpathExpr string, content []byte) ([]Result, error)
+func QueryBytesWithOptions(xpathExpr string, content []byte, opts Options) ([]Result, error)
+
 // Compile XPath for reuse (performance optimization)
 func Compile(xpathExpr string) (*XPath, error)
 
@@ -366,8 +371,8 @@ type Result struct {
     NodeName      string            // Element name (div, span, etc.)
     NodeType      int               // Node type (1=element, 2=attribute, 3=text)
     Attributes    map[string]string // Element attributes
-    StartLocation int               // Character start position (full element or content-only)
-    EndLocation   int               // Character end position (full element or content-only)
+    StartLocation int               // Raw-byte start position (full element or content-only)
+    EndLocation   int               // Raw-byte end position (full element or content-only)
     ContentStart  int               // Start of inner content (after opening tag)
     ContentEnd    int               // End of inner content (before closing tag)
     Path          string            // Generated XPath path
@@ -379,11 +384,17 @@ type Result struct {
 
 ```go
 type Options struct {
-    IncludeLocation bool   // Include character positions (default: true)
-    OutputFormat    string // "nodes", "values", "paths" (default: "nodes")
-    ContentsOnly    bool   // Extract only inner content between tags (default: false)
+    IncludeLocation  bool   // Include source positions (default: true)
+    OutputFormat     string // "nodes", "values", "paths" (default: "nodes")
+    ContentsOnly     bool   // Extract only inner content between tags (default: false)
+    ScriptingEnabled bool   // Parse noscript as RAWTEXT
+    Charset          string // Explicit WHATWG response charset; empty = tolerant UTF-8
 }
 ```
+
+Charset decoding affects the logical DOM used by XPath, not the source
+coordinate system. Text and attributes are decoded Unicode, while result
+locations continue to index the original response bytes.
 
 **ContentsOnly Mode:**
 - `false` (default): Extract full elements including tags: `<div>content</div>`

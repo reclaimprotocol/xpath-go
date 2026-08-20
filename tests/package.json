@@ -6,12 +6,14 @@
   "scripts": {
     "test": "node comprehensive_compare.js",
     "test:typed-conversions": "node typed_conversions_test.js",
+    "test:charset": "node charset_oracle_test.js",
     "test:edge-cases": "node edge_cases_test.js",
-    "test:all": "npm test && npm run test:typed-conversions && npm run test:edge-cases",
+    "test:all": "npm test && npm run test:typed-conversions && npm run test:charset && npm run test:edge-cases",
     "install-deps": "npm install"
   },
   "dependencies": {
-    "jsdom": "^23.0.0"
+    "jsdom": "^23.0.0",
+    "whatwg-encoding": "^3.1.1"
   },
   "devDependencies": {},
   "keywords": ["xpath", "jsdom", "compatibility", "testing"],

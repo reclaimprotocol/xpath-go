@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 const { JSDOM } = require('jsdom');
+const whatwgEncoding = require('whatwg-encoding');
 
 // Comprehensive XPath compatibility tester
 class ComprehensiveXPathTester {
@@ -163,6 +164,12 @@ class ComprehensiveXPathTester {
     }
 
     getHtmlContent(testCase) {
+        // Raw encoded fixtures are stored as base64 so JSON never coerces
+        // invalid UTF-8 bytes before either implementation sees them.
+        if (testCase.htmlBase64) {
+            return Buffer.from(testCase.htmlBase64, 'base64');
+        }
+
         // If filepath is specified, load HTML from file
         if (testCase.filepath) {
             // Handle both absolute and relative paths
@@ -180,7 +187,7 @@ class ComprehensiveXPathTester {
             if (!fs.existsSync(fullPath)) {
                 throw new Error(`HTML file not found: ${fullPath}`);
             }
-            return fs.readFileSync(fullPath, 'utf8');
+            return testCase.charset ? fs.readFileSync(fullPath) : fs.readFileSync(fullPath, 'utf8');
         }
         
         // Otherwise use inline HTML
@@ -223,7 +230,7 @@ class ComprehensiveXPathTester {
         // Get HTML content - either from inline html field or from filepath
         const htmlContent = this.getHtmlContent(testCase);
         
-        const jsResult = this.runJavaScriptTest(testCase.xpath, htmlContent, contentsOnly);
+        const jsResult = this.runJavaScriptTest(testCase.xpath, htmlContent, contentsOnly, testCase);
         const goResult = this.runGoTest(testCase.xpath, htmlContent, contentsOnly, testCase);
         
         const comparison = this.compareResults(jsResult, goResult, testCase);
@@ -241,10 +248,11 @@ class ComprehensiveXPathTester {
         };
     }
 
-    runJavaScriptTest(xpath, html, contentsOnly = false) {
+    runJavaScriptTest(xpath, html, contentsOnly = false, testCase = null) {
         try {
+            const charset = testCase && testCase.charset ? testCase.charset : null;
             const dom = new JSDOM(html, {
-                contentType: 'text/html',
+                contentType: charset ? `text/html; charset=${charset}` : 'text/html',
                 includeNodeLocations: true
             });
             const document = dom.window.document;
@@ -252,7 +260,15 @@ class ComprehensiveXPathTester {
             
             // Store reference to dom and original HTML for position lookups
             this.currentDom = dom;
-            this.originalHTML = html;
+            if (Buffer.isBuffer(html)) {
+                const encoding = whatwgEncoding.labelToName(charset || 'utf-8');
+                if (!encoding) {
+                    throw new Error(`WHATWG does not recognize charset label ${charset}`);
+                }
+                this.originalHTML = whatwgEncoding.decode(html, encoding);
+            } else {
+                this.originalHTML = html;
+            }
             this.contentsOnly = contentsOnly;
             
             const xpathResult = document.evaluate(
@@ -293,6 +309,20 @@ class ComprehensiveXPathTester {
                         path: "/string-result"
                     });
                     break;
+            }
+
+            // jsdom locations index the decoded JavaScript string. Alternate-
+            // charset fixtures provide independent raw-byte expectations so
+            // the comparator can validate xpath-go's source remapping without
+            // pretending decoded UTF-16 offsets are raw response offsets.
+            if (testCase && testCase.expectedRawLocations) {
+                if (testCase.expectedRawLocations.length !== results.length) {
+                    throw new Error(`Expected ${testCase.expectedRawLocations.length} raw locations, got ${results.length} jsdom results`);
+                }
+                results.forEach((result, index) => {
+                    result.startLocation = testCase.expectedRawLocations[index].start;
+                    result.endLocation = testCase.expectedRawLocations[index].end;
+                });
             }
 
             return {
@@ -343,7 +373,8 @@ class ComprehensiveXPathTester {
             }
             const traceFlag = this.options.trace ? '--trace' : '';
             const contentsOnlyFlag = contentsOnly ? '--contents-only' : '';
-            const cmd = `"${this.goTestBinary}" "${htmlFile}" "${xpathFile}" ${traceFlag} ${contentsOnlyFlag}`;
+            const charsetFlag = testCase && testCase.charset ? `--charset "${testCase.charset}"` : '';
+            const cmd = `"${this.goTestBinary}" "${htmlFile}" "${xpathFile}" ${traceFlag} ${contentsOnlyFlag} ${charsetFlag}`;
             
             let output;
             for (let attempt = 0; attempt < 2; attempt++) {

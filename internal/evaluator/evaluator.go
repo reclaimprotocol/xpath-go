@@ -39,6 +39,15 @@ func (e *Evaluator) SetScriptingEnabled(enabled bool) {
 
 // Evaluate evaluates an XPath expression against HTML/XML content
 func (e *Evaluator) Evaluate(xpathExpr, content string) ([]types.Node, error) {
+	return e.EvaluateWithDocument(xpathExpr, content, nil)
+}
+
+// EvaluateWithDocument evaluates an XPath expression after parsing content and
+// before evaluating it. prepareDocument is intended for callers that maintain
+// a source view separate from the parser input (for example, a decoded
+// character-set view) and need to adjust source locations on the parsed tree.
+// It must not change the DOM structure or text used for XPath evaluation.
+func (e *Evaluator) EvaluateWithDocument(xpathExpr, content string, prepareDocument func(*types.Node)) ([]types.Node, error) {
 	// Parse XPath expression
 	parsedXPath, err := e.parser.Parse(xpathExpr)
 	if err != nil {
@@ -49,6 +58,9 @@ func (e *Evaluator) Evaluate(xpathExpr, content string) ([]types.Node, error) {
 	documentNode, err := e.htmlParser.Parse(content)
 	if err != nil {
 		return nil, fmt.Errorf("HTML parsing failed: %w", err)
+	}
+	if prepareDocument != nil {
+		prepareDocument(documentNode)
 	}
 	e.prepareAxisOrder(documentNode)
 

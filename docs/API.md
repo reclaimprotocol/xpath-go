@@ -66,6 +66,29 @@ results, err := xpath.QueryWithOptions("//p", html, xpath.Options{
 })
 ```
 
+### QueryBytes and QueryBytesWithOptions
+
+```go
+func QueryBytes(xpathExpr string, content []byte) ([]Result, error)
+func QueryBytesWithOptions(xpathExpr string, content []byte, opts Options) ([]Result, error)
+```
+
+These byte-oriented variants are intended for HTTP response bodies. When
+`opts.Charset` is set, XPath evaluates a decoded Unicode DOM while all location
+fields remain byte offsets into `content`. Full-node `Result.Value` also
+preserves the original source bytes in its Go string. For stateful encodings,
+zero-output shift bytes between adjacent nodes belong to neither full-node
+range; `ContentStart:ContentEnd` still includes every encoded byte physically
+between an element's opening and closing tags.
+
+```go
+results, err := xpath.QueryBytesWithOptions(
+    `//div[@title='Información']`,
+    responseBody,
+    xpath.Options{Charset: "iso-8859-1"},
+)
+```
+
 ### Compile
 
 ```go
@@ -121,8 +144,8 @@ type Result struct {
 - `NodeName`: HTML/XML element name (e.g., "div", "span", "a")
 - `NodeType`: Node type constant (1=element, 2=attribute, 3=text)
 - `Attributes`: Map of element attributes
-- `StartLocation`: Character position where extraction starts (full element or content-only based on ContentsOnly option)
-- `EndLocation`: Character position where extraction ends (full element or content-only based on ContentsOnly option)
+- `StartLocation`: Raw-byte position where extraction starts (full element or content-only based on ContentsOnly option)
+- `EndLocation`: Raw-byte position where extraction ends (full element or content-only based on ContentsOnly option)
 - `ContentStart`: Start of inner content (after opening tag), always available for fine-grained control
 - `ContentEnd`: End of inner content (before closing tag), always available for fine-grained control  
 - `Path`: Generated XPath path to this node
@@ -160,6 +183,16 @@ Evaluates the compiled XPath against new content.
 - `[]Result`: Matching results
 - `error`: Evaluation error
 
+#### EvaluateWithOptions and EvaluateBytesWithOptions
+
+```go
+func (x *XPath) EvaluateWithOptions(content string, opts Options) ([]Result, error)
+func (x *XPath) EvaluateBytesWithOptions(content []byte, opts Options) ([]Result, error)
+```
+
+These methods provide the same charset and byte-oriented behavior for a
+compiled expression. A compiled `XPath` may be shared by concurrent callers.
+
 #### GetExpression
 
 ```go
@@ -177,9 +210,12 @@ Configuration options for XPath evaluation.
 
 ```go
 type Options struct {
-    IncludeLocation bool   `json:"include_location"`
-    OutputFormat    string `json:"output_format"`
-    ContentsOnly    bool   `json:"contents_only"`
+    IncludeLocation  bool   `json:"include_location"`
+    OutputFormat     string `json:"output_format"`
+    ContentsOnly     bool   `json:"contents_only"`
+    Debug            bool   `json:"debug"`
+    ScriptingEnabled bool   `json:"scripting_enabled"`
+    Charset          string `json:"charset"`
 }
 ```
 
@@ -187,6 +223,16 @@ type Options struct {
 - `IncludeLocation`: Include character position tracking (default: true)
 - `OutputFormat`: Result format - "nodes", "values", or "paths" (default: "nodes") 
 - `ContentsOnly`: Extract only inner content between tags (default: false)
+- `Charset`: Explicit WHATWG response-charset label. Empty means tolerant
+  UTF-8. For example, the `iso-8859-1` label follows web behavior and resolves
+  to Windows-1252.
+
+The library does not inspect HTTP headers or perform `<meta charset>` sniffing;
+pass the charset resolved by the response-handling layer.
+
+`TextContent` and attribute values are decoded Unicode. `StartLocation`,
+`EndLocation`, `ContentStart`, and `ContentEnd` always index the original raw
+response bytes, even when decoding changes byte widths.
 
 **Output Formats:**
 - `"nodes"`: Full node information with metadata (default)
@@ -236,7 +282,7 @@ All errors implement the standard Go `error` interface and provide descriptive m
 
 ```go
 // Get library version
-version := xpath.Version        // "1.5.0"
+version := xpath.Version        // "1.6.0"
 apiVersion := xpath.APIVersion  // "v1"
 
 // Get build information
