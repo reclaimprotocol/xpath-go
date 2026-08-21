@@ -2,7 +2,7 @@
 
 🎯 **High-compatibility XPath library for Go with precise location tracking**
 
-[![Go Version](https://img.shields.io/badge/Go-1.24.6%2B-blue.svg)](https://golang.org)
+[![Go Version](https://img.shields.io/badge/Go-1.21%2B-blue.svg)](https://golang.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Go Report Card](https://goreportcard.com/badge/github.com/reclaimprotocol/xpath-go)](https://goreportcard.com/report/github.com/reclaimprotocol/xpath-go)
 [![Coverage](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg)](https://github.com/reclaimprotocol/xpath-go)

@@ -26,7 +26,7 @@ func loadTypedConversionCases(t *testing.T) []typedConversionCase {
 	if !ok {
 		t.Fatal("could not locate typed conversion test source")
 	}
-	data, err := os.ReadFile(filepath.Join(filepath.Dir(filename), "tests", "shared", "typed_conversion_testcases.json"))
+	data, err := os.ReadFile(filepath.Join(filepath.Dir(filename), "..", "shared", "typed_conversion_testcases.json"))
 	if err != nil {
 		t.Fatal(err)
 	}

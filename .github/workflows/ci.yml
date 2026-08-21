@@ -16,7 +16,9 @@ permissions:
   pull-requests: read
 
 env:
+  MIN_GO_VERSION: '1.21.x'
   GO_VERSION: '1.24.6'
+  GOTOOLCHAIN: 'local'
   NODE_VERSION: '20'
 
 jobs:
@@ -25,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: ['1.24.6']
+        go-version: ['1.21.x', '1.22.x', '1.24.6']
     
     steps:
     - uses: actions/checkout@v4
@@ -68,7 +70,7 @@ jobs:
         fi
     
     - name: Run tests
-      run: go test -v -coverprofile=coverage.out ./...
+      run: go test -v -coverpkg=./... -coverprofile=coverage.out ./...
 
     - name: Run race detector
       run: go test -race ./...
@@ -111,7 +113,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: ${{ env.GO_VERSION }}
+        go-version: ${{ env.MIN_GO_VERSION }}
     
     - name: Set up Node.js
       uses: actions/setup-node@v4

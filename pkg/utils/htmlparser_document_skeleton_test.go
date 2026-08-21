@@ -697,7 +697,7 @@ func TestParseExplicitDocumentSkeletonScalesNearLinearly(t *testing.T) {
 	}
 	best := func(count int) time.Duration {
 		bestDuration := time.Duration(1<<63 - 1)
-		for range 2 {
+		for attempt := 0; attempt < 2; attempt++ {
 			if elapsed := measure(count); elapsed < bestDuration {
 				bestDuration = elapsed
 			}
