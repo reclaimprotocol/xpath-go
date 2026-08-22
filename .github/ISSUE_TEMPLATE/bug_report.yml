@@ -1,0 +1,66 @@
+name: Bug report
+description: Report a reproducible problem in xpath-go.
+title: "bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to report a bug. Do not report security
+        vulnerabilities here; use the security policy instead.
+  - type: input
+    id: version
+    attributes:
+      label: xpath-go version or commit
+      description: Include the module version, release tag, or commit SHA.
+      placeholder: v1.6.0
+    validations:
+      required: true
+  - type: input
+    id: go-version
+    attributes:
+      label: Go version and platform
+      description: Paste the relevant `go version` output.
+      placeholder: go version go1.21.x darwin/arm64
+    validations:
+      required: true
+  - type: textarea
+    id: xpath
+    attributes:
+      label: XPath expression
+      description: Include the smallest expression that shows the problem.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: input
+    attributes:
+      label: Minimal input document
+      description: Redact sensitive data. Include the smallest HTML or byte-input example.
+      render: html
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction and actual result
+      description: Include a runnable Go snippet or exact command and its output.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+      description: Explain the expected behavior and any relevant specification or browser comparison.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched existing issues and reviewed the compatibility documentation.
+          required: true
+        - label: This report contains no credentials, private data, or unpatched security details.
+          required: true

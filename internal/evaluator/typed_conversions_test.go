@@ -26,14 +26,14 @@ func typedConversionContext() *types.Node {
 
 func evaluateTypedExpression(t *testing.T, node *types.Node, expression string) string {
 	t.Helper()
-	result, err := NewExpressionEvaluator(NewEvaluator()).EvaluateExpression(expression, node)
+	parsed, err := parseXPath(expression)
 	if err != nil {
-		t.Fatalf("EvaluateExpression(%q): %v", expression, err)
+		t.Fatalf("Parse(%q): %v", expression, err)
 	}
-	return result
+	return evaluateXPathValue(parsed, node, NewEvaluator()).legacyString()
 }
 
-func TestFunctionParserPreservesTypedConversionStructure(t *testing.T) {
+func TestUnifiedParserPreservesTypedConversionStructure(t *testing.T) {
 	checks := []struct {
 		expression string
 		name       string
@@ -45,7 +45,7 @@ func TestFunctionParserPreservesTypedConversionStructure(t *testing.T) {
 	}
 
 	for _, check := range checks {
-		expression, err := NewFunctionParser(check.expression).Parse()
+		expression, err := parseXPath(check.expression)
 		if err != nil {
 			t.Fatalf("Parse(%q): %v", check.expression, err)
 		}
@@ -55,7 +55,7 @@ func TestFunctionParserPreservesTypedConversionStructure(t *testing.T) {
 		}
 	}
 
-	expression, err := NewFunctionParser(`'01'='1'`).Parse()
+	expression, err := parseXPath(`'01'='1'`)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -71,14 +71,14 @@ func TestFunctionParserPreservesTypedConversionStructure(t *testing.T) {
 	}
 }
 
-func TestFunctionParserRejectsInvalidTypedConversionArity(t *testing.T) {
+func TestUnifiedParserRejectsInvalidTypedConversionArity(t *testing.T) {
 	for _, expression := range []string{
 		`string('a', 'b')`,
 		`number(1, 2)`,
 		`boolean()`,
 		`boolean(true(), false())`,
 	} {
-		if _, err := NewFunctionParser(expression).Parse(); err == nil {
+		if _, err := parseXPath(expression); err == nil {
 			t.Errorf("Parse(%q) succeeded, want XPath function arity error", expression)
 		}
 	}

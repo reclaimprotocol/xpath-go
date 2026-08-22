@@ -1,0 +1,30 @@
+name: Support or documentation question
+description: Ask a question that could improve xpath-go’s public documentation.
+title: "question: "
+labels: [question]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Check README, API, compatibility, and support documentation before filing.
+        Do not include secrets or security vulnerabilities.
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: State what you are trying to accomplish and where the documentation was unclear.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Minimal context
+      description: Include xpath-go version, Go version, XPath expression, and a redacted input sample if relevant.
+      render: text
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I reviewed the existing documentation and searched open issues.
+          required: true

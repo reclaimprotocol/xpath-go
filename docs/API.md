@@ -19,11 +19,11 @@ Complete API documentation for xpath-go library.
 func Query(xpathExpr, content string) ([]Result, error)
 ```
 
-Evaluates an XPath expression against HTML/XML content with default options.
+Evaluates an XPath expression against browser-recovered HTML with default options.
 
 **Parameters:**
 - `xpathExpr`: XPath expression string (e.g., "//div[@class='content']")
-- `content`: HTML/XML content to query against
+- `content`: HTML content to query against
 
 **Returns:**
 - `[]Result`: Slice of matching results with location tracking
@@ -50,7 +50,7 @@ Evaluates XPath with custom options for advanced control.
 
 **Parameters:**
 - `xpathExpr`: XPath expression string
-- `content`: HTML/XML content to query
+- `content`: HTML content to query
 - `opts`: Options struct for customization
 
 **Returns:**
@@ -95,7 +95,9 @@ results, err := xpath.QueryBytesWithOptions(
 func Compile(xpathExpr string) (*XPath, error)
 ```
 
-Pre-compiles an XPath expression for repeated use (performance optimization).
+Parses and validates an XPath expression, returning a reusable compiled value
+for repeated evaluation. Compilation does not parse or evaluate the HTML
+documents passed to `Evaluate`.
 
 **Parameters:**
 - `xpathExpr`: XPath expression to compile
@@ -122,7 +124,8 @@ for _, doc := range documents {
 
 ### Result
 
-Represents a single XPath query result with complete metadata.
+Represents a single XPath query result. Location metadata is populated only
+when requested by `Options.IncludeLocation`.
 
 ```go
 type Result struct {
@@ -141,13 +144,13 @@ type Result struct {
 
 **Fields:**
 - `Value`: Primary value of the node (varies by OutputFormat)
-- `NodeName`: HTML/XML element name (e.g., "div", "span", "a")
+- `NodeName`: HTML element name (e.g., "div", "span", "a")
 - `NodeType`: Node type constant (1=element, 2=attribute, 3=text)
 - `Attributes`: Map of element attributes
-- `StartLocation`: Raw-byte position where extraction starts (full element or content-only based on ContentsOnly option)
-- `EndLocation`: Raw-byte position where extraction ends (full element or content-only based on ContentsOnly option)
-- `ContentStart`: Start of inner content (after opening tag), always available for fine-grained control
-- `ContentEnd`: End of inner content (before closing tag), always available for fine-grained control  
+- `StartLocation`: Raw-byte position where extraction starts when location tracking is enabled (full element or content-only based on ContentsOnly option)
+- `EndLocation`: Raw-byte position where extraction ends when location tracking is enabled (full element or content-only based on ContentsOnly option)
+- `ContentStart`: Start of inner content (after opening tag) when location tracking is enabled
+- `ContentEnd`: End of inner content (before closing tag) when location tracking is enabled
 - `Path`: Generated XPath path to this node
 - `TextContent`: Combined text content of node and all children
 
@@ -177,7 +180,7 @@ func (x *XPath) Evaluate(content string) ([]Result, error)
 Evaluates the compiled XPath against new content.
 
 **Parameters:**
-- `content`: HTML/XML content string
+- `content`: HTML content string
 
 **Returns:**
 - `[]Result`: Matching results
@@ -220,7 +223,10 @@ type Options struct {
 ```
 
 **Fields:**
-- `IncludeLocation`: Include character position tracking (default: true)
+- `IncludeLocation`: Populate source-location fields. `Query`, `QueryBytes`,
+  and `(*XPath).Evaluate` enable this in their convenience defaults; the
+  zero-value `Options{}` used with a `*WithOptions` API leaves location fields
+  at zero. This option is for callers that do not need source coordinates.
 - `OutputFormat`: Result format - "nodes", "values", or "paths" (default: "nodes") 
 - `ContentsOnly`: Extract only inner content between tags (default: false)
 - `Charset`: Explicit WHATWG response-charset label. Empty means tolerant
@@ -230,9 +236,9 @@ type Options struct {
 The library does not inspect HTTP headers or perform `<meta charset>` sniffing;
 pass the charset resolved by the response-handling layer.
 
-`TextContent` and attribute values are decoded Unicode. `StartLocation`,
-`EndLocation`, `ContentStart`, and `ContentEnd` always index the original raw
-response bytes, even when decoding changes byte widths.
+`TextContent` and attribute values are decoded Unicode. When location tracking
+is enabled, `StartLocation`, `EndLocation`, `ContentStart`, and `ContentEnd`
+index the original raw response bytes, even when decoding changes byte widths.
 
 **Output Formats:**
 - `"nodes"`: Full node information with metadata (default)
@@ -282,7 +288,7 @@ All errors implement the standard Go `error` interface and provide descriptive m
 
 ```go
 // Get library version
-version := xpath.Version        // "1.6.0"
+version := xpath.Version        // "1.7.0"
 apiVersion := xpath.APIVersion  // "v1"
 
 // Get build information
@@ -423,7 +429,7 @@ for _, result := range results {
 
 ## Thread Safety
 
-All functions in the xpath-go library are **thread-safe** and can be used concurrently:
+Package-level queries and compiled XPath evaluation can be used concurrently:
 
 ```go
 var wg sync.WaitGroup
@@ -440,6 +446,10 @@ for i := 0; i < 10; i++ {
 
 wg.Wait()
 ```
+
+`pkg/utils.HTMLParser` is reusable sequentially, but a parser instance owns
+mutable per-document state. Do not call `Parse` concurrently on the same
+instance; create one parser per concurrent parse operation.
 
 ## Best Practices
 
@@ -459,10 +469,10 @@ wg.Wait()
    }
    ```
 
-2. **Disable location tracking for performance-critical code:**
+2. **Disable location tracking when coordinates are not needed:**
    ```go
    results, err := xpath.QueryWithOptions(expr, html, xpath.Options{
-       IncludeLocation: false,  // Faster processing
+       IncludeLocation: false,  // Location fields are unavailable
    })
    ```
 

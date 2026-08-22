@@ -82,3 +82,61 @@ func TestParseManyTextStateElementsScalesNearLinearly(t *testing.T) {
 		t.Fatalf("Text-state parsing scales quadratically: 4x input took %.1fx longer (%s -> %s)", float64(large)/float64(small), small, large)
 	}
 }
+
+func TestParseLongPlainTextPreservesContentAndLocations(t *testing.T) {
+	const repeats = 4096
+	const unit = "plain-text-🙂 " // 14 UTF-16 code units.
+	content := strings.Repeat(unit, repeats)
+	document, err := NewHTMLParser().Parse(content)
+	if err != nil {
+		t.Fatalf("Parse returned an error: %v", err)
+	}
+	children := parsedBodyChildren(document)
+	if len(children) != 1 || children[0].Type != types.TextNode {
+		t.Fatalf("Expected one body text node, got %#v", children)
+	}
+	text := children[0]
+	if text.Value != content || text.TextContent != content {
+		t.Fatalf("Long plain-text content was not preserved")
+	}
+	if text.StartPos != 0 || text.EndPos != len(content) || text.StartLine != 1 || text.StartColumn != 1 || text.EndLine != 1 || text.EndColumn != 1+14*repeats {
+		t.Fatalf("Unexpected long text range: %#v", text)
+	}
+}
+
+func TestParseLongPlainTextScalesNearLinearly(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping long plain-text scaling regression in short mode")
+	}
+
+	measure := func(repeats int) time.Duration {
+		content := strings.Repeat("plain-text-0123456789 ", repeats)
+		started := time.Now()
+		document, err := NewHTMLParser().Parse(content)
+		elapsed := time.Since(started)
+		if err != nil {
+			t.Fatalf("Parse(%d repeats) returned an error: %v", repeats, err)
+		}
+		children := parsedBodyChildren(document)
+		if len(children) != 1 || children[0].Value != content {
+			t.Fatalf("Parse(%d repeats) did not preserve its text node", repeats)
+		}
+		return elapsed
+	}
+
+	// The previous append-by-concatenation loop copied the accumulated string
+	// for every rune. A 4x input should stay well below that quadratic curve.
+	_ = measure(256)
+	minOfTwo := func(repeats int) time.Duration {
+		first, second := measure(repeats), measure(repeats)
+		if first < second {
+			return first
+		}
+		return second
+	}
+	small, large := minOfTwo(1024), minOfTwo(4096)
+	t.Logf("parsed long plain text 1024=%v 4096=%v ratio=%.1fx", small, large, float64(large)/float64(small))
+	if large > 10*small && large-small > 50*time.Millisecond {
+		t.Fatalf("Long plain-text parsing scaled quadratically: 4x input took %.1fx longer (%s -> %s)", float64(large)/float64(small), small, large)
+	}
+}

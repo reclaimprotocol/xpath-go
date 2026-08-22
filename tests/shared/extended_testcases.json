@@ -5935,6 +5935,13 @@
     "category": "end-tag-recovery"
   },
   {
+    "name": "Student portal page stray closing div recovers student name span",
+    "html": "<html><body><form id=\"form1\"><div class=\"header\"><div class=\"nav\"><a href=\"payments.aspx\">Pay Online</a></div></div><div class=\"sidebar\"><table class=\"menu\"><tr><td>Home</td></tr><tr><td>Results</td></tr></div></table></div><div class=\"content\"><div class=\"profile\"><span id=\"stname\">Student Name</span><span id=\"senroll\">12345</span></div></div></form></body></html>",
+    "xpath": "//span[@id='stname']/text()",
+    "description": "ASP.NET student portal with a stray </div> in a sidebar menu table must still extract the student-name span text.",
+    "category": "end-tag-recovery"
+  },
+  {
     "name": "Charset decoding - ISO-8859-1 text and attribute XPath",
     "htmlBase64": "PHA+Y2Fm6TwvcD48ZGl2IHRpdGxlPSJTZfFvciI+Sm9z6TwvZGl2Pg==",
     "charset": "iso-8859-1",

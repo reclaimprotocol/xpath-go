@@ -49,7 +49,7 @@ conformance.
 
 ### Validation infrastructure
 
-- Expanded the browser comparator from 120 to 878 cases (37 original and 841
+- Expanded the browser comparator from 120 to 888 cases (37 original and 851
   extended), covering parser recovery, XPath behavior, namespaces, node kinds,
   locations, and full-element/content-only output.
 - Added an independent 18-case jsdom oracle for typed XPath conversions and
@@ -61,35 +61,26 @@ conformance.
 
 ## Validation evidence
 
-Fresh validation was run on **2026-08-14** from the repository root unless a
+Fresh validation was run on **2026-08-22** from the repository root unless a
 command says otherwise.
 
 | Check | Result |
 |---|---|
-| Legacy tracked tests | PASS: all 18 top-level tests present at `HEAD` (8 public API and 10 parser tests, including their subtests) passed against the accumulated implementation |
 | `go test -count=1 ./...` | PASS: all packages |
-| `go test -race -count=1 ./...` | PASS: all packages on the final rerun; see timing note below |
-| `npm test` in `tests/` | PASS: 878/878 matched jsdom; 37/37 original and 841/841 extended |
+| `go test -race -count=1 ./...` | PASS: all packages |
+| `npm run test:all` in `tests/` | PASS: runner unit checks; 888/888 jsdom compatibility; 18 typed-conversion and 3 charset oracle cases; the separate intentional edge-case suite reported its 2 expected differences and 0 unexpected failures |
 | `npm run test:typed-conversions` in `tests/` | PASS: 18/18 browser-oracle cases |
 | `go vet ./...` | PASS |
-| `golangci-lint run` | PASS: 0 issues (golangci-lint 2.3.1) |
+| `golangci-lint run --enable=unused` | PASS: 0 issues |
 | `gofmt -l` over all Go files | PASS: no files reported |
 | `git diff --check` | PASS |
-
-The final full race-instrumented rerun passed. During the independent audit, an
-earlier race run reported no data race but one performance-ratio assertion
-(`TestParseTableAdoptionScaling`) measured 10.0x for a 4x input and failed its
-timing threshold. That test passed three consecutive non-race runs, and the race
-suite excluding only that timing assertion also passed. This is recorded as an
-instrumentation-sensitive benchmark flake, not a functional or data-race
-failure.
 
 The generated report is
 [`tests/comprehensive_compatibility_report.json`](../tests/comprehensive_compatibility_report.json).
 
 ## Intentional boundaries and deferred gaps
 
-- **Corpus-bounded claim:** 100% means 878/878 in the checked-in comparator. New
+- **Corpus-bounded claim:** 100% means 888/888 in the checked-in comparator. New
   browser fixtures can still expose unsupported recovery or XPath behavior.
 - **XPath 1.0 surface not yet complete:** variable references, a namespace
   resolver/namespace axis, and unimplemented core functions such as `id`,

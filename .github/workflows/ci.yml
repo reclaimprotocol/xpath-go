@@ -2,187 +2,171 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop ]
-    tags: [ 'v*' ]
+    branches: [main, develop]
+    tags: ['v*']
   pull_request:
-    branches: [ main ]
+    branches: [main]
   schedule:
-    # Run tests daily at 2 AM UTC
     - cron: '0 2 * * *'
+  workflow_dispatch:
 
 permissions:
-  contents: write
-  packages: write
-  pull-requests: read
+  contents: read
 
 env:
   GO_VERSION: '1.24.6'
   NODE_VERSION: '20'
+  GOTOOLCHAIN: local
 
 jobs:
+  quality:
+    name: Quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+      - name: Formatting
+        run: test -z "$(gofmt -l .)"
+      - name: Vet
+        run: go vet ./...
+      - name: Lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: latest
+          args: --timeout=5m --enable=unused
+
   test:
-    name: Test
+    name: Go ${{ matrix.go-version }}
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        go-version: ['1.24.6']
-    
+        go-version: ['1.21.x', '1.22.x', '1.24.6']
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: ${{ matrix.go-version }}
-    
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-    
-    - name: Cache Go modules
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.cache/go-build
-          ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ matrix.go-version }}-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-${{ matrix.go-version }}-
-    
-    - name: Download dependencies
-      run: go mod download
-    
-    - name: Verify dependencies
-      run: go mod verify
-    
-    - name: Run vet
-      run: go vet ./...
-    
-    - name: Run fmt check
-      run: |
-        if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
-          echo "Go code is not formatted properly:"
-          gofmt -s -d .
-          exit 1
-        fi
-    
-    - name: Run tests
-      run: go test -v -coverprofile=coverage.out ./...
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+      - run: go mod verify
+      - name: Unit and integration tests
+        if: matrix.go-version != env.GO_VERSION
+        run: make test
+      - name: Coverage
+        if: matrix.go-version == env.GO_VERSION
+        run: go test -count=1 -coverpkg=./... -coverprofile=coverage.out ./...
+      - name: Upload coverage
+        if: matrix.go-version == env.GO_VERSION
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.out
+          flags: unittests
 
-    - name: Run race detector
-      run: go test -race ./...
-    
-    - name: Run benchmarks
-      run: go test -bench=. -benchmem ./...
-    
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
-      with:
-        file: ./coverage.out
-        flags: unittests
-        name: codecov-umbrella
-
-  lint:
-    name: Lint
+  race:
+    name: Race detector
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: ${{ env.GO_VERSION }}
-    
-    - name: golangci-lint
-      uses: golangci/golangci-lint-action@v6
-      with:
-        version: latest
-        args: --timeout=5m
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+      - run: make test-race
+
+  scaling:
+    name: Scaling invariants
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+      - run: make test-scaling
 
   compatibility:
-    name: jsdom Compatibility Test
+    name: Browser compatibility
     runs-on: ubuntu-latest
-    needs: [test]
-    
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: ${{ env.GO_VERSION }}
-    
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-    
-    - name: Install Node.js dependencies
-      run: |
-        cd tests
-        npm install
-    
-    - name: Run compatibility tests
-      run: |
-        cd tests
-        node comprehensive_compare.js
-    
-    - name: Upload compatibility report
-      uses: actions/upload-artifact@v4
-      with:
-        name: xpath-compatibility-report
-        path: tests/xpath_compatibility_report.json
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.21.x'
+          cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: tests/package-lock.json
+      - name: Install browser-oracle dependencies
+        working-directory: tests
+        run: npm ci
+      - name: Run all compatibility oracles
+        working-directory: tests
+        run: npm run test:all
+      - name: Upload compatibility report
+        uses: actions/upload-artifact@v4
+        with:
+          name: xpath-compatibility-report
+          path: tests/comprehensive_compatibility_report.json
+
+  benchmark:
+    name: Scheduled benchmarks
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+      - run: make test-bench
 
   build:
-    name: Build
+    name: Build ${{ matrix.os }}/${{ matrix.arch }}
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         os: [linux, windows, darwin]
         arch: [amd64, arm64]
         exclude:
           - os: windows
             arch: arm64
-    
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: ${{ env.GO_VERSION }}
-    
-    - name: Build
-      env:
-        GOOS: ${{ matrix.os }}
-        GOARCH: ${{ matrix.arch }}
-      run: |
-        go build -v ./...
-        mkdir -p examples
-        go build -o examples/xpath-basic-${{ matrix.os }}-${{ matrix.arch }} ./cmd/examples/basic 2>/dev/null || echo "No basic example yet"
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+      - name: Cross-build packages
+        env:
+          GOOS: ${{ matrix.os }}
+          GOARCH: ${{ matrix.arch }}
+        run: go build ./...
 
   release:
     name: Release
-    runs-on: ubuntu-latest
-    needs: [test, lint, build, compatibility]
     if: startsWith(github.ref, 'refs/tags/')
-    
+    needs: [quality, test, race, scaling, compatibility, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-    
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: ${{ env.GO_VERSION }}
-    
-    - name: Run GoReleaser
-      uses: goreleaser/goreleaser-action@v5
-      with:
-        distribution: goreleaser
-        version: latest
-        args: release --clean
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+      - uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -28,6 +28,10 @@ func (e *Evaluator) prepareAxisOrder(document *types.Node) {
 		e.axisSubtreeEnd[node] = len(e.axisOrder)
 	}
 	visit(document)
+	// DOM ordering also defines output order for all regular node sets. Cache
+	// the metadata alongside the axis preorder so repeated sort operations do
+	// not traverse the whole recovered tree again.
+	e.treeOrder, e.attributeBase, e.attributeRanks = treeOrderMaps(document)
 }
 
 func (e *Evaluator) axisIndexesMatching(nodeTest string) []int {
@@ -307,6 +311,16 @@ func (e *Evaluator) getPrecedingSiblings(node *types.Node) []*types.Node {
 
 // getAttributeNodes returns all attribute nodes for the given element
 func (e *Evaluator) getAttributeNodes(node *types.Node) []*types.Node {
+	if node == nil {
+		return nil
+	}
+	if e.attributeNodes == nil {
+		e.attributeNodes = make(map[*types.Node][]*types.Node)
+	}
+	if cached, ok := e.attributeNodes[node]; ok {
+		return cached
+	}
+
 	var attrNodes []*types.Node
 
 	// Use AttributeOrder if available (preserves document order)
@@ -352,6 +366,7 @@ func (e *Evaluator) getAttributeNodes(node *types.Node) []*types.Node {
 		}
 	}
 
+	e.attributeNodes[node] = attrNodes
 	return attrNodes
 }
 
@@ -360,16 +375,4 @@ func attributeLocalName(owner *types.Node, qualified string) string {
 		return local
 	}
 	return qualified
-}
-
-// getAllNodes returns all nodes in the document tree
-func (e *Evaluator) getAllNodes(root *types.Node) []*types.Node {
-	var nodes []*types.Node
-
-	nodes = append(nodes, root)
-	for _, child := range root.Children {
-		nodes = append(nodes, e.getAllNodes(child)...)
-	}
-
-	return nodes
 }

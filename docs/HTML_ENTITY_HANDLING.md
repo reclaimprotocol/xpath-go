@@ -1,210 +1,72 @@
-# HTML Entity Handling in XPath-Go
+# HTML character references
 
-## Overview
+XPath-Go follows browser-style HTML parsing for named and numeric character
+references. XPath expressions evaluate the decoded DOM value, while source
+locations continue to address the original response bytes.
 
-XPath-Go preserves HTML entities in their original encoded form, which differs from JavaScript's DOM behavior that automatically decodes entities. This document explains this design choice and provides guidance for working with HTML entities.
+## Text and attribute values
 
-## Behavior Comparison
+Given this source:
 
-### JavaScript DOM Behavior
 ```html
-<!-- Source HTML -->
-<p>Text with &amp; &lt; &gt; &quot; characters</p>
+<p title="Tom &amp; Jerry">A &lt; B &copy;</p>
 ```
 
-```javascript
-// JavaScript automatically decodes entities
-element.textContent; // "Text with & < > " characters"
+the logical DOM contains:
 
-// XPath query matches decoded content
-document.evaluate('//p[contains(text(), "&")]', document, null, 0, null);
-// ✅ Matches: finds the <p> element
-```
+- text: `A < B ©`
+- `title`: `Tom & Jerry`
 
-### XPath-Go Behavior
-```html
-<!-- Source HTML -->
-<p>Text with &amp; &lt; &gt; &quot; characters</p>
-```
+Queries therefore use decoded characters:
 
 ```go
-// XPath-Go preserves original entity encoding
-results, _ := xpath.Query("//p", html)
-results[0].TextContent // "Text with &amp; &lt; &gt; &quot; characters"
+source := `<p title="Tom &amp; Jerry">A &lt; B &copy;</p>`
 
-// XPath query works with encoded content
-xpath.Query("//p[contains(text(), '&')]", html)
-// ❌ No match: looks for "&" but content has "&amp;"
-
-xpath.Query("//p[contains(text(), '&amp;')]", html)  
-// ✅ Matches: finds the encoded entity
-```
-
-## Why XPath-Go Preserves Entities
-
-### 1. Fidelity to Source Content
-XPath-Go maintains exactly what was written in the HTML source:
-```html
-<p>Use &amp;amp; to display &amp; in HTML</p>
-```
-
-- **JavaScript**: `"Use &amp; to display & in HTML"` (information loss!)
-- **XPath-Go**: `"Use &amp;amp; to display &amp; in HTML"` (preserves intent)
-
-### 2. Predictable Behavior
-What you see in the HTML source is exactly what you get in text content:
-```html
-<div title="&quot;Hello&quot;">&lt;script&gt;alert()&lt;/script&gt;</div>
-```
-
-- **JavaScript**: Attribute = `"Hello"`, Text = `<script>alert()</script>` (potential security issues)
-- **XPath-Go**: Attribute = `&quot;Hello&quot;`, Text = `&lt;script&gt;alert()&lt;/script&gt;` (safe and predictable)
-
-### 3. No Information Loss
-You can always decode entities when needed, but you can't recover the original encoding:
-```go
-// You can decode when needed
-decoded := html.UnescapeString(textContent)
-
-// But you can't go back from decoded to original encoding
-// without losing information about what was originally encoded
-```
-
-### 4. Consistency Across Languages
-Many HTML parsers in other languages also preserve entities:
-- Python's `lxml`: Preserves entities by default
-- Java's JSoup: Configurable, can preserve entities
-- XPath-Go: Preserves entities (consistent with this approach)
-
-## Working with HTML Entities
-
-### Method 1: Query with Encoded Entities
-```go
-// Query for the encoded form
-results, _ := xpath.Query("//p[contains(text(), '&amp;')]", html)
-```
-
-### Method 2: Decode After Extraction
-```go
-import "html"
-
-results, _ := xpath.Query("//p", html)
-for _, result := range results {
-    decoded := html.UnescapeString(result.TextContent)
-    if strings.Contains(decoded, "&") {
-        // Process the decoded content
-    }
-}
-```
-
-### Method 3: Pre-process HTML (Advanced)
-```go
-import "html"
-
-// Decode entities in HTML before parsing (use with caution)
-decodedHTML := html.UnescapeString(originalHTML)
-results, _ := xpath.Query("//p[contains(text(), '&')]", decodedHTML)
-```
-
-⚠️ **Warning**: Pre-processing can cause issues with:
-- Nested entities (`&amp;amp;` becomes `&amp;` not `&`)
-- Malformed HTML structure
-- Security implications
-
-## Common HTML Entities Reference
-
-| Entity | Character | XPath-Go Text Content | JavaScript textContent |
-|--------|-----------|----------------------|----------------------|
-| `&amp;` | `&` | `&amp;` | `&` |
-| `&lt;` | `<` | `&lt;` | `<` |
-| `&gt;` | `>` | `&gt;` | `>` |
-| `&quot;` | `"` | `&quot;` | `"` |
-| `&apos;` | `'` | `&apos;` | `'` |
-| `&#39;` | `'` | `&#39;` | `'` |
-| `&nbsp;` | ` ` (non-breaking space) | `&nbsp;` | ` ` |
-
-## Best Practices
-
-### 1. Be Explicit in Queries
-```go
-// ✅ Good: Explicit about entity encoding
-xpath.Query("//p[contains(text(), '&amp;')]", html)
-
-// ❌ Avoid: Assuming entities are decoded
-xpath.Query("//p[contains(text(), '&')]", html)
-```
-
-### 2. Normalize When Comparing
-```go
-func normalizeText(text string) string {
-    return html.UnescapeString(text)
+results, err := xpath.Query(
+    `//p[contains(text(), '<') and @title='Tom & Jerry']`,
+    source,
+)
+if err != nil {
+    log.Fatal(err)
 }
 
-// Compare normalized versions
-if normalizeText(result.TextContent) == normalizeText(expectedText) {
-    // Match found
-}
+fmt.Println(results[0].TextContent) // A < B ©
 ```
 
-### 3. Document Entity Expectations
-```go
-// Document whether your functions expect encoded or decoded content
-func FindElementByText(xpath, text string, encoded bool) []*types.Node {
-    if !encoded {
-        text = html.EscapeString(text)
-    }
-    query := fmt.Sprintf("//element[contains(text(), '%s')]", text)
-    results, _ := xpath.Query(query, html)
-    return results
-}
-```
+Do not pre-decode the complete HTML response. Decoding before parsing can turn
+escaped markup into actual markup and changes source offsets.
 
-## Testing Considerations
+## Source fidelity
 
-When writing tests that involve HTML entities:
+Decoded DOM values and source fidelity are separate contracts:
+
+- `Result.TextContent` and parsed attribute values contain decoded Unicode.
+- `Result.StartLocation` and `Result.EndLocation` are byte offsets into the
+  original input.
+- In full-node mode, `Result.Value` is sliced from the original input and
+  therefore retains the spelling used in the response, including references.
 
 ```go
-func TestHTMLEntities(t *testing.T) {
-    html := `<p>Text with &amp; &lt; &gt; characters</p>`
-    
-    // Test with encoded entities (XPath-Go behavior)
-    results, _ := xpath.Query("//p[contains(text(), '&amp;')]", html)
-    assert.Len(t, results, 1)
-    
-    // Test decoded comparison
-    decoded := html.UnescapeString(results[0].TextContent)
-    assert.Contains(t, decoded, "&")
-}
+source := `<p>A &amp; B</p>`
+results, _ := xpath.Query(`//p`, source)
+
+fmt.Println(results[0].TextContent) // A & B
+fmt.Println(results[0].Value)       // <p>A &amp; B</p>
+fmt.Println(source[
+    results[0].StartLocation:results[0].EndLocation,
+]) // <p>A &amp; B</p>
 ```
 
-## Migration from JavaScript XPath
+This distinction also applies to byte inputs decoded with `Options.Charset`:
+XPath sees Unicode, while locations index the original encoded response.
 
-If migrating from JavaScript XPath code:
+## Browser recovery
 
-```javascript
-// JavaScript code
-document.evaluate('//p[contains(text(), "&")]', document, null, 0, null)
-```
+The tokenizer covers the named and numeric reference behavior exercised by the
+checked-in compatibility corpus, including semicolonless legacy references,
+attribute-context restrictions, invalid numeric values, and references ending
+at EOF. Unknown references remain literal text.
 
-```go
-// XPath-Go equivalent
-xpath.Query("//p[contains(text(), '&amp;')]", html)
-
-// Or with decoding
-results, _ := xpath.Query("//p", html)
-for _, result := range results {
-    if strings.Contains(html.UnescapeString(result.TextContent), "&") {
-        // Found match
-    }
-}
-```
-
-## Summary
-
-XPath-Go's entity preservation is a **feature, not a bug**. It provides:
-- ✅ **Fidelity**: Preserves original HTML content exactly
-- ✅ **Predictability**: Consistent behavior across all content
-- ✅ **Flexibility**: You can decode when needed
-- ✅ **Security**: Prevents entity-related parsing issues
-
-When working with XPath-Go, always consider whether your content contains HTML entities and adjust your queries accordingly.
+The project targets practical browser compatibility rather than claiming every
+HTML Living Standard case. Add a browser-oracle fixture when extending this
+area; see [Testing](TESTING.md) and [Compatibility](COMPATIBILITY.md).

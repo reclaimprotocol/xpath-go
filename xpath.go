@@ -28,6 +28,7 @@ type Result struct {
 // XPath represents a compiled XPath expression
 type XPath struct {
 	expression string
+	program    *evaluator.Program
 }
 
 // Options for XPath evaluation
@@ -77,13 +78,17 @@ func QueryBytesWithOptions(xpathExpr string, content []byte, opts Options) ([]Re
 	if err != nil {
 		return nil, err
 	}
-	// Create evaluator and evaluate XPath
-	if opts.Debug {
-		EnableTrace()
+	program, err := evaluator.Compile(xpathExpr)
+	if err != nil {
+		return nil, err
 	}
+	// Evaluator owns mutable parser, tree-builder, and axis state. Keep it
+	// scoped to this call so parallel requests do not share document state.
 	eval := evaluator.NewEvaluator()
 	eval.SetScriptingEnabled(opts.ScriptingEnabled)
-	nodes, err := eval.EvaluateWithDocument(xpathExpr, decodedContent, mapper.remapDocumentLocations)
+	stopTrace := enableEvaluationTrace(opts.Debug)
+	defer stopTrace()
+	nodes, err := eval.EvaluateProgramWithDocument(program, decodedContent, mapper.remapDocumentLocations)
 	if err != nil {
 		return nil, err
 	}
@@ -98,9 +103,11 @@ func Compile(xpathExpr string) (*XPath, error) {
 		return nil, fmt.Errorf("xpath expression cannot be empty")
 	}
 
-	return &XPath{
-		expression: xpathExpr,
-	}, nil
+	program, err := evaluator.Compile(xpathExpr)
+	if err != nil {
+		return nil, err
+	}
+	return &XPath{expression: xpathExpr, program: program}, nil
 }
 
 // Evaluate uses a pre-compiled XPath expression
@@ -127,15 +134,17 @@ func (x *XPath) EvaluateBytesWithOptions(content []byte, opts Options) ([]Result
 	if err != nil {
 		return nil, err
 	}
-	if opts.Debug {
-		EnableTrace()
-	}
 	// Evaluator owns mutable parser, tree-builder, and axis state. Keep it
 	// scoped to this call so a compiled expression remains safe to share
 	// between concurrent evaluations with different options/documents.
 	eval := evaluator.NewEvaluator()
 	eval.SetScriptingEnabled(opts.ScriptingEnabled)
-	nodes, err := eval.EvaluateWithDocument(x.expression, decodedContent, mapper.remapDocumentLocations)
+	if x.program == nil {
+		return nil, fmt.Errorf("XPath program is nil")
+	}
+	stopTrace := enableEvaluationTrace(opts.Debug)
+	defer stopTrace()
+	nodes, err := eval.EvaluateProgramWithDocument(x.program, decodedContent, mapper.remapDocumentLocations)
 	if err != nil {
 		return nil, err
 	}
@@ -145,14 +154,28 @@ func (x *XPath) EvaluateBytesWithOptions(content []byte, opts Options) ([]Result
 
 // GetExpression returns the original XPath expression
 func (x *XPath) GetExpression() string {
+	if x == nil {
+		return ""
+	}
 	return x.expression
 }
 
 // convertNodesToResults converts internal nodes to public result format
 func convertNodesToResults(nodes []types.Node, opts Options, originalContent string) []Result {
-	var results []Result
+	results := make([]Result, 0, len(nodes))
+	paths := make(map[*types.Node]string, len(nodes))
+	siblings := make(map[*types.Node]map[*types.Node]nodePathPosition)
 
-	for _, node := range nodes {
+	for index := range nodes {
+		node := &nodes[index]
+		identity := node.Origin
+		if identity == nil {
+			// `nodes` contains value copies for the public conversion boundary.
+			// Its indexed address is stable for the lifetime of this conversion;
+			// taking the address of a range variable would instead make distinct
+			// Origin-less results share the same cache key under Go 1.21.
+			identity = node
+		}
 		result := Result{
 			Value:        node.Value,
 			NodeName:     node.Name,
@@ -161,34 +184,39 @@ func convertNodesToResults(nodes []types.Node, opts Options, originalContent str
 			LocalName:    node.LocalName,
 			Prefix:       node.Prefix,
 			Attributes:   node.Attributes,
-			Path:         generateNodePath(&node),
 			TextContent:  node.TextContent,
-			ContentStart: node.ContentStart,
-			ContentEnd:   node.ContentEnd,
 		}
+		if opts.IncludeLocation {
+			result.ContentStart = node.ContentStart
+			result.ContentEnd = node.ContentEnd
+		}
+		result.Path = generateNodePathCached(identity, paths, siblings)
 
 		// Handle contentsOnly option - adjust positions and value based on extraction mode
 		if opts.ContentsOnly {
-			// Only elements have an inner source range. For non-container nodes
-			// such as text, comments, and processing instructions, retain the
-			// node's full source range while exposing its DOM text value.
-			if node.Type == types.ElementNode {
-				result.StartLocation = node.ContentStart
-				result.EndLocation = node.ContentEnd
-			} else {
-				result.StartLocation = node.StartPos
-				result.EndLocation = node.EndPos
+			if opts.IncludeLocation {
+				// Only elements have an inner source range. For non-container nodes
+				// such as text, comments, and processing instructions, retain the
+				// node's full source range while exposing its DOM text value.
+				if node.Type == types.ElementNode {
+					result.StartLocation = node.ContentStart
+					result.EndLocation = node.ContentEnd
+				} else {
+					result.StartLocation = node.StartPos
+					result.EndLocation = node.EndPos
+				}
 			}
 			// For content-only mode, value should be just the text content
 			result.Value = node.TextContent
 		} else {
-			// Use full element positions (including tags)
-			result.StartLocation = node.StartPos
-			result.EndLocation = node.EndPos
-			// For full mode, value should include the HTML markup
+			if opts.IncludeLocation {
+				// Use full element positions (including tags).
+				result.StartLocation = node.StartPos
+				result.EndLocation = node.EndPos
+			}
+			// Value extraction is independent of whether locations are exposed.
 			if node.Type == types.DocumentTypeNode {
-				// Browser DocumentType.nodeValue and textContent are null/empty;
-				// its source range remains available through the location fields.
+				// Browser DocumentType.nodeValue and textContent are null/empty.
 				result.Value = ""
 			} else if node.StartPos < len(originalContent) && node.EndPos <= len(originalContent) && node.EndPos > node.StartPos {
 				result.Value = originalContent[node.StartPos:node.EndPos]
@@ -215,51 +243,59 @@ func convertNodesToResults(nodes []types.Node, opts Options, originalContent str
 	return results
 }
 
-// generateNodePath generates an XPath-like path for a node
-func generateNodePath(node *types.Node) string {
+type nodePathPosition struct {
+	index int
+	count int
+}
+
+// generateNodePathCached generates XPath-like paths while memoizing ancestors
+// and sibling-name positions. Result conversion used to rescan every parent’s
+// children twice for each selected node.
+func generateNodePathCached(node *types.Node, paths map[*types.Node]string, siblings map[*types.Node]map[*types.Node]nodePathPosition) string {
+	if path, ok := paths[node]; ok {
+		return path
+	}
 	if node.Parent == nil {
-		return "/" + node.Name
+		path := "/" + node.Name
+		paths[node] = path
+		return path
 	}
 
-	parentPath := generateNodePath(node.Parent)
+	parentPath := generateNodePathCached(node.Parent, paths, siblings)
 	if parentPath == "/" {
 		parentPath = ""
 	}
 
-	// Add position if there are siblings with the same name
-	position := 1
-	if node.Parent != nil {
+	positions, ok := siblings[node.Parent]
+	if !ok {
+		positions = make(map[*types.Node]nodePathPosition, len(node.Parent.Children))
+		counts := make(map[string]int)
 		for _, sibling := range node.Parent.Children {
-			if sibling.Name == node.Name {
-				if sibling == node {
-					break
-				}
-				position++
-			}
+			counts[sibling.Name]++
+			positions[sibling] = nodePathPosition{index: counts[sibling.Name]}
 		}
+		for sibling, position := range positions {
+			position.count = counts[sibling.Name]
+			positions[sibling] = position
+		}
+		siblings[node.Parent] = positions
 	}
-
-	if position > 1 || hasSiblingsWithSameName(node) {
-		return fmt.Sprintf("%s/%s[%d]", parentPath, node.Name, position)
+	position := positions[node]
+	var path string
+	if position.index > 1 || position.count > 1 {
+		path = fmt.Sprintf("%s/%s[%d]", parentPath, node.Name, position.index)
+	} else {
+		path = fmt.Sprintf("%s/%s", parentPath, node.Name)
 	}
-
-	return fmt.Sprintf("%s/%s", parentPath, node.Name)
+	paths[node] = path
+	return path
 }
 
-// hasSiblingsWithSameName checks if a node has siblings with the same name
-func hasSiblingsWithSameName(node *types.Node) bool {
-	if node.Parent == nil {
-		return false
+func enableEvaluationTrace(enabled bool) func() {
+	if !enabled {
+		return func() {}
 	}
-
-	count := 0
-	for _, sibling := range node.Parent.Children {
-		if sibling.Name == node.Name {
-			count++
-		}
-	}
-
-	return count > 1
+	return evaluator.BeginTrace()
 }
 
 // EnableTrace enables verbose trace logging for debugging XPath evaluation

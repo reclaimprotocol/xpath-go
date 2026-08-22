@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [1.7.0] - 2026-08-22
+
+### Added
+- Added a reusable compiled XPath program backed by one typed, source-spanned parser.
+- Added layered test commands, parser fuzzing, scaling checks, browser-runner unit tests, and focused evaluator/parser benchmarks.
+- Added OSS contribution, conduct, security, support, release, issue, pull-request, and dependency-update metadata.
+
+### Changed
+- Decomposed the HTML tokenizer and tree builder into focused state, formatting, table, template, foreign-content, document, list, and select modules.
+- Replaced repeated HTML text aggregation with incremental updates and dirty-subtree synchronization for recovery edits.
+- Split oversized Go recovery suites and the browser comparator into behavior-focused test modules.
+- Removed legacy XPath parsing/execution paths and repeated predicate reparsing.
+
+### Removed
+- Removed checked-in local-tool configuration and generated build/dependency artifacts.
+
 ## [1.6.0] - 2026-08-21
 
 ### Added

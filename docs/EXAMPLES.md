@@ -557,7 +557,7 @@ func robustErrorHandling() {
 
 ## Location Tracking Examples
 
-### Precise Character Positioning
+### Precise Byte Positioning
 
 ```go
 func locationTrackingExample() {
@@ -588,7 +588,7 @@ func locationTrackingExample() {
             i+1, result.NodeName, result.Attributes["id"])
         fmt.Printf("    Text Content: %q\n", 
             truncateString(result.TextContent, 50))
-        fmt.Printf("    Character Range: %d-%d\n", 
+        fmt.Printf("    Byte Range: %d-%d\n",
             result.StartLocation, result.EndLocation)
         fmt.Printf("    XPath: %s\n", result.Path)
         

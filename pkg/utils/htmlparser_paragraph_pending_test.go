@@ -1,0 +1,394 @@
+package utils
+
+import (
+	"testing"
+
+	"github.com/reclaimprotocol/xpath-go/pkg/types"
+)
+
+func TestParseAncestorEndTagsUnwindParagraphAndButton(t *testing.T) {
+	testCases := []struct {
+		name, content, outerName         string
+		outerEnd, buttonStart, buttonEnd int
+		paragraphStart, paragraphEnd     int
+		wantTail                         bool
+	}{
+		{
+			name: "div", content: `<div><button><p>x</div>tail`, outerName: "div", outerEnd: 23,
+			buttonStart: 5, buttonEnd: 17, paragraphStart: 13, paragraphEnd: 17, wantTail: true,
+		},
+		{
+			name: "section", content: `<section><button><p>x</section>`, outerName: "section", outerEnd: 31,
+			buttonStart: 9, buttonEnd: 21, paragraphStart: 17, paragraphEnd: 21,
+		},
+	}
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			document, err := NewHTMLParser().Parse(testCase.content)
+			if err != nil {
+				t.Fatalf("Parse returned an error: %v", err)
+			}
+			if len(parsedBodyChildren(document)) == 0 || parsedBodyChildren(document)[0].Name != testCase.outerName {
+				t.Fatalf("Expected outer %s, got %#v", testCase.outerName, parsedBodyChildren(document))
+			}
+			outer := parsedBodyChildren(document)[0]
+			assertNodeIdentity(t, outer, testCase.outerName, "x", 0, testCase.outerEnd)
+			button := findFirstElementByName(outer, "button")
+			assertNodeIdentity(t, button, "button", "x", testCase.buttonStart, testCase.buttonEnd)
+			paragraph := findFirstElementByName(button, "p")
+			assertNodeIdentity(t, paragraph, "p", "x", testCase.paragraphStart, testCase.paragraphEnd)
+			if testCase.wantTail {
+				if len(parsedBodyChildren(document)) != 2 || parsedBodyChildren(document)[1].Type != types.TextNode || parsedBodyChildren(document)[1].Value != "tail" || parsedBodyChildren(document)[1].StartPos != 23 || parsedBodyChildren(document)[1].EndPos != 27 {
+					t.Fatalf("Expected tail sibling at 23:27, got %#v", parsedBodyChildren(document))
+				}
+			}
+		})
+	}
+}
+
+func TestParseHTMLCloseExtendsAllPendingParagraphsToEOF(t *testing.T) {
+	const content = `<html><body><p>a<button><p>b</html>`
+	document, err := NewHTMLParser().Parse(content)
+	if err != nil {
+		t.Fatalf("Parse returned an error: %v", err)
+	}
+	paragraphs := findAllElementsByName(document, "p")
+	if len(paragraphs) != 2 {
+		t.Fatalf("Expected outer and inner paragraphs, got %#v", paragraphs)
+	}
+	assertNodeIdentity(t, paragraphs[0], "p", "ab", 12, 35)
+	assertNodeIdentity(t, paragraphs[1], "p", "b", 24, 35)
+	button := findFirstElementByName(document, "button")
+	assertNodeIdentity(t, button, "button", "b", 16, 35)
+	for _, paragraph := range paragraphs {
+		if paragraph.EndLine != 1 || paragraph.EndColumn != 36 {
+			t.Fatalf("Expected pending paragraph to end at browser EOF coordinate 1:36, got %#v", paragraph)
+		}
+	}
+}
+
+func TestParseBodyAndHTMLCloseKeepParagraphLocationPendingToEOF(t *testing.T) {
+	testCases := []struct {
+		name, content                  string
+		htmlEnd, bodyEnd, paragraphEnd int
+	}{
+		{name: "body and html close", content: `<html><body><p>x</body></html>`, htmlEnd: 30, bodyEnd: 23, paragraphEnd: 30},
+		{name: "comment after body and html", content: `<html><body><p>x</body></html><!--c-->`, htmlEnd: 30, bodyEnd: 23, paragraphEnd: 38},
+		{name: "comment after html", content: `<html><body><p>x</html><!--c-->`, htmlEnd: 23, bodyEnd: 16, paragraphEnd: 31},
+	}
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			document, err := NewHTMLParser().Parse(testCase.content)
+			if err != nil {
+				t.Fatalf("Parse returned an error: %v", err)
+			}
+			html := findFirstElementByName(document, "html")
+			body := findFirstElementByName(document, "body")
+			paragraph := findFirstElementByName(document, "p")
+			assertNodeIdentity(t, html, "html", "x", 0, testCase.htmlEnd)
+			assertNodeIdentity(t, body, "body", "x", 6, testCase.bodyEnd)
+			assertNodeIdentity(t, paragraph, "p", "x", 12, testCase.paragraphEnd)
+			if paragraph.EndLine != 1 || paragraph.EndColumn != testCase.paragraphEnd+1 {
+				t.Fatalf("Expected paragraph EOF coordinate 1:%d, got %#v", testCase.paragraphEnd+1, paragraph)
+			}
+			texts := findAllTextNodes(paragraph)
+			if len(texts) != 1 || texts[0].Value != "x" || texts[0].StartPos != 15 || texts[0].EndPos != 16 {
+				t.Fatalf("Expected x text at 15:16, got %#v", texts)
+			}
+		})
+	}
+}
+
+func TestParseNULInAncestorTagNameStillClosesInnerParagraph(t *testing.T) {
+	const content = "<div\x00><p>x</div\x00>"
+	document, err := NewHTMLParser().Parse(content)
+	if err != nil {
+		t.Fatalf("Parse returned an error: %v", err)
+	}
+	if len(parsedBodyChildren(document)) != 1 {
+		t.Fatalf("Expected one recovered div ancestor, got %#v", parsedBodyChildren(document))
+	}
+	outer := parsedBodyChildren(document)[0]
+	assertNodeIdentity(t, outer, "div�", "x", 0, 17)
+	if len(outer.Children) != 1 {
+		t.Fatalf("Expected one inner p, got %#v", outer.Children)
+	}
+	assertNodeIdentity(t, outer.Children[0], "p", "x", 6, 17)
+}
+
+func TestParseGenericAncestorEndTagIsIgnoredWhileParagraphIsOpen(t *testing.T) {
+	testCases := []struct {
+		name, content, ancestor   string
+		paragraphStart, textStart int
+	}{
+		{name: "custom element", content: `<foo><p>x</foo>tail`, ancestor: "foo", paragraphStart: 5, textStart: 8},
+		{name: "inline span", content: `<span><p>x</span>tail`, ancestor: "span", paragraphStart: 6, textStart: 9},
+	}
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			document, err := NewHTMLParser().Parse(testCase.content)
+			if err != nil {
+				t.Fatalf("Parse returned an error: %v", err)
+			}
+			if len(parsedBodyChildren(document)) != 1 {
+				t.Fatalf("Expected one ancestor containing all continuation text, got %#v", parsedBodyChildren(document))
+			}
+			ancestor := parsedBodyChildren(document)[0]
+			assertNodeIdentity(t, ancestor, testCase.ancestor, "xtail", 0, len(testCase.content))
+			if len(ancestor.Children) != 1 {
+				t.Fatalf("Expected ancestor to retain its inner p, got %#v", ancestor.Children)
+			}
+			paragraph := ancestor.Children[0]
+			assertNodeIdentity(t, paragraph, "p", "xtail", testCase.paragraphStart, len(testCase.content))
+			if len(paragraph.Children) != 1 {
+				t.Fatalf("Expected ignored end token and tail to coalesce into one text node, got %#v", paragraph.Children)
+			}
+			text := paragraph.Children[0]
+			if text.Type != types.TextNode || text.Value != "xtail" || text.StartPos != testCase.textStart || text.EndPos != len(testCase.content) {
+				t.Fatalf("Expected coalesced xtail text at %d:%d, got %#v", testCase.textStart, len(testCase.content), text)
+			}
+		})
+	}
+}
+
+func TestParsePendingParagraphResolvesOnFollowingBlockOrEOFText(t *testing.T) {
+	t.Run("block after html close", func(t *testing.T) {
+		const content = `<html><body><p>x</html><div>y</div>`
+		document, err := NewHTMLParser().Parse(content)
+		if err != nil {
+			t.Fatalf("Parse returned an error: %v", err)
+		}
+		html := findFirstElementByName(document, "html")
+		body := findFirstElementByName(document, "body")
+		paragraph := findFirstElementByName(document, "p")
+		div := findFirstElementByName(document, "div")
+		assertNodeIdentity(t, paragraph, "p", "x", 12, 23)
+		assertNodeIdentity(t, div, "div", "y", 23, 35)
+		assertNodeIdentity(t, html, "html", "xy", 0, 23)
+		assertNodeIdentity(t, body, "body", "xy", 6, 16)
+		if paragraph.Parent != div.Parent {
+			t.Fatalf("Expected p and following div to be body siblings, got p parent %#v and div parent %#v", paragraph.Parent, div.Parent)
+		}
+	})
+
+	t.Run("block after body close", func(t *testing.T) {
+		const content = `<html><body><p>x</body><div>y</div></html>`
+		document, err := NewHTMLParser().Parse(content)
+		if err != nil {
+			t.Fatalf("Parse returned an error: %v", err)
+		}
+		html := findFirstElementByName(document, "html")
+		body := findFirstElementByName(document, "body")
+		paragraph := findFirstElementByName(document, "p")
+		div := findFirstElementByName(document, "div")
+		assertNodeIdentity(t, paragraph, "p", "x", 12, 23)
+		assertNodeIdentity(t, div, "div", "y", 23, 35)
+		assertNodeIdentity(t, html, "html", "xy", 0, 42)
+		assertNodeIdentity(t, body, "body", "xy", 6, 23)
+		if paragraph.Parent != div.Parent {
+			t.Fatalf("Expected p and following div to be body siblings, got p parent %#v and div parent %#v", paragraph.Parent, div.Parent)
+		}
+	})
+
+	t.Run("text after html close", func(t *testing.T) {
+		const content = `<html><body><p>x</html>tail`
+		document, err := NewHTMLParser().Parse(content)
+		if err != nil {
+			t.Fatalf("Parse returned an error: %v", err)
+		}
+		html := findFirstElementByName(document, "html")
+		body := findFirstElementByName(document, "body")
+		paragraph := findFirstElementByName(document, "p")
+		assertNodeIdentity(t, paragraph, "p", "xtail", 12, 27)
+		if len(paragraph.Children) != 1 || paragraph.Children[0].Type != types.TextNode || paragraph.Children[0].Value != "xtail" || paragraph.Children[0].StartPos != 15 || paragraph.Children[0].EndPos != 27 {
+			t.Fatalf("Expected one coalesced xtail text node at 15:27, got %#v", paragraph.Children)
+		}
+		assertNodeIdentity(t, html, "html", "xtail", 0, 23)
+		assertNodeIdentity(t, body, "body", "xtail", 6, 16)
+	})
+
+	t.Run("whitespace after html close", func(t *testing.T) {
+		const content = `<html><body><p>x</html>   `
+		document, err := NewHTMLParser().Parse(content)
+		if err != nil {
+			t.Fatalf("Parse returned an error: %v", err)
+		}
+		html := findFirstElementByName(document, "html")
+		body := findFirstElementByName(document, "body")
+		paragraph := findFirstElementByName(document, "p")
+		assertNodeIdentity(t, paragraph, "p", "x   ", 12, 26)
+		if len(paragraph.Children) != 1 || paragraph.Children[0].Type != types.TextNode || paragraph.Children[0].Value != "x   " || paragraph.Children[0].StartPos != 15 || paragraph.Children[0].EndPos != 26 {
+			t.Fatalf("Expected one coalesced whitespace continuation text node at 15:26, got %#v", paragraph.Children)
+		}
+		assertNodeIdentity(t, html, "html", "x   ", 0, 23)
+		assertNodeIdentity(t, body, "body", "x   ", 6, 16)
+	})
+}
+
+func TestParsePendingParagraphCommentAndStackResolution(t *testing.T) {
+	t.Run("comments and processing instructions defer until block", func(t *testing.T) {
+		for _, tc := range []struct {
+			declaration string
+			nodeType    types.NodeType
+			name, value string
+		}{{`<!foo>`, types.CommentNode, "#comment", "foo"}, {`<?foo>`, types.ProcessingInstructionNode, "foo", ""}, {`</$foo>`, types.CommentNode, "#comment", "$foo"}} {
+			content := `<html><body><p>x</html>` + tc.declaration + `<div>y</div>`
+			blockStart := 23 + len(tc.declaration)
+			document, err := NewHTMLParser().Parse(content)
+			if err != nil {
+				t.Fatalf("Parse %q: %v", tc.declaration, err)
+			}
+			assertNodeIdentity(t, findFirstElementByName(document, "p"), "p", "x", 12, blockStart)
+			assertNodeIdentity(t, findFirstElementByName(document, "div"), "div", "y", blockStart, len(content))
+			nodes := findAllNodesByType(document, tc.nodeType)
+			if len(nodes) != 1 || nodes[0].Name != tc.name || nodes[0].Value != tc.value || nodes[0].StartPos != 23 || nodes[0].EndPos != blockStart || nodes[0].Parent != document {
+				t.Fatalf("Expected document node %s=%q at 23:%d, got %#v", tc.name, tc.value, blockStart, nodes)
+			}
+		}
+	})
+	t.Run("explicit p end", func(t *testing.T) {
+		for _, content := range []string{`<html><body><p>x</html></p>tail`, `<html><body><p>x</body></p>tail</html>`} {
+			document, err := NewHTMLParser().Parse(content)
+			if err != nil {
+				t.Fatal(err)
+			}
+			ps := findAllElementsByName(document, "p")
+			if len(ps) != 1 {
+				t.Fatalf("Expected one p, got %#v", ps)
+			}
+			assertNodeIdentity(t, ps[0], "p", "x", 12, 27)
+			texts := findAllTextNodes(document)
+			if len(texts) != 2 || texts[1].Value != "tail" || texts[1].StartPos != 27 || texts[1].EndPos != 31 || texts[1].Parent != ps[0].Parent {
+				t.Fatalf("Expected body tail at 27:31, got %#v", texts)
+			}
+		}
+	})
+	t.Run("ordered pending stack", func(t *testing.T) {
+		const base = `<html><body><p>a<button><p>b</html>`
+		for _, tc := range []struct {
+			name, suffix, outerText, buttonText string
+			outerEnd, buttonEnd, innerEnd       int
+		}{
+			{"block", `<div>y</div>`, "aby", "by", 47, 47, 35},
+			{"p end", `</p>tail`, "abtail", "btail", 43, 43, 39},
+			{"button end", `</button>tail`, "abtail", "b", 48, 44, 35},
+		} {
+			document, err := NewHTMLParser().Parse(base + tc.suffix)
+			if err != nil {
+				t.Fatal(err)
+			}
+			ps := findAllElementsByName(document, "p")
+			if len(ps) != 2 {
+				t.Fatalf("%s: expected two p nodes, got %#v", tc.name, ps)
+			}
+			assertNodeIdentity(t, ps[0], "p", tc.outerText, 12, tc.outerEnd)
+			assertNodeIdentity(t, ps[1], "p", "b", 24, tc.innerEnd)
+			button := findFirstElementByName(document, "button")
+			assertNodeIdentity(t, button, "button", tc.buttonText, 16, tc.buttonEnd)
+			if tc.name == "block" {
+				div := findFirstElementByName(document, "div")
+				assertNodeIdentity(t, div, "div", "y", 35, 47)
+				if div.Parent != button {
+					t.Fatalf("Expected div inside button")
+				}
+			}
+		}
+	})
+	t.Run("inline descendants stay pending", func(t *testing.T) {
+		for _, tc := range []struct {
+			content, value string
+			end            int
+		}{{`<html><body><p><span>x</html>tail`, "xtail", 33}, {`<html><body><p><span>x</html><!--c-->`, "x", 37}} {
+			document, err := NewHTMLParser().Parse(tc.content)
+			if err != nil {
+				t.Fatal(err)
+			}
+			assertNodeIdentity(t, findFirstElementByName(document, "p"), "p", tc.value, 12, tc.end)
+			assertNodeIdentity(t, findFirstElementByName(document, "span"), "span", tc.value, 15, tc.end)
+		}
+	})
+}
+
+func TestParsePendingParagraphContentRangesAndCommentReentry(t *testing.T) {
+	t.Run("tail content ranges", func(t *testing.T) {
+		const content = `<html><body><p><span>x</html>tail`
+		document, err := NewHTMLParser().Parse(content)
+		if err != nil {
+			t.Fatal(err)
+		}
+		p, span := findFirstElementByName(document, "p"), findFirstElementByName(document, "span")
+		if p.ContentStart != 15 || p.ContentEnd != 33 || span.ContentStart != 21 || span.ContentEnd != 33 {
+			t.Fatalf("Expected p content 15:33 and span 21:33, got p %#v span %#v", p, span)
+		}
+	})
+	t.Run("comment EOF content ranges", func(t *testing.T) {
+		const content = `<html><body><p><span>x</html><!--c-->`
+		document, err := NewHTMLParser().Parse(content)
+		if err != nil {
+			t.Fatal(err)
+		}
+		p, span := findFirstElementByName(document, "p"), findFirstElementByName(document, "span")
+		if p.ContentEnd != 37 || span.ContentEnd != 37 {
+			t.Fatalf("Expected pending content ranges through comment EOF, got p %#v span %#v", p, span)
+		}
+	})
+	t.Run("multiline explicit close", func(t *testing.T) {
+		const content = "<html>\n<body><p><span>x</html>\n</p>tail"
+		document, err := NewHTMLParser().Parse(content)
+		if err != nil {
+			t.Fatal(err)
+		}
+		p, span := findFirstElementByName(document, "p"), findFirstElementByName(document, "span")
+		assertNodeIdentity(t, p, "p", "x\n", 13, 35)
+		assertNodeIdentity(t, span, "span", "x\n", 16, 31)
+		if p.ContentStart != 16 || p.ContentEnd != 31 || span.ContentStart != 22 || span.ContentEnd != 31 || span.EndLine != 3 || span.EndColumn != 1 || p.EndLine != 3 || p.EndColumn != 5 {
+			t.Fatalf("Expected implied span endpoint 3:1 and matched p endpoint 3:5, got p %#v span %#v", p, span)
+		}
+	})
+	t.Run("explicit close retains whitespace", func(t *testing.T) {
+		const content = `<html><body><p>x</html></p>   `
+		document, err := NewHTMLParser().Parse(content)
+		if err != nil {
+			t.Fatal(err)
+		}
+		p := findFirstElementByName(document, "p")
+		assertNodeIdentity(t, p, "p", "x", 12, 27)
+		texts := findAllTextNodes(document)
+		if len(texts) != 2 || texts[1].Value != "   " || texts[1].StartPos != 27 || texts[1].EndPos != 30 || texts[1].Parent != p.Parent {
+			t.Fatalf("Expected body whitespace at 27:30, got %#v", texts)
+		}
+	})
+	t.Run("comments reenter body after resolution", func(t *testing.T) {
+		for _, tc := range []struct {
+			content, wantText string
+			pEnd, secondStart int
+		}{
+			{`<html><body><p>x</html><!--a--></p><!--b-->`, "x", 35, 35},
+			{`<html><body><p>x</html><!--a--><div>y</div><!--b-->`, "xy", 31, 43},
+		} {
+			document, err := NewHTMLParser().Parse(tc.content)
+			if err != nil {
+				t.Fatal(err)
+			}
+			p := findFirstElementByName(document, "p")
+			assertNodeIdentity(t, p, "p", "x", 12, tc.pEnd)
+			comments := findAllNodesByType(document, types.CommentNode)
+			var first, second *types.Node
+			for _, comment := range comments {
+				if comment.Value == "a" {
+					first = comment
+				}
+				if comment.Value == "b" {
+					second = comment
+				}
+			}
+			if len(comments) != 2 || first == nil || first.StartPos != 23 || first.EndPos != 31 || first.Parent != document || second == nil || second.StartPos != tc.secondStart || second.EndPos != tc.secondStart+8 || second.Parent != p.Parent {
+				t.Fatalf("Expected document a then body b comments, got %#v", comments)
+			}
+			html, body := findFirstElementByName(document, "html"), findFirstElementByName(document, "body")
+			if html.TextContent != tc.wantText || body.TextContent != tc.wantText {
+				t.Fatalf("Expected comments excluded from html/body text %q, got html=%q body=%q", tc.wantText, html.TextContent, body.TextContent)
+			}
+		}
+	})
+}
