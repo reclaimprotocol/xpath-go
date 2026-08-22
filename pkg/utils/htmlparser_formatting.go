@@ -2,6 +2,7 @@
 package utils
 
 import (
+	"slices"
 	"sort"
 	"strings"
 
@@ -109,18 +110,15 @@ func (p *HTMLParser) handleSpecialFormattingStart(current *types.Node, text stri
 		return adoptionNone, err
 	}
 	if name == "a" && action != adoptionReturn {
-		for _, candidate := range p.activeFormatting {
-			if candidate == old {
-				if old.current != nil && old.current.StartLine != 0 && !formattingInOrdinaryScope(old.current, current) {
-					old.current.ContentEnd = p.pos
-					old.current.EndPos = p.pos
-					old.current.EndLine = p.line
-					old.current.EndColumn = p.col
-					p.setAdoptionFlag(old.current, adoptionReturnAtSplit)
-				}
-				p.removeActiveFormattingEntry(old)
-				break
+		if slices.Contains(p.activeFormatting, old) {
+			if old.current != nil && old.current.StartLine != 0 && !formattingInOrdinaryScope(old.current, current) {
+				old.current.ContentEnd = p.pos
+				old.current.EndPos = p.pos
+				old.current.EndLine = p.line
+				old.current.EndColumn = p.col
+				p.setAdoptionFlag(old.current, adoptionReturnAtSplit)
 			}
+			p.removeActiveFormattingEntry(old)
 		}
 	}
 	p.resetAdoptionUnwindCache()
@@ -839,11 +837,9 @@ func (p *HTMLParser) appendUniqueChild(parent, child *types.Node) {
 		p.markTextDirty(parent)
 		return
 	}
-	for _, existing := range parent.Children {
-		if existing == child {
-			child.Parent = parent
-			return
-		}
+	if slices.Contains(parent.Children, child) {
+		child.Parent = parent
+		return
 	}
 	child.Parent = parent
 	parent.Children = append(parent.Children, child)
