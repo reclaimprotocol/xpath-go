@@ -1,0 +1,43 @@
+name: Feature request
+description: Propose a focused improvement to xpath-go.
+title: "feat: "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Explain the problem first. Proposals are evaluated against the project’s
+        XPath and browser-HTML compatibility scope.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: What user problem or limitation does this address?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior or API
+      description: Include XPath examples, Go API shape, and expected results where applicable.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe workarounds or other approaches you evaluated.
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Compatibility and testing considerations
+      description: Note backwards-compatibility, browser/XPath compatibility, performance, or documentation impact.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched existing issues and reviewed the compatibility documentation.
+          required: true
+        - label: This is not a security vulnerability report.
+          required: true

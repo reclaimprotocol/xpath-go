@@ -29,7 +29,10 @@ func (e *Evaluator) removeDuplicates(nodes []*types.Node) []*types.Node {
 // agency recovery can deliberately place nodes before nodes that appeared
 // earlier in the input.
 func (e *Evaluator) sortNodePointersByTreeOrder(nodes []*types.Node, document *types.Node) {
-	order, attributeBase, attributeRanks := treeOrderMaps(document)
+	order, attributeBase, attributeRanks := e.treeOrder, e.attributeBase, e.attributeRanks
+	if order == nil {
+		order, attributeBase, attributeRanks = treeOrderMaps(document)
+	}
 	sort.SliceStable(nodes, func(i, j int) bool {
 		return treeOrderForNode(nodes[i], order, attributeBase, attributeRanks) < treeOrderForNode(nodes[j], order, attributeBase, attributeRanks)
 	})

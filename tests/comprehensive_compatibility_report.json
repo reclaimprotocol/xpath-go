@@ -1,6 +1,6 @@
 {
-  "total": 882,
-  "passed": 882,
+  "total": 888,
+  "passed": 888,
   "failed": 0,
   "compatibility": "100.0",
   "details": [
@@ -94566,6 +94566,498 @@
             "endLocation": 451,
             "path": "/#document/html/body/div/div/div/div/div[2]/span/#text[2]",
             "textContent": "Student Name"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Student portal page stray closing div recovers student name span",
+      "xpath": "//span[@id='stname']/text()",
+      "suite": "extended",
+      "category": "end-tag-recovery",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Student Name",
+            "nodeName": "#text",
+            "nodeType": 3,
+            "namespaceURI": "",
+            "localName": "",
+            "prefix": "",
+            "attributes": {},
+            "textContent": "Student Name",
+            "startLocation": 284,
+            "endLocation": 296,
+            "path": "/html/body/form/div[3]/div/span[1]/#text"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "Student Name",
+            "nodeName": "#text",
+            "nodeType": 3,
+            "startLocation": 284,
+            "endLocation": 296,
+            "path": "/#document/html/body/form/div[3]/div/span[1]/#text[2]",
+            "textContent": "Student Name"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "Student Name",
+            "nodeName": "#text",
+            "nodeType": 3,
+            "namespaceURI": "",
+            "localName": "",
+            "prefix": "",
+            "attributes": {},
+            "textContent": "Student Name",
+            "startLocation": 284,
+            "endLocation": 296,
+            "path": "/html/body/form/div[3]/div/span[1]/#text"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "Student Name",
+            "nodeName": "#text",
+            "nodeType": 3,
+            "startLocation": 284,
+            "endLocation": 296,
+            "path": "/#document/html/body/form/div[3]/div/span[1]/#text[2]",
+            "textContent": "Student Name"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Charset decoding - ISO-8859-1 text and attribute XPath",
+      "xpath": "//div[contains(text(), 'José') and @title='Señor']",
+      "suite": "extended",
+      "category": "charset-decoding",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "<div title=\"Señor\">José</div>",
+            "nodeName": "div",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "localName": "div",
+            "prefix": "",
+            "attributes": {
+              "title": "Señor"
+            },
+            "textContent": "José",
+            "startLocation": 11,
+            "endLocation": 40,
+            "path": "/html/body/div"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "<div title=\"Se�or\">Jos�</div>",
+            "nodeName": "div",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "attributes": {
+              "title": "Señor"
+            },
+            "startLocation": 11,
+            "endLocation": 40,
+            "contentStart": 30,
+            "contentEnd": 34,
+            "path": "/#document/html/body/div[2]",
+            "textContent": "José"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "<div title=\"Señor\">José</div>",
+            "nodeName": "div",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "localName": "div",
+            "prefix": "",
+            "attributes": {
+              "title": "Señor"
+            },
+            "textContent": "José",
+            "startLocation": 11,
+            "endLocation": 40,
+            "path": "/html/body/div"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "<div title=\"Se�or\">Jos�</div>",
+            "nodeName": "div",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "attributes": {
+              "title": "Señor"
+            },
+            "startLocation": 11,
+            "endLocation": 40,
+            "contentStart": 30,
+            "contentEnd": 34,
+            "path": "/#document/html/body/div[2]",
+            "textContent": "José"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Charset decoding - Windows-1252 smart-quote attribute",
+      "xpath": "//div[@title='“Hola”']/text()",
+      "suite": "extended",
+      "category": "charset-decoding",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "ok",
+            "nodeName": "#text",
+            "nodeType": 3,
+            "namespaceURI": "",
+            "localName": "",
+            "prefix": "",
+            "attributes": {},
+            "textContent": "ok",
+            "startLocation": 20,
+            "endLocation": 22,
+            "path": "/html/body/div/#text"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "ok",
+            "nodeName": "#text",
+            "nodeType": 3,
+            "startLocation": 20,
+            "endLocation": 22,
+            "path": "/#document/html/body/div/#text[2]",
+            "textContent": "ok"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "ok",
+            "nodeName": "#text",
+            "nodeType": 3,
+            "namespaceURI": "",
+            "localName": "",
+            "prefix": "",
+            "attributes": {},
+            "textContent": "ok",
+            "startLocation": 20,
+            "endLocation": 22,
+            "path": "/html/body/div/#text"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "ok",
+            "nodeName": "#text",
+            "nodeType": 3,
+            "startLocation": 20,
+            "endLocation": 22,
+            "path": "/#document/html/body/div/#text[2]",
+            "textContent": "ok"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Charset decoding - ISO-8859-1 WHATWG alias maps C1 euro",
+      "xpath": "//p[text()='€']",
+      "suite": "extended",
+      "category": "charset-decoding",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "<p>€</p>",
+            "nodeName": "p",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "localName": "p",
+            "prefix": "",
+            "attributes": {},
+            "textContent": "€",
+            "startLocation": 0,
+            "endLocation": 8,
+            "path": "/html/body/p"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "<p>�</p>",
+            "nodeName": "p",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "startLocation": 0,
+            "endLocation": 8,
+            "contentStart": 3,
+            "contentEnd": 4,
+            "path": "/#document/html/body/p[2]",
+            "textContent": "€"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "<p>€</p>",
+            "nodeName": "p",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "localName": "p",
+            "prefix": "",
+            "attributes": {},
+            "textContent": "€",
+            "startLocation": 0,
+            "endLocation": 8,
+            "path": "/html/body/p"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "<p>�</p>",
+            "nodeName": "p",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "startLocation": 0,
+            "endLocation": 8,
+            "contentStart": 3,
+            "contentEnd": 4,
+            "path": "/#document/html/body/p[2]",
+            "textContent": "€"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Charset decoding - Shift_JIS multibyte XPath and offsets",
+      "xpath": "//span[@title='情報' and text()='あ']",
+      "suite": "extended",
+      "category": "charset-decoding",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "<span title=\"情報\">あ</span>",
+            "nodeName": "span",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "localName": "span",
+            "prefix": "",
+            "attributes": {
+              "title": "情報"
+            },
+            "textContent": "あ",
+            "startLocation": 9,
+            "endLocation": 37,
+            "path": "/html/body/span"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "<span title=\"����\">��</span>",
+            "nodeName": "span",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "attributes": {
+              "title": "情報"
+            },
+            "startLocation": 9,
+            "endLocation": 37,
+            "contentStart": 28,
+            "contentEnd": 30,
+            "path": "/#document/html/body/span[2]",
+            "textContent": "あ"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "<span title=\"情報\">あ</span>",
+            "nodeName": "span",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "localName": "span",
+            "prefix": "",
+            "attributes": {
+              "title": "情報"
+            },
+            "textContent": "あ",
+            "startLocation": 9,
+            "endLocation": 37,
+            "path": "/html/body/span"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "<span title=\"����\">��</span>",
+            "nodeName": "span",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "attributes": {
+              "title": "情報"
+            },
+            "startLocation": 9,
+            "endLocation": 37,
+            "contentStart": 28,
+            "contentEnd": 30,
+            "path": "/#document/html/body/span[2]",
+            "textContent": "あ"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Charset decoding - UTF-16LE BOM XPath and offsets",
+      "xpath": "//span[@title='情報' and text()='あ']",
+      "suite": "extended",
+      "category": "charset-decoding",
+      "passed": true,
+      "jsResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "<span title=\"情報\">あ</span>",
+            "nodeName": "span",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "localName": "span",
+            "prefix": "",
+            "attributes": {
+              "title": "情報"
+            },
+            "textContent": "あ",
+            "startLocation": 18,
+            "endLocation": 68,
+            "path": "/html/body/span"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "goResult": {
+        "success": true,
+        "results": [
+          {
+            "value": "<\u0000s\u0000p\u0000a\u0000n\u0000 \u0000t\u0000i\u0000t\u0000l\u0000e\u0000=\u0000\"\u0000�`1X\"\u0000>\u0000B0<\u0000/\u0000s\u0000p\u0000a\u0000n\u0000>\u0000",
+            "nodeName": "span",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "attributes": {
+              "title": "情報"
+            },
+            "startLocation": 18,
+            "endLocation": 68,
+            "contentStart": 52,
+            "contentEnd": 54,
+            "path": "/#document/html/body/span[2]",
+            "textContent": "あ"
+          }
+        ],
+        "count": 1,
+        "error": null
+      },
+      "comparison": {
+        "match": true,
+        "reason": "Perfect match",
+        "jsResults": [
+          {
+            "value": "<span title=\"情報\">あ</span>",
+            "nodeName": "span",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "localName": "span",
+            "prefix": "",
+            "attributes": {
+              "title": "情報"
+            },
+            "textContent": "あ",
+            "startLocation": 18,
+            "endLocation": 68,
+            "path": "/html/body/span"
+          }
+        ],
+        "goResults": [
+          {
+            "value": "<\u0000s\u0000p\u0000a\u0000n\u0000 \u0000t\u0000i\u0000t\u0000l\u0000e\u0000=\u0000\"\u0000�`1X\"\u0000>\u0000B0<\u0000/\u0000s\u0000p\u0000a\u0000n\u0000>\u0000",
+            "nodeName": "span",
+            "nodeType": 1,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "attributes": {
+              "title": "情報"
+            },
+            "startLocation": 18,
+            "endLocation": 68,
+            "contentStart": 52,
+            "contentEnd": 54,
+            "path": "/#document/html/body/span[2]",
+            "textContent": "あ"
           }
         ]
       }

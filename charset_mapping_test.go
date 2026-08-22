@@ -275,7 +275,7 @@ func TestMalformedShiftJISPreservesMarkupAndTextRawBoundaries(t *testing.T) {
 func TestCharsetBOMIsStrippedBeforeXPath(t *testing.T) {
 	t.Run("utf-8", func(t *testing.T) {
 		raw := append([]byte{0xef, 0xbb, 0xbf}, []byte(`<p>text</p>`)...)
-		results, err := QueryBytesWithOptions(`//text()`, raw, Options{OutputFormat: "nodes", Charset: "utf-8"})
+		results, err := QueryBytesWithOptions(`//text()`, raw, Options{IncludeLocation: true, OutputFormat: "nodes", Charset: "utf-8"})
 		if err != nil || len(results) != 1 || results[0].TextContent != "text" {
 			t.Fatalf("UTF-8 BOM must not become a text node: results=%#v err=%v", results, err)
 		}
@@ -289,7 +289,7 @@ func TestCharsetBOMIsStrippedBeforeXPath(t *testing.T) {
 		for _, r := range `<p>text</p>` {
 			raw = append(raw, byte(r), byte(r>>8))
 		}
-		results, err := QueryBytesWithOptions(`//text()`, raw, Options{OutputFormat: "nodes", Charset: "utf-16le"})
+		results, err := QueryBytesWithOptions(`//text()`, raw, Options{IncludeLocation: true, OutputFormat: "nodes", Charset: "utf-16le"})
 		if err != nil || len(results) != 1 || results[0].TextContent != "text" {
 			t.Fatalf("UTF-16LE BOM must not become a text node: results=%#v err=%v", results, err)
 		}

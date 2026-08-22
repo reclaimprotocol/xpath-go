@@ -9,6 +9,7 @@ import (
 // TraceMode controls debug logging for the XPath evaluator
 type TraceMode struct {
 	enabled bool
+	scopes  int
 	mu      sync.RWMutex
 }
 
@@ -32,7 +33,27 @@ func DisableTrace() {
 func IsTraceEnabled() bool {
 	globalTrace.mu.RLock()
 	defer globalTrace.mu.RUnlock()
-	return globalTrace.enabled
+	return globalTrace.enabled || globalTrace.scopes > 0
+}
+
+// BeginTrace enables trace output for one evaluation and returns an idempotent
+// release function. It deliberately composes with the public EnableTrace /
+// DisableTrace switch: disabling a manual trace does not silence a concurrent
+// scoped debug evaluation, and releasing a scope does not disable manual
+// tracing.
+func BeginTrace() func() {
+	globalTrace.mu.Lock()
+	globalTrace.scopes++
+	globalTrace.mu.Unlock()
+
+	var once sync.Once
+	return func() {
+		once.Do(func() {
+			globalTrace.mu.Lock()
+			globalTrace.scopes--
+			globalTrace.mu.Unlock()
+		})
+	}
 }
 
 // Trace logs a message if trace mode is enabled

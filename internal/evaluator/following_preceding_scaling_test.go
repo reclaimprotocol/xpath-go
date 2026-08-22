@@ -4,7 +4,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/reclaimprotocol/xpath-go/internal/parser"
 	"github.com/reclaimprotocol/xpath-go/pkg/types"
 )
 
@@ -29,7 +28,7 @@ func alternatingAxisDocument(pairs int) *types.Node {
 
 func bestMultiContextAxisEvaluation(t *testing.T, document *types.Node, expression string, want int) time.Duration {
 	t.Helper()
-	parsed, err := parser.NewParser().Parse(expression)
+	program, err := Compile(expression)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -38,10 +37,10 @@ func bestMultiContextAxisEvaluation(t *testing.T, document *types.Node, expressi
 		evaluator := NewEvaluator()
 		start := time.Now()
 		evaluator.prepareAxisOrder(document)
-		results, evalErr := evaluator.evaluateSteps(parsed, document)
+		value := evaluateXPathValue(program.root, document, evaluator)
 		elapsed := time.Since(start)
-		if evalErr != nil || len(results) != want {
-			t.Fatalf("multi-context axis %q: got %d results, want %d; err=%v", expression, len(results), want, evalErr)
+		if value.kind != nodeSetXPathValue || len(value.nodes) != want {
+			t.Fatalf("multi-context axis %q: got %d results, want %d", expression, len(value.nodes), want)
 		}
 		if elapsed < best {
 			best = elapsed

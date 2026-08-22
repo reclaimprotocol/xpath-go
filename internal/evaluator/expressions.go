@@ -19,11 +19,20 @@ type Expression interface {
 	String() string
 }
 
+// SourceSpan identifies a byte range in the XPath source. Parser diagnostics
+// use these offsets directly; retained spans also let future API layers point
+// at a typed path/function node without reparsing its text.
+type SourceSpan struct {
+	Start int
+	End   int
+}
+
 // BooleanExpression represents 'and'/'or' logic
 type BooleanExpression struct {
 	Left     Expression
 	Operator string
 	Right    Expression
+	Span     SourceSpan
 }
 
 func (b *BooleanExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
@@ -39,6 +48,7 @@ type ComparisonExpression struct {
 	Left     Expression
 	Operator string
 	Right    Expression
+	Span     SourceSpan
 }
 
 func (c *ComparisonExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
@@ -52,6 +62,7 @@ func (c *ComparisonExpression) String() string {
 // ElementExpression represents check for a child element existence
 type ElementExpression struct {
 	Name string
+	Span SourceSpan
 }
 
 func (e *ElementExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
@@ -64,8 +75,11 @@ func (e *ElementExpression) String() string {
 
 // AxisExpression represents an axis navigation in an expression
 type AxisExpression struct {
-	Axis     string
-	NodeTest string
+	Axis       string
+	NodeTest   string
+	Predicates []Expression
+	Following  []PathStep
+	Span       SourceSpan
 }
 
 func (a *AxisExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
@@ -73,13 +87,34 @@ func (a *AxisExpression) Evaluate(node *types.Node, evaluator *Evaluator) string
 }
 
 func (a *AxisExpression) String() string {
-	return fmt.Sprintf("%s::%s", a.Axis, a.NodeTest)
+	value := fmt.Sprintf("%s::%s", a.Axis, a.NodeTest)
+	for _, predicate := range a.Predicates {
+		value += "[" + predicate.String() + "]"
+	}
+	for _, step := range a.Following {
+		if step.Descendant {
+			value += "//"
+		} else {
+			value += "/"
+		}
+		value += pathStepString(step)
+	}
+	return value
 }
 
 // PathStep represents a single step in a path
 type PathStep struct {
-	Name       string
-	Predicates []string
+	Name string
+	Span SourceSpan
+	// Axis is empty for the child axis. Keeping it on every path step means
+	// explicit axes can occur at any depth of a parsed expression rather than
+	// being represented by a special first-step expression.
+	Axis       string
+	Predicates []Expression
+	// Descendant is the `//` separator immediately before this step. Keeping
+	// it on the step preserves the compact predicate-expression AST while
+	// making relative paths such as .//span unambiguous.
+	Descendant bool
 }
 
 // PathExpression represents a path like head/title or */span
@@ -87,6 +122,7 @@ type PathExpression struct {
 	Steps      []PathStep
 	IsAbsolute bool
 	IsDeep     bool // true if starts with //
+	Span       SourceSpan
 }
 
 func (p *PathExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
@@ -102,19 +138,46 @@ func (p *PathExpression) String() string {
 			prefix = "//"
 		}
 	}
-	for _, step := range p.Steps {
-		s := step.Name
-		for _, pred := range step.Predicates {
-			s += "[" + pred + "]"
+	for index, step := range p.Steps {
+		if index > 0 {
+			if step.Descendant {
+				parts = append(parts, "//")
+			} else {
+				parts = append(parts, "/")
+			}
 		}
-		parts = append(parts, s)
+		parts = append(parts, pathStepString(step))
 	}
-	return prefix + strings.Join(parts, "/")
+	return prefix + strings.Join(parts, "")
+}
+
+func pathStepString(step PathStep) string {
+	value := step.Name
+	if step.Axis == "attribute" {
+		value = "@" + value
+	} else if step.Axis != "" && step.Axis != "child" {
+		value = step.Axis + "::" + value
+	}
+	for _, predicate := range step.Predicates {
+		value += "[" + predicate.String() + "]"
+	}
+	return value
+}
+
+// FunctionCall is a typed function-call AST node. Source offsets are retained
+// for diagnostics produced at compile time.
+type FunctionCall struct {
+	Name      string
+	Arguments []Expression
+	StartPos  int
+	EndPos    int
+	Span      SourceSpan
 }
 
 // FunctionExpression represents a function call
 type FunctionExpression struct {
 	Function *FunctionCall
+	Span     SourceSpan
 }
 
 func (f *FunctionExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
@@ -132,6 +195,7 @@ func (f *FunctionExpression) String() string {
 // LiteralExpression represents a string literal
 type LiteralExpression struct {
 	Value string
+	Span  SourceSpan
 }
 
 func (l *LiteralExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
@@ -145,6 +209,7 @@ func (l *LiteralExpression) String() string {
 // NumberExpression represents a numeric constant
 type NumberExpression struct {
 	Value float64
+	Span  SourceSpan
 }
 
 func (n *NumberExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
@@ -158,6 +223,7 @@ func (n *NumberExpression) String() string {
 // AttributeExpression represents @attribute
 type AttributeExpression struct {
 	Name string
+	Span SourceSpan
 }
 
 func (a *AttributeExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
@@ -176,11 +242,13 @@ type ArithmeticExpression struct {
 	Left     Expression
 	Operator string
 	Right    Expression
+	Span     SourceSpan
 }
 
 // UnaryExpression represents XPath's recursive unary minus expression.
 type UnaryExpression struct {
 	Operand Expression
+	Span    SourceSpan
 }
 
 func (u *UnaryExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
@@ -193,6 +261,33 @@ func (u *UnaryExpression) String() string { return "-" + u.Operand.String() }
 // string(A | B) use the first member in recovered DOM document order.
 type UnionExpression struct {
 	Operands []Expression
+	Span     SourceSpan
+}
+
+type nodeSetIdentity struct {
+	node      *types.Node
+	owner     *types.Node
+	namespace string
+	localName string
+	attribute bool
+}
+
+func nodeSetIdentityFor(candidate *types.Node) nodeSetIdentity {
+	identity := nodeSetIdentity{node: candidate}
+	if candidate == nil {
+		return identity
+	}
+	if candidate.Type == types.AttributeNode {
+		localName := candidate.LocalName
+		if localName == "" {
+			localName = candidate.Name
+		}
+		return nodeSetIdentity{owner: candidate.Parent, namespace: candidate.NamespaceURI, localName: localName, attribute: true}
+	}
+	if candidate.Origin != nil {
+		identity.node = candidate.Origin
+	}
+	return identity
 }
 
 func (u *UnionExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
@@ -242,6 +337,12 @@ func evaluateXPathValue(expression Expression, node *types.Node, evaluator *Eval
 		if expr.Name == "." {
 			return nodeSetValue(node)
 		}
+		if expr.Name == ".." {
+			if node.Parent == nil {
+				return nodeSetValue()
+			}
+			return nodeSetValue(node.Parent)
+		}
 		nodes := make([]*types.Node, 0)
 		for _, child := range node.Children {
 			if child.Type == types.ElementNode && (expr.Name == "*" || child.Name == expr.Name) {
@@ -251,7 +352,11 @@ func evaluateXPathValue(expression Expression, node *types.Node, evaluator *Eval
 		return nodeSetValue(nodes...)
 
 	case *AxisExpression:
-		return nodeSetValue(evaluator.evaluateAxisNodes(node, expr.Axis, expr.NodeTest)...)
+		nodes := evaluator.evaluateAxisNodesWithPredicates(node, expr.Axis, expr.NodeTest, expr.Predicates)
+		if len(expr.Following) == 0 {
+			return nodeSetValue(nodes...)
+		}
+		return nodeSetValue(evaluatePathSteps(expr.Following, nodes, evaluator)...)
 
 	case *PathExpression:
 		return nodeSetValue(evaluatePathNodes(expr, node, evaluator)...)
@@ -298,30 +403,14 @@ func evaluateXPathValue(expression Expression, node *types.Node, evaluator *Eval
 
 	case *UnionExpression:
 		var nodes []*types.Node
-		type unionIdentity struct {
-			node      *types.Node
-			owner     *types.Node
-			namespace string
-			localName string
-			attribute bool
-		}
-		seen := make(map[unionIdentity]struct{})
+		seen := make(map[nodeSetIdentity]struct{})
 		for _, operand := range expr.Operands {
 			value := evaluateXPathValue(operand, node, evaluator)
 			if value.kind != nodeSetXPathValue {
 				return xpathValue{kind: invalidXPathValue}
 			}
 			for _, candidate := range value.nodes {
-				identity := unionIdentity{node: candidate}
-				if candidate.Type == types.AttributeNode {
-					localName := candidate.LocalName
-					if localName == "" {
-						localName = candidate.Name
-					}
-					identity = unionIdentity{owner: candidate.Parent, namespace: candidate.NamespaceURI, localName: localName, attribute: true}
-				} else if candidate.Origin != nil {
-					identity.node = candidate.Origin
-				}
+				identity := nodeSetIdentityFor(candidate)
 				if _, exists := seen[identity]; exists {
 					continue
 				}
@@ -339,7 +428,27 @@ func evaluateXPathValue(expression Expression, node *types.Node, evaluator *Eval
 	return xpathValue{kind: invalidXPathValue}
 }
 
-func (evaluator *Evaluator) evaluateAxisNodes(node *types.Node, axis, nodeTest string) []*types.Node {
+// evaluateAxisNodesWithPredicates evaluates a pre-parsed axis expression.
+// Axis predicates appear inside already compiled outer predicates, so carrying
+// their typed AST here avoids reparsing them for every outer context node.
+func (evaluator *Evaluator) evaluateAxisNodesWithPredicates(node *types.Node, axis, nodeTest string, predicates []Expression) []*types.Node {
+	// Following and preceding are global reverse/document-order axes. Selecting
+	// [N] or [last()] through the precomputed matching-index cache avoids
+	// materializing every later/earlier node for each context node.
+	if (axis == "following" || axis == "preceding") && len(predicates) > 0 {
+		position, last, positional := typedAxisPosition(predicates[0])
+		if positional {
+			candidate := evaluator.positionalAxisNode(node, types.XPathAxis(axis), nodeTest, position, last)
+			if candidate == nil {
+				return nil
+			}
+			result := []*types.Node{candidate}
+			for _, predicate := range predicates[1:] {
+				result = evaluator.applyPredicate(result, predicate, node)
+			}
+			return result
+		}
+	}
 	var candidates []*types.Node
 	switch axis {
 	case "parent":
@@ -384,15 +493,11 @@ func (evaluator *Evaluator) evaluateAxisNodes(node *types.Node, axis, nodeTest s
 	case "attribute":
 		candidates = evaluator.getAttributeNodes(node)
 	}
-	baseTest, predicates := splitAxisNodeTest(nodeTest)
-	result := make([]*types.Node, 0, len(candidates))
-	for _, candidate := range candidates {
-		if evaluator.matchesNodeTest(candidate, baseTest) {
-			result = append(result, candidate)
-		}
-	}
+	// applyNodeTest carries the axis-sensitive wildcard rule: * means element
+	// on ordinary axes and attribute on the attribute axis.
+	result := evaluator.applyNodeTest(candidates, nodeTest)
 	for _, predicate := range predicates {
-		result = evaluator.applyUnifiedPredicate(result, predicate)
+		result = evaluator.applyPredicate(result, predicate, node)
 	}
 	root := node
 	if node.Type == types.AttributeNode && node.Parent != nil {
@@ -405,34 +510,15 @@ func (evaluator *Evaluator) evaluateAxisNodes(node *types.Node, axis, nodeTest s
 	return result
 }
 
-func splitAxisNodeTest(nodeTest string) (string, []string) {
-	start := strings.IndexByte(nodeTest, '[')
-	if start < 0 {
-		return nodeTest, nil
+func typedAxisPosition(expression Expression) (position int, last bool, ok bool) {
+	if number, ok := expression.(*NumberExpression); ok {
+		position = int(number.Value)
+		return position, false, number.Value == float64(position) && position > 0
 	}
-	base := strings.TrimSpace(nodeTest[:start])
-	var predicates []string
-	for position := start; position < len(nodeTest); {
-		if nodeTest[position] != '[' {
-			position++
-			continue
-		}
-		contentStart, depth := position+1, 1
-		position++
-		for position < len(nodeTest) && depth > 0 {
-			switch nodeTest[position] {
-			case '[':
-				depth++
-			case ']':
-				depth--
-			}
-			position++
-		}
-		if depth == 0 {
-			predicates = append(predicates, nodeTest[contentStart:position-1])
-		}
+	if function, ok := expression.(*FunctionExpression); ok && function.Function.Name == "last" && len(function.Function.Arguments) == 0 {
+		return 0, true, true
 	}
-	return base, predicates
+	return 0, false, false
 }
 
 func evaluatePathNodes(path *PathExpression, node *types.Node, evaluator *Evaluator) []*types.Node {
@@ -441,48 +527,87 @@ func evaluatePathNodes(path *PathExpression, node *types.Node, evaluator *Evalua
 		evaluator.contextPosition, evaluator.contextSize = oldPosition, oldSize
 	}()
 	var currentNodes []*types.Node
+	steps := path.Steps
 	if path.IsAbsolute {
 		root := node
 		for root.Parent != nil {
 			root = root.Parent
 		}
-		if path.IsDeep {
-			currentNodes = evaluator.getDescendantNodes(root, true)
-		} else {
-			currentNodes = []*types.Node{root}
+		currentNodes = []*types.Node{root}
+		// // is shorthand for /descendant-or-self::node()/ rather than
+		// starting a child step from every descendant. Marking the first step
+		// preserves that distinction for node tests and explicit axes alike.
+		if path.IsDeep && len(steps) > 0 {
+			steps = append([]PathStep(nil), steps...)
+			steps[0].Descendant = true
 		}
 	} else {
 		currentNodes = []*types.Node{node}
 	}
 
-	for _, step := range path.Steps {
+	return evaluatePathSteps(steps, currentNodes, evaluator)
+}
+
+// evaluatePathSteps evaluates already parsed path steps from a caller-provided
+// node set. Axis expressions use this after their typed node test, which keeps
+// an explicit axis followed by a location path out of string-based parsing.
+func evaluatePathSteps(steps []PathStep, currentNodes []*types.Node, evaluator *Evaluator) []*types.Node {
+	for _, step := range steps {
 		var nextNodes []*types.Node
-		for _, current := range currentNodes {
+		stepContexts := currentNodes
+		if step.Descendant {
+			stepContexts = make([]*types.Node, 0)
+			for _, current := range currentNodes {
+				stepContexts = append(stepContexts, evaluator.getDescendantNodes(current, true)...)
+			}
+		}
+		for _, current := range stepContexts {
+			if step.Axis != "" && step.Axis != "child" {
+				matching := evaluator.evaluateAxisNodesWithPredicates(current, step.Axis, step.Name, step.Predicates)
+				nextNodes = append(nextNodes, matching...)
+				continue
+			}
+			if step.Name == "." {
+				matching := []*types.Node{current}
+				for _, predicate := range step.Predicates {
+					matching = evaluator.applyPredicate(matching, predicate, current)
+				}
+				nextNodes = append(nextNodes, matching...)
+				continue
+			}
+			if step.Name == ".." {
+				matching := make([]*types.Node, 0, 1)
+				if current.Parent != nil {
+					matching = append(matching, current.Parent)
+				}
+				for _, predicate := range step.Predicates {
+					matching = evaluator.applyPredicate(matching, predicate, current)
+				}
+				nextNodes = append(nextNodes, matching...)
+				continue
+			}
 			if strings.HasPrefix(step.Name, "@") {
 				name := strings.TrimPrefix(step.Name, "@")
+				matching := make([]*types.Node, 0)
 				for _, attribute := range evaluator.getAttributeNodes(current) {
 					if name == "*" || attribute.Name == name {
-						nextNodes = append(nextNodes, attribute)
+						matching = append(matching, attribute)
 					}
 				}
+				for _, predicate := range step.Predicates {
+					matching = evaluator.applyPredicate(matching, predicate, current)
+				}
+				nextNodes = append(nextNodes, matching...)
 				continue
 			}
 			matching := make([]*types.Node, 0)
 			for _, child := range evaluator.getChildNodes(current) {
-				if child.Type == types.ElementNode && (step.Name == "*" || child.Name == step.Name) {
+				if evaluator.matchesNodeTest(child, step.Name) {
 					matching = append(matching, child)
 				}
 			}
 			for _, predicate := range step.Predicates {
-				filtered := make([]*types.Node, 0, len(matching))
-				for index, candidate := range matching {
-					evaluator.contextPosition = index + 1
-					evaluator.contextSize = len(matching)
-					if evaluator.evaluateSimpleCondition(candidate, predicate) {
-						filtered = append(filtered, candidate)
-					}
-				}
-				matching = filtered
+				matching = evaluator.applyPredicate(matching, predicate, current)
 			}
 			nextNodes = append(nextNodes, matching...)
 		}

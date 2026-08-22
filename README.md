@@ -1,22 +1,20 @@
 # xpath-go
 
-🎯 **High-compatibility XPath library for Go with precise location tracking**
+🎯 **Browser-oriented XPath library for Go with precise source-byte locations**
 
 [![Go Version](https://img.shields.io/badge/Go-1.21%2B-blue.svg)](https://golang.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Go Report Card](https://goreportcard.com/badge/github.com/reclaimprotocol/xpath-go)](https://goreportcard.com/report/github.com/reclaimprotocol/xpath-go)
-[![Coverage](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg)](https://github.com/reclaimprotocol/xpath-go)
 [![Release](https://img.shields.io/github/v/release/reclaimprotocol/xpath-go)](https://github.com/reclaimprotocol/xpath-go/releases)
 
 ## ✨ Features
 
-- 🎯 **High Compatibility** - Strives for close compatibility with jsdom's XPath evaluation
-- 📍 **Precise Location Tracking** - Raw-byte positioning in source HTML/XML
+- 🎯 **Browser Compatibility** - Validated against jsdom across 888 checked-in cases
+- 📍 **Precise Location Tracking** - Raw-byte positioning in the original HTML response
 - 🌐 **Response Charset Decoding** - WHATWG labels with raw-byte location preservation
 - 📄 **Dual Extraction Modes** - Extract full elements or content-only with `contentsOnly` option
-- ⚡ **High Performance** - Optimized evaluation engine with smart caching
-- 🔧 **Production Ready** - Comprehensive error handling and extensive testing
-- 🧪 **Battle Tested** - Extensively tested against reference implementations
+- ⚡ **Performance-oriented** - Reusable compiled expressions and allocation-aware evaluation
+- 🧪 **Reference-validated** - Go characterization tests plus browser, charset, and conversion oracles
 - 📦 **Minimal Dependencies** - Uses Go's maintained `x/text` encoding tables
 - 🎨 **Developer Friendly** - Rich debugging support with trace logging
 
@@ -55,27 +53,31 @@ func main() {
 go get github.com/reclaimprotocol/xpath-go
 ```
 
-## 🎯 Complete XPath Support
+## 🎯 XPath Support
 
-### ✅ Axes (100% Compatible)
+### ✅ Axes (validated subset)
 - `child::`, `parent::`, `ancestor::`, `descendant::`
 - `following::`, `preceding::`, `following-sibling::`, `preceding-sibling::`
-- `attribute::`, `namespace::`, `self::`
+- `attribute::`, `self::`
 - `descendant-or-self::`, `ancestor-or-self::`
 
-### ✅ Functions (Comprehensive Support)
+The `namespace::` axis is not currently implemented. See
+[`docs/COMPATIBILITY.md`](docs/COMPATIBILITY.md) for the supported XPath 1.0
+subset and known gaps.
+
+### ✅ Functions (validated subset)
 - **Node Functions**: `text()`, `node()`, `position()`, `last()`, `count()`
 - **String Functions**: `string()`, `normalize-space()`, `starts-with()`, `contains()`, `substring()`
 - **Boolean Functions**: `boolean()`, `not()`
 - **Number Functions**: `number()`, `string-length()`
 
-### ✅ Operators (Full Support)
+### ✅ Operators (validated subset)
 - **Comparison**: `=`, `!=`, `<`, `>`, `<=`, `>=`
 - **Logical**: `and`, `or`, `not()`
 - **Arithmetic**: `+`, `-`, `*`, `div`, `mod`
 - **Union**: `|` (pipe operator)
 
-### ✅ Predicates (Full Support)
+### ✅ Predicates (validated subset)
 - Attribute predicates: `[@id='test']`, `[@class and @id]`
 - Position predicates: `[1]`, `[last()]`, `[position()>2]`
 - Content predicates: `[text()='value']`, `[contains(text(), 'substring')]`
@@ -83,7 +85,7 @@ go get github.com/reclaimprotocol/xpath-go
 
 ## 📊 XPath Support
 
-**Comprehensive XPath 1.0 implementation with extensive test coverage**
+**XPath 1.0 subset with browser-oriented HTML recovery**
 
 | Feature Category | Support | Details |
 |------------------|---------|---------|
@@ -91,39 +93,28 @@ go get github.com/reclaimprotocol/xpath-go
 | Attribute Queries | ✅ Full | Attribute existence, value matching, complex conditions |
 | Text Functions | ✅ Full | text(), contains(), starts-with(), normalize-space() |
 | Position Functions | ✅ Full | position(), last(), numeric positions |
-| Axes Navigation | ✅ Full | All XPath axes including ancestor/descendant |
+| Axes Navigation | 🔶 Subset | Covered XPath axes including ancestor/descendant; `namespace::` is unsupported |
 | Complex Predicates | ✅ Full | Boolean logic, nested predicates, unions |
 | String Functions | ✅ Full | substring(), string-length() with edge cases |
 
 ## 📋 Important Compatibility Notes
 
 ### HTML Entity Handling
-**XPath-Go preserves HTML entities in their original encoded form**, which differs from JavaScript's DOM behavior:
+
+XPath-Go decodes named and numeric character references in text and attributes,
+matching browser DOM behavior. Result locations and full-node `Value` slices
+still refer to the original source bytes.
 
 ```html
 <!-- Source HTML -->
 <p>Text with &amp; &lt; &gt; characters</p>
 ```
 
-| Implementation | Text Content | XPath Query |
-|---------------|--------------|-------------|
-| **JavaScript DOM** | `"Text with & < > characters"` | `//p[contains(text(), '&')]` ✅ |
-| **XPath-Go** | `"Text with &amp; &lt; &gt; characters"` | `//p[contains(text(), '&amp;')]` ✅ |
-
-**Why this difference exists:**
-- ✅ **Preserves original HTML content** exactly as written
-- ✅ **No information loss** - you can decode when needed
-- ✅ **Predictable behavior** - what you see is what you get
-- ✅ **Security benefits** - prevents entity-related parsing issues
-
-**Working with entities:**
 ```go
-// Method 1: Query with encoded entities
-results, _ := xpath.Query("//p[contains(text(), '&amp;')]", html)
-
-// Method 2: Decode after extraction  
-results, _ := xpath.Query("//p", html)
-decoded := html.UnescapeString(results[0].TextContent)
+source := `<p>Text with &amp; &lt; &gt; characters</p>`
+results, _ := xpath.Query("//p[contains(text(), '&')]", source)
+fmt.Println(results[0].TextContent) // Text with & < > characters
+fmt.Println(results[0].Value)       // original <p>...</p> source
 ```
 
 📖 **[Read the complete HTML Entity Handling guide](docs/HTML_ENTITY_HANDLING.md)** for detailed information and best practices.
@@ -136,11 +127,6 @@ decoded := html.UnescapeString(results[0].TextContent)
 <!-- Source HTML -->
 <p>Hello 世界</p>
 ```
-
-| Implementation | Position Calculation | `StartLocation` | `EndLocation` |
-|---------------|---------------------|-----------------|---------------|
-| **JavaScript DOM** | Character-based | 0 | 27 |
-| **XPath-Go** | Byte-based | 0 | 31 |
 
 **Why byte-based positioning:**
 - ✅ **Go idiomatic** - Aligns with Go's string handling and byte slice operations
@@ -166,7 +152,7 @@ func ByteToCharPos(s string, bytePos int) int {
 
 While XPath-Go aims for high compatibility with web standards, there are some intentional design choices:
 
-- **HTML Entity Preservation**: Maintains original `&amp;` vs `&` for security and consistency
+- **HTML character references**: XPath sees decoded DOM text; source extraction retains the original bytes
 - **Unicode Position Tracking**: Uses byte offsets for Go ecosystem compatibility  
 - **Performance Optimizations**: Some complex expressions may have subtle evaluation differences
 
@@ -176,14 +162,15 @@ For complete compatibility details, see [docs/COMPATIBILITY.md](docs/COMPATIBILI
 
 ### Location Tracking
 
-Get precise character positions for all matched nodes:
+Get precise source-byte positions for matched nodes (location tracking is
+enabled by default):
 
 ```go
 results, _ := xpath.Query("//div[@class='content']", htmlContent)
 for _, result := range results {
     fmt.Printf("Element: <%s>\n", result.NodeName)
     fmt.Printf("Text: %s\n", result.TextContent) 
-    fmt.Printf("Character Range: %d-%d\n", result.StartLocation, result.EndLocation)
+    fmt.Printf("Byte Range: %d-%d\n", result.StartLocation, result.EndLocation)
     fmt.Printf("XPath: %s\n", result.Path)
     fmt.Printf("Attributes: %+v\n", result.Attributes)
 }
@@ -200,7 +187,7 @@ if err != nil {
     log.Fatal(err)
 }
 
-// Use multiple times (faster)
+// Reuse for multiple documents; benchmark your workload to measure the benefit
 for _, htmlDoc := range documents {
     results, err := compiled.Evaluate(htmlDoc)
     if err != nil {
@@ -316,7 +303,7 @@ results, _ := xpath.QueryWithOptions("//div", html, xpath.Options{
 })
 // StartLocation/EndLocation: Hello <span>World</span>!
 
-// Fine-grained control (always available)
+// Fine-grained control when IncludeLocation is enabled
 fmt.Printf("Full element: %s\n", html[result.StartLocation:result.EndLocation])
 fmt.Printf("Inner content: %s\n", html[result.ContentStart:result.ContentEnd])
 ```
@@ -327,12 +314,15 @@ fmt.Printf("Inner content: %s\n", html[result.ContentStart:result.ContentEnd])
 
 ## 📈 Performance
 
-Optimized for production use:
+Designed for production use:
 
-- **Fast parsing** with caching support
-- **Efficient evaluation** with minimal memory allocations  
-- **Thread-safe** design for concurrent usage
-- **Compiled expressions** for repeated queries
+- **Reusable compiled expressions** for repeated queries
+- **Byte-oriented source locations** when location metadata is requested
+- **Concurrent evaluation** with per-call state
+
+Performance depends on document size, expression shape, output format, and
+whether location metadata is requested. Run the checked-in benchmarks for your
+workload instead of relying on a fixed speed or allocation claim.
 
 ```go
 // Compile once, use many times
@@ -355,7 +345,7 @@ func QueryWithOptions(xpathExpr, content string, opts Options) ([]Result, error)
 func QueryBytes(xpathExpr string, content []byte) ([]Result, error)
 func QueryBytesWithOptions(xpathExpr string, content []byte, opts Options) ([]Result, error)
 
-// Compile XPath for reuse (performance optimization)
+// Compile XPath for reuse
 func Compile(xpathExpr string) (*XPath, error)
 
 // Enable/disable debug tracing
@@ -384,7 +374,7 @@ type Result struct {
 
 ```go
 type Options struct {
-    IncludeLocation  bool   // Include source positions (default: true)
+    IncludeLocation  bool   // Include source positions; zero-value Options disables them
     OutputFormat     string // "nodes", "values", "paths" (default: "nodes")
     ContentsOnly     bool   // Extract only inner content between tags (default: false)
     ScriptingEnabled bool   // Parse noscript as RAWTEXT
@@ -400,22 +390,36 @@ locations continue to index the original response bytes.
 - `false` (default): Extract full elements including tags: `<div>content</div>`
 - `true`: Extract only inner content: `content`
 
-Both modes maintain precise position tracking. With `ContentsOnly: true`, `StartLocation`/`EndLocation` point to the content boundaries, while `ContentStart`/`ContentEnd` are always available for fine-grained control.
+With location tracking enabled, both modes maintain source-byte positions.
+With `ContentsOnly: true`, `StartLocation`/`EndLocation` point to the content
+boundaries, while `ContentStart`/`ContentEnd` identify the inner content.
+Set `IncludeLocation: false` when coordinates are not needed; location fields
+are then unavailable.
+
+`Query`, `QueryBytes`, and `(*XPath).Evaluate` enable location tracking in
+their convenience defaults. The explicit `*WithOptions` APIs use the supplied
+value as-is, so `Options{}` leaves location fields at zero.
 
 ## 🔧 Development
 
 ### Testing
 
 ```bash
-# Go tests
-go test ./...
+# Fast Go unit and integration suite
+make test
 
-# Compatibility tests (requires Node.js)
-cd tests && npm install && npm test
+# Full pre-merge verification
+make test-all
 
-# Benchmarks
-go test -bench=. -benchmem ./...
+# Individual slower layers
+make test-race
+make test-scaling
+make test-compat
+make test-fuzz
+make test-bench
 ```
+
+See [Testing](docs/TESTING.md) for the purpose and expected use of each layer.
 
 ## 🤝 Contributing
 
@@ -427,7 +431,7 @@ git clone https://github.com/reclaimprotocol/xpath-go.git
 cd xpath-go && go mod download
 
 # Run tests
-go test ./... && cd tests && npm install && npm test
+make test-all
 ```
 
 ## 📄 License
@@ -442,4 +446,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**🎉 Production Ready**: This library is actively used in production and provides reliable XPath evaluation for Go applications.
+Compatibility claims are bounded by the checked-in Go and browser-oracle test
+suites. See [Compatibility](docs/COMPATIBILITY.md) for the validated surface and
+known differences.

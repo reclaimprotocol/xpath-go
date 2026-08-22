@@ -19,7 +19,7 @@ func TestParseTypedConversionPredicates(t *testing.T) {
 		{`//div[not('01'='1') and @code=1]`, `not('01'='1') and @code=1`},
 		{`//main[string(//a | //z)='first']`, `string(//a | //z)='first'`},
 		{`//main[number(string((//a | //b)))=1]`, `number(string((//a | //b)))=1`},
-		{`//case[left < right]`, `left<right`},
+		{`//case[left < right]`, `left < right`},
 	}
 
 	for _, check := range checks {
@@ -52,5 +52,19 @@ func TestParseRejectsInvalidTypedConversionArity(t *testing.T) {
 		if _, err := NewParser().Parse(expression); err == nil {
 			t.Errorf("Parse(%q) succeeded, want XPath function arity error", expression)
 		}
+	}
+}
+
+func TestParseNumericLiteralsWithLeadingDots(t *testing.T) {
+	for _, expression := range []string{
+		`//item[.5 < 1]`,
+		`//item[.5]`,
+	} {
+		if _, err := NewParser().Parse(expression); err != nil {
+			t.Errorf("Parse(%q): %v", expression, err)
+		}
+	}
+	if _, err := NewParser().Parse(`//item[1.2.3]`); err == nil {
+		t.Error("Parse accepted malformed numeric literal")
 	}
 }

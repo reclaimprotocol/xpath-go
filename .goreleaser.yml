@@ -1,3 +1,4 @@
+version: 2
 project_name: xpath-go
 
 # Build configuration
@@ -17,20 +18,19 @@ builds:
       - CGO_ENABLED=0
     ldflags:
       - -s -w
-      - -X main.Version={{.Version}}
-      - -X main.GitCommit={{.ShortCommit}}
-      - -X main.BuildTime={{.Date}}
-    skip: true  # Skip until we have cmd/examples/basic
+      - -X github.com/reclaimprotocol/xpath-go.GitCommit={{.ShortCommit}}
+      - -X github.com/reclaimprotocol/xpath-go.BuildTime={{.Date}}
 
 # Archive configuration
 archives:
   - id: default
-    builds:
+    ids:
       - xpath-example
     format_overrides:
       - goos: windows
-        format: zip
+        formats: [zip]
     files:
+      - LICENSE
       - README.md
       - "docs/**"
       - "cmd/examples/**"
@@ -41,7 +41,7 @@ checksum:
 
 # Snapshot configuration
 snapshot:
-  name_template: "{{ incpatch .Version }}-snapshot"
+  version_template: "{{ incpatch .Version }}-snapshot"
 
 # Release configuration
 release:
@@ -54,14 +54,14 @@ release:
   header: |
     ## XPath Go v{{.Version}}
     
-    🎯 **High-Compatibility XPath Library for Go**
+    🎯 **Browser-Oriented XPath Library for Go**
     
-    This release brings comprehensive XPath functionality with strong compatibility and precise node location tracking.
+    This release provides the XPath behavior documented by the checked-in compatibility suite with precise source-byte location tracking.
     
     ### ✨ Highlights
-    - **High Compatibility**: Strives for close compatibility with web standards and jsdom
-    - **Location Tracking**: Precise character positioning in source HTML/XML
-    - **Production Ready**: Comprehensive error handling and performance optimization
+    - **Browser Compatibility**: Validated against the checked-in jsdom oracle
+    - **Location Tracking**: Precise byte offsets in original HTML input
+    - **Documented Scope**: Explicit compatibility boundaries and regression tests
     
     ### What's Changed
   footer: |
@@ -91,12 +91,6 @@ changelog:
       order: 2
     - title: "Other Changes"
       order: 999
-
-# Source archives
-source:
-  enabled: true
-  name_template: "{{ .ProjectName }}-{{ .Version }}-source"
-  format: tar.gz
 
 # Git configuration
 git:

@@ -324,12 +324,12 @@ Our current implementation provides solid XPath 1.0 compatibility with some XPat
 
 ## Recommendations
 
-### For Production Use
-**Current implementation is sufficient for most production use cases** involving:
-- HTML/XML document parsing
+### Current scope
+**The current implementation targets the checked-in compatibility surface** involving:
+- Browser-recovered HTML parsing
 - Web scraping and data extraction
-- Basic content management
-- Test automation
+- Content extraction
+- Test automation against the documented XPath 1.0 subset
 
 ### For Enhanced Compatibility
 Focus on **Phase 1** implementation which provides:

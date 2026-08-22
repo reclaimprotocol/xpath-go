@@ -1,388 +1,194 @@
 # Performance Benchmarks
 
-Performance analysis and optimization guide for xpath-go library.
+Performance guidance for xpath-go. The repository contains reproducible
+benchmarks; it intentionally does not publish fixed timing or allocation
+numbers because those vary by Go version, architecture, CPU, input size, and
+background load.
 
 ## Table of Contents
 
 - [Benchmark Results](#benchmark-results)
 - [Performance Tips](#performance-tips)
-- [Memory Usage](#memory-usage)
-- [Comparison with Other Libraries](#comparison-with-other-libraries)
-- [Optimization Strategies](#optimization-strategies)
+- [Profiling and Debugging](#profiling-and-debugging)
+- [Benchmark Your Own Use Cases](#benchmark-your-own-use-cases)
 
 ## Benchmark Results
 
-### Basic Operations
+Run the checked-in suites from the repository root:
 
-These benchmarks demonstrate the performance characteristics of common XPath operations:
-
-```
-goos: darwin
-goarch: arm64
-pkg: github.com/reclaimprotocol/xpath-go
-
-Benchmark_Query_SimpleElement-8           	  100000	     12543 ns/op	    2048 B/op	      45 allocs/op
-Benchmark_Query_AttributeSelection-8      	   80000	     15623 ns/op	    2304 B/op	      52 allocs/op
-Benchmark_Query_TextContent-8             	   90000	     13892 ns/op	    2176 B/op	      48 allocs/op
-Benchmark_Query_ComplexPredicate-8        	   60000	     20145 ns/op	    3072 B/op	      67 allocs/op
-Benchmark_Query_AxisNavigation-8          	   70000	     18234 ns/op	    2816 B/op	      58 allocs/op
-
-Benchmark_Compile_vs_Query-8             	   50000	     8945 ns/op	     1536 B/op	      32 allocs/op
-Benchmark_CompiledEvaluate-8              	  200000	     4567 ns/op	     1024 B/op	      18 allocs/op
+```bash
+go test -run '^$' -bench . -benchmem ./...
 ```
 
-### Performance by XPath Complexity
+`-run '^$'` skips ordinary tests, while `-benchmem` reports allocations. Use
+`-count` and `-benchtime` when comparing changes, for example:
 
-| XPath Type | Operations/sec | Memory/op | Notes |
-|-----------|----------------|-----------|--------|
-| Simple element (`//div`) | ~80,000 | 2KB | Fast element matching |
-| Attribute selection (`//div[@id]`) | ~65,000 | 2.3KB | Attribute lookup overhead |
-| Text predicates (`//p[text()='value']`) | ~70,000 | 2.2KB | Text content comparison |
-| Complex predicates (`//div[@id and @class]`) | ~50,000 | 3KB | Multiple condition evaluation |
-| Axis navigation (`//div/following-sibling::p`) | ~55,000 | 2.8KB | Tree traversal costs |
+```bash
+go test -run '^$' -bench 'Benchmark(Query|CompiledEvaluate)$' \
+  -benchmem -count=5 .
+go test -run '^$' -bench 'BenchmarkHTMLParser' -benchmem -count=5 ./pkg/utils
+```
 
-### Compiled vs. Non-Compiled Performance
+The XPath package currently includes:
+
+- `BenchmarkQuery`: one-shot XPath parsing, HTML parsing, evaluation, and
+  public result conversion.
+- `BenchmarkCompiledEvaluate`: repeated evaluation after `Compile`.
+- `BenchmarkPredicateHeavyEvaluation`: nested predicates and typed
+  conversions.
+- `BenchmarkResultPathConstruction`: result conversion with many repeated
+  sibling names.
+- `BenchmarkResultPathScaling`: result-path conversion at 64, 256, and 1024
+  selected nodes.
+
+The evaluator package also includes `BenchmarkAttributeNodeMaterialization`,
+which compares repeated cached attribute-axis access with fresh materialization.
+On the audit machine (Apple M2 Pro, Go benchmark defaults), the cached case
+reported 0 B/op and 0 allocs/op; use the benchmark on your target workload
+before treating those numbers as portable.
+
+The HTML parser package includes `BenchmarkHTMLParserPlainText`,
+`BenchmarkHTMLParserMalformedFormattingRecovery`, and
+`BenchmarkHTMLParserTableRecovery`.
+
+The benchmark output from the target machine is the authoritative source for
+current timings and allocations. Do not infer a universal speedup from one
+machine's output.
+
+### Compiled vs. non-compiled usage
 
 ```go
-// Non-compiled: Parse + Evaluate each time
+// One-shot: parses the expression on each call.
 for i := 0; i < 1000; i++ {
-    xpath.Query("//div[@class='item']", html) // ~8-12ms each
+    results, err := xpath.Query("//div[@class='item']", html)
+    _ = results
+    _ = err
 }
 
-// Compiled: Parse once, evaluate many times  
-compiled, _ := xpath.Compile("//div[@class='item']")
+// Reusable: compile once, then evaluate many documents.
+compiled, err := xpath.Compile("//div[@class='item']")
+if err != nil {
+    log.Fatal(err)
+}
 for i := 0; i < 1000; i++ {
-    compiled.Evaluate(html) // ~4-6ms each
+    results, err := compiled.Evaluate(html)
+    _ = results
+    _ = err
 }
 ```
 
-**Performance improvement: ~2x faster for repeated queries**
+Compilation is intended to validate and retain the expression for reuse. It
+does not eliminate HTML parsing or evaluation work. Compare
+`BenchmarkQuery` and `BenchmarkCompiledEvaluate` with identical inputs when
+quantifying the effect of compilation.
 
 ## Performance Tips
 
-### 1. Use Compiled XPath for Repeated Queries
+### 1. Reuse compiled expressions
 
-**❌ Slow - Repeated parsing:**
 ```go
+compiled, err := xpath.Compile("//div[@class='item']")
+if err != nil {
+    return err
+}
 for _, doc := range documents {
-    results, _ := xpath.Query("//div[@class='item']", doc)
-    // Parses XPath expression every time
+    results, err := compiled.Evaluate(doc)
+    if err != nil {
+        return err
+    }
+    _ = results
 }
 ```
 
-**✅ Fast - Compile once:**
+This avoids reparsing the same expression. The benefit depends on the
+expression and the relative cost of parsing versus document processing.
+
+### 2. Prefer selective expressions
+
+Specific paths and predicates can reduce traversal and candidate nodes:
+
 ```go
-compiled, _ := xpath.Compile("//div[@class='item']")
-for _, doc := range documents {
-    results, _ := compiled.Evaluate(doc)
-    // Reuses parsed expression
-}
+xpath.Query("//div[@id='target']", html)
+xpath.Query("//div[@class='container']/span/a", html)
 ```
 
-### 2. Optimize XPath Expressions
+Broad searches and deeply nested descendant paths may require more tree
+traversal. Measure representative documents before changing selectors solely
+for performance.
 
-**❌ Slow - Broad searches:**
-```go
-xpath.Query("//*[@id='target']", html)           // Searches all elements
-xpath.Query("//div//span//a", html)              // Multiple descendant searches
-```
+### 3. Choose the output you need
 
-**✅ Fast - Specific paths:**
-```go
-xpath.Query("//div[@id='target']", html)         // Direct attribute match
-xpath.Query("//div[@class='container']/span/a", html) // More specific path
-```
-
-### 3. Use Efficient Predicates
-
-**❌ Slow - Complex text operations:**
-```go
-xpath.Query("//p[contains(normalize-space(text()), 'search')]", html)
-```
-
-**✅ Fast - Simple conditions:**
-```go
-xpath.Query("//p[@class='content']", html)       // Attribute matching
-xpath.Query("//p[text()='exact match']", html)   // Exact text matching
-```
-
-### 4. Minimize Location Tracking When Not Needed
+When callers do not need node metadata, use a value-oriented output format:
 
 ```go
-// Disable location tracking for performance-critical code
-results, _ := xpath.QueryWithOptions(expr, html, xpath.Options{
-    IncludeLocation: false,  // ~10-15% performance gain
-    OutputFormat:    "values",
+results, err := xpath.QueryWithOptions(expr, html, xpath.Options{
+    OutputFormat: "values",
 })
 ```
 
-## Memory Usage
+`IncludeLocation: false` is intended to omit source-location metadata. It may
+reduce work, but the size of any improvement is workload-dependent and must be
+measured. Code that needs `StartLocation`, `EndLocation`, `ContentStart`, or
+`ContentEnd` should leave it enabled.
 
-### Memory Allocation Patterns
+### 4. Reuse parsed documents when the application allows it
 
-```go
-// Small HTML document (~1KB)
-Benchmark_SmallDoc-8    	  200000	     5432 ns/op	    1024 B/op	      23 allocs/op
+If an application evaluates many expressions against the same HTML, avoid
+reparsing the source between expressions where the public API or an application
+cache makes that possible. Account for document lifetime and memory usage when
+doing so.
 
-// Medium HTML document (~10KB)  
-Benchmark_MediumDoc-8   	   50000	    18456 ns/op	    4096 B/op	      78 allocs/op
+### 5. Process independent documents concurrently
 
-// Large HTML document (~100KB)
-Benchmark_LargeDoc-8    	    5000	   156789 ns/op	   32768 B/op	     432 allocs/op
-```
+Compiled expressions can be shared by concurrent evaluations when the API
+contract and current implementation guarantee that use. Keep document inputs
+and result handling per call, and verify concurrency-sensitive changes with:
 
-### Memory Optimization Tips
-
-1. **Process documents in chunks for very large files:**
-   ```go
-   const maxDocSize = 1024 * 1024 // 1MB chunks
-   if len(htmlContent) > maxDocSize {
-       // Split into smaller pieces
-   }
-   ```
-
-2. **Reuse compiled expressions:**
-   ```go
-   // Good: One compilation, many uses
-   compiled, _ := xpath.Compile(expression)
-   
-   // Use compiled expression multiple times...
-   ```
-
-3. **Use specific output formats:**
-   ```go
-   // Only get values, not full node metadata
-   results, _ := xpath.QueryWithOptions(expr, html, xpath.Options{
-       OutputFormat: "values",
-   })
-   ```
-
-## Comparison with Other Libraries
-
-### Feature Comparison
-
-| Library | Compatibility | Location Tracking | Performance | Memory Usage |
-|---------|---------------|------------------|-------------|--------------|
-| xpath-go | High compatibility | ✅ Character-level | High | Optimized |
-| antchfx/xpath | Basic compatibility | ❌ No | High | Good |
-| xpath (C bindings) | Strong compatibility | ❌ No | Very High | Low |
-
-### Performance Comparison (Approximate)
-
-```
-Simple XPath queries (//div):
-├── xpath-go:     ~80,000 ops/sec
-├── antchfx:      ~120,000 ops/sec  
-└── libxml2 (C):  ~200,000 ops/sec
-
-Complex XPath queries (//div[@class and position()>1]):
-├── xpath-go:     ~50,000 ops/sec
-├── antchfx:      ~40,000 ops/sec (limited predicate support)
-└── libxml2 (C):  ~150,000 ops/sec
-```
-
-**Note:** xpath-go prioritizes high compatibility and location tracking over raw speed.
-
-## Optimization Strategies
-
-### 1. XPath Expression Optimization
-
-**Use specific selectors:**
-```go
-// Instead of broad searches
-"//div//p//span"
-
-// Use specific paths when possible
-"//div[@class='content']/p[1]/span[@class='highlight']"
-```
-
-**Combine conditions efficiently:**
-```go
-// Efficient: Single predicate with AND
-"//div[@class='item' and @id]"
-
-// Less efficient: Multiple predicates
-"//div[@class='item'][@id]"
-```
-
-### 2. HTML Structure Optimization
-
-**For better XPath performance:**
-- Use semantic HTML with clear structure
-- Add strategic ID and class attributes
-- Avoid deeply nested structures when possible
-- Use consistent naming conventions
-
-### 3. Application-Level Optimizations
-
-**Cache parsed HTML when possible:**
-```go
-type CachedDocument struct {
-    content string
-    parsed  *internal.Document // Internal representation
-}
-
-// Parse once, query multiple times
-```
-
-**Batch similar queries:**
-```go
-// Instead of multiple separate queries
-results1, _ := xpath.Query("//div[@class='a']", html)
-results2, _ := xpath.Query("//div[@class='b']", html)
-
-// Use union operator
-results, _ := xpath.Query("//div[@class='a' or @class='b']", html)
-```
-
-### 4. Concurrent Processing
-
-**Process multiple documents in parallel:**
-```go
-func processDocuments(docs []string, xpathExpr string) {
-    compiled, _ := xpath.Compile(xpathExpr)
-    
-    var wg sync.WaitGroup
-    semaphore := make(chan struct{}, runtime.NumCPU())
-    
-    for _, doc := range docs {
-        wg.Add(1)
-        go func(document string) {
-            defer wg.Done()
-            semaphore <- struct{}{}        // Acquire
-            defer func() { <-semaphore }() // Release
-            
-            results, _ := compiled.Evaluate(document)
-            // Process results...
-        }(doc)
-    }
-    
-    wg.Wait()
-}
+```bash
+go test -race ./...
 ```
 
 ## Profiling and Debugging
 
-### Enable Profiling
+Use Go's benchmark and profiling tools for evidence:
 
-```go
-import _ "net/http/pprof"
-import "net/http"
-
-go func() {
-    log.Println(http.ListenAndServe("localhost:6060", nil))
-}()
-
-// Access http://localhost:6060/debug/pprof/ for profiling
+```bash
+go test -run '^$' -bench . -benchmem -cpuprofile cpu.prof -memprofile mem.prof .
+go tool pprof cpu.prof
+go tool pprof mem.prof
 ```
 
-### Benchmark Your Own Use Cases
+Profile the smallest representative benchmark first. Look at both CPU samples
+and allocation counts; an optimization that improves one can regress the
+other.
+
+## Benchmark Your Own Use Cases
+
+Add a benchmark next to the package it exercises:
 
 ```go
 func BenchmarkYourUseCase(b *testing.B) {
     html := loadTestHTML()
-    compiled, _ := xpath.Compile("//your/xpath/here")
-    
+    compiled, err := xpath.Compile("//your/xpath/here")
+    if err != nil {
+        b.Fatal(err)
+    }
+
+    b.ReportAllocs()
     b.ResetTimer()
     for i := 0; i < b.N; i++ {
         results, err := compiled.Evaluate(html)
         if err != nil {
             b.Fatal(err)
         }
-        _ = results // Use results to avoid optimization
-    }
-}
-```
-
-### Memory Profiling
-
-```bash
-# Run benchmarks with memory profiling
-go test -bench=. -memprofile=mem.prof
-
-# Analyze memory usage
-go tool pprof mem.prof
-```
-
-## Real-World Performance Examples
-
-### Web Scraping Scenario
-
-```go
-// Scraping 1000 product pages
-func benchmarkWebScraping() {
-    // Compile all XPath expressions once
-    productTitle, _ := xpath.Compile("//h1[@class='product-title']")
-    productPrice, _ := xpath.Compile("//span[@class='price']")
-    productRating, _ := xpath.Compile("//div[@class='rating']/@data-rating")
-    
-    start := time.Now()
-    
-    for i := 0; i < 1000; i++ {
-        html := fetchProductPage(i) // Simulated
-        
-        // Fast evaluation using compiled expressions
-        title, _ := productTitle.Evaluate(html)
-        price, _ := productPrice.Evaluate(html)
-        rating, _ := productRating.Evaluate(html)
-        
-        // Process results...
-    }
-    
-    duration := time.Since(start)
-    fmt.Printf("Processed 1000 pages in %v\n", duration)
-    // Typical result: ~2-5 seconds depending on HTML size
-}
-```
-
-### Document Processing Pipeline
-
-```go
-// Processing pipeline with 10,000 documents
-func benchmarkPipeline() {
-    docs := loadDocuments(10000)
-    
-    // Pre-compile all expressions
-    extractors := map[string]*xpath.XPath{
-        "title":       compileOrPanic("//title"),
-        "headings":    compileOrPanic("//h1 | //h2 | //h3"),
-        "links":       compileOrPanic("//a[@href]"),
-        "images":      compileOrPanic("//img[@src]"),
-        "metadata":    compileOrPanic("//meta[@name]"),
-    }
-    
-    start := time.Now()
-    
-    // Process with worker pool
-    const numWorkers = 8
-    docChan := make(chan string, 100)
-    var wg sync.WaitGroup
-    
-    // Start workers
-    for i := 0; i < numWorkers; i++ {
-        wg.Add(1)
-        go func() {
-            defer wg.Done()
-            for doc := range docChan {
-                processDocument(doc, extractors)
-            }
-        }()
-    }
-    
-    // Send documents to workers
-    go func() {
-        defer close(docChan)
-        for _, doc := range docs {
-            docChan <- doc
+        if len(results) == 0 {
+            b.Fatal("expected at least one result")
         }
-    }()
-    
-    wg.Wait()
-    duration := time.Since(start)
-    
-    fmt.Printf("Processed 10,000 documents in %v\n", duration)
-    fmt.Printf("Average: %.2f docs/second\n", 10000.0/duration.Seconds())
+    }
 }
 ```
 
-These benchmarks and optimization strategies will help you get the best performance from xpath-go in your specific use cases.
+Keep benchmark inputs stable, report the Go version and machine when sharing
+results, and compare multiple runs. Benchmark results are measurements, not
+compatibility guarantees; refer to [`COMPATIBILITY.md`](COMPATIBILITY.md) for
+the validated XPath and HTML scope.

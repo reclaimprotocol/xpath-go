@@ -308,48 +308,7 @@ func (e *Evaluator) evaluateFunctionLegacy(fn *FunctionCall, node *types.Node) s
 		res := arg.Evaluate(node, e)
 		if isTruthy(res) {
 			if path, ok := arg.(*PathExpression); ok {
-				// Evaluate path but get result nodes
-				currentNodes := []*types.Node{node}
-				if path.IsAbsolute {
-					root := node
-					for root.Parent != nil {
-						root = root.Parent
-					}
-					if path.IsDeep {
-						currentNodes = e.getDescendantNodes(root, true)
-					} else {
-						currentNodes = []*types.Node{root}
-					}
-				}
-				for _, step := range path.Steps {
-					var nextNodes []*types.Node
-					for _, n := range currentNodes {
-						candidates := e.getChildNodes(n)
-
-						var matchingNodes []*types.Node
-						for _, child := range candidates {
-							if child.Type == types.ElementNode && (step.Name == "*" || child.Name == step.Name) {
-								matchingNodes = append(matchingNodes, child)
-							}
-						}
-
-						currentStepNodes := matchingNodes
-						for _, predicate := range step.Predicates {
-							var filtered []*types.Node
-							for i, m := range currentStepNodes {
-								e.contextPosition = i + 1
-								e.contextSize = len(currentStepNodes)
-								if e.evaluateSimpleCondition(m, predicate) {
-									filtered = append(filtered, m)
-								}
-							}
-							currentStepNodes = filtered
-						}
-						nextNodes = append(nextNodes, currentStepNodes...)
-					}
-					currentNodes = nextNodes
-				}
-				return strconv.Itoa(len(currentNodes))
+				return strconv.Itoa(len(evaluatePathNodes(path, node, e)))
 			}
 			// For simple ElementExpression like count(li)
 			if elem, ok := arg.(*ElementExpression); ok {

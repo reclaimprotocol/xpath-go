@@ -81,3 +81,29 @@ func TestQueryPortalPageStrayEndTagRecoversNestedSpanText(t *testing.T) {
 		t.Fatalf("Expected the span text to be extracted, got %#v", results)
 	}
 }
+
+// TestQueryStudentPortalStrayEndTagRecoversStudentName simulates a second
+// production page pattern: an ASP.NET student portal (navigation header with
+// a "Pay Online" link, menu table carrying a stray </div>) that must still
+// expose a student-name span via //span[@id='stname']/text(). jsdom reference:
+// the stray </div> is ignored and the span text query returns the name.
+func TestQueryStudentPortalStrayEndTagRecoversStudentName(t *testing.T) {
+	const document = `<html><body>` +
+		`<form id="form1">` +
+		`<div class="header"><div class="nav"><a href="payments.aspx">Pay Online</a></div></div>` +
+		`<div class="sidebar"><table class="menu">` +
+		`<tr><td>Home</td></tr><tr><td>Results</td></tr></div></table></div>` +
+		`<div class="content"><div class="profile">` +
+		`<span id="stname">Student Name</span>` +
+		`<span id="senroll">12345</span>` +
+		`</div></div>` +
+		`</form></body></html>`
+
+	results, err := xpath.Query(`//span[@id='stname']/text()`, document)
+	if err != nil {
+		t.Fatalf("Query returned an error: %v", err)
+	}
+	if len(results) != 1 || results[0].TextContent != "Student Name" {
+		t.Fatalf("Expected the student name span to be extracted, got %#v", results)
+	}
+}

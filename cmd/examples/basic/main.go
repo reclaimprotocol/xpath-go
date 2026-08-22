@@ -89,6 +89,12 @@ func main() {
 		fmt.Printf("  Go Version: %s\n", buildInfo.GoVersion)
 		fmt.Printf("  Platform: %s\n", buildInfo.Platform)
 		fmt.Printf("  Compiler: %s\n", buildInfo.Compiler)
+		if buildInfo.GitCommit != "" {
+			fmt.Printf("  Git Commit: %s\n", buildInfo.GitCommit)
+		}
+		if buildInfo.BuildTime != "" {
+			fmt.Printf("  Build Time: %s\n", buildInfo.BuildTime)
+		}
 	}
 }
 

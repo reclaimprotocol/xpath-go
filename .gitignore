@@ -1,1 +1,19 @@
 /.crush
+/.claude/
+/CRUSH.md
+
+# Go build and test artifacts.
+/bin/
+/dist/
+/coverage.out
+*.test
+*.prof
+*.out
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Local example binary and JavaScript test dependencies.
+/xpath-go
+/tests/node_modules/
