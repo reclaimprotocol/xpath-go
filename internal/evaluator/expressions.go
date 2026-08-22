@@ -88,7 +88,7 @@ func (a *AxisExpression) Evaluate(node *types.Node, evaluator *Evaluator) string
 
 func (a *AxisExpression) String() string {
 	var value strings.Builder
-	value.WriteString(fmt.Sprintf("%s::%s", a.Axis, a.NodeTest))
+	fmt.Fprintf(&value, "%s::%s", a.Axis, a.NodeTest)
 	for _, predicate := range a.Predicates {
 		value.WriteString("[" + predicate.String() + "]")
 	}
