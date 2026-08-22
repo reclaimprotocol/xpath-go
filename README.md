@@ -1,24 +1,24 @@
 # xpath-go
 
-🎯 **Browser-oriented XPath library for Go with precise source-byte locations**
+**Browser-oriented XPath library for Go with precise source-byte locations**
 
 [![Go Version](https://img.shields.io/badge/Go-1.21%2B-blue.svg)](https://golang.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Go Report Card](https://goreportcard.com/badge/github.com/reclaimprotocol/xpath-go)](https://goreportcard.com/report/github.com/reclaimprotocol/xpath-go)
 [![Release](https://img.shields.io/github/v/release/reclaimprotocol/xpath-go)](https://github.com/reclaimprotocol/xpath-go/releases)
 
-## ✨ Features
+## Features
 
-- 🎯 **Browser Compatibility** - Validated against jsdom across 888 checked-in cases
-- 📍 **Precise Location Tracking** - Raw-byte positioning in the original HTML response
-- 🌐 **Response Charset Decoding** - WHATWG labels with raw-byte location preservation
-- 📄 **Dual Extraction Modes** - Extract full elements or content-only with `contentsOnly` option
-- ⚡ **Performance-oriented** - Reusable compiled expressions and allocation-aware evaluation
-- 🧪 **Reference-validated** - Go characterization tests plus browser, charset, and conversion oracles
-- 📦 **Minimal Dependencies** - Uses Go's maintained `x/text` encoding tables
-- 🎨 **Developer Friendly** - Rich debugging support with trace logging
+- **Browser compatibility** - Validated against jsdom across 888 checked-in cases
+- **Precise location tracking** - Raw-byte positioning in the original HTML response
+- **Response charset decoding** - WHATWG labels with raw-byte location preservation
+- **Dual extraction modes** - Extract full elements or content-only with the `ContentsOnly` option
+- **Performance-oriented** - Reusable compiled expressions and allocation-aware evaluation
+- **Reference-validated** - Go characterization tests plus browser, charset, and conversion oracles
+- **Minimal dependencies** - Uses Go's maintained `x/text` encoding tables
+- **Developer friendly** - Rich debugging support with trace logging
 
-## 🚀 Quick Start
+## Quick Start
 
 ```go
 package main
@@ -47,57 +47,61 @@ func main() {
 }
 ```
 
-## 📦 Installation
+## Installation
 
 ```bash
 go get github.com/reclaimprotocol/xpath-go
 ```
 
-## 🎯 XPath Support
+The module requires Go 1.21 or newer. CI validates Go 1.21, 1.22, 1.24, and
+1.27; release and quality jobs use the latest Go 1.27 patch release.
 
-### ✅ Axes (validated subset)
+## XPath Support
+
+### Axes (12 of 13 XPath 1.0 axes)
 - `child::`, `parent::`, `ancestor::`, `descendant::`
 - `following::`, `preceding::`, `following-sibling::`, `preceding-sibling::`
 - `attribute::`, `self::`
 - `descendant-or-self::`, `ancestor-or-self::`
 
-The `namespace::` axis is not currently implemented. See
-[`docs/COMPATIBILITY.md`](docs/COMPATIBILITY.md) for the supported XPath 1.0
+xpath-go supports 12 of the 13 XPath 1.0 axes. The `namespace::` axis and a
+namespace-prefix resolver are not currently implemented. See
+[`docs/COMPATIBILITY.md`](docs/COMPATIBILITY.md) for the complete supported
 subset and known gaps.
 
-### ✅ Functions (validated subset)
+### Functions (validated subset)
 - **Node Functions**: `text()`, `node()`, `position()`, `last()`, `count()`
 - **String Functions**: `string()`, `normalize-space()`, `starts-with()`, `contains()`, `substring()`
 - **Boolean Functions**: `boolean()`, `not()`
 - **Number Functions**: `number()`, `string-length()`
 
-### ✅ Operators (validated subset)
+### Operators (validated subset)
 - **Comparison**: `=`, `!=`, `<`, `>`, `<=`, `>=`
 - **Logical**: `and`, `or`, `not()`
 - **Arithmetic**: `+`, `-`, `*`, `div`, `mod`
 - **Union**: `|` (pipe operator)
 
-### ✅ Predicates (validated subset)
+### Predicates (validated subset)
 - Attribute predicates: `[@id='test']`, `[@class and @id]`
 - Position predicates: `[1]`, `[last()]`, `[position()>2]`
 - Content predicates: `[text()='value']`, `[contains(text(), 'substring')]`
 - Complex boolean expressions: `[@id='a' or @class='b'] and [position()=1]`
 
-## 📊 XPath Support
+## Compatibility Summary
 
 **XPath 1.0 subset with browser-oriented HTML recovery**
 
 | Feature Category | Support | Details |
 |------------------|---------|---------|
-| Basic Selection | ✅ Full | Element, attribute, wildcard selection |
-| Attribute Queries | ✅ Full | Attribute existence, value matching, complex conditions |
-| Text Functions | ✅ Full | text(), contains(), starts-with(), normalize-space() |
-| Position Functions | ✅ Full | position(), last(), numeric positions |
-| Axes Navigation | 🔶 Subset | Covered XPath axes including ancestor/descendant; `namespace::` is unsupported |
-| Complex Predicates | ✅ Full | Boolean logic, nested predicates, unions |
-| String Functions | ✅ Full | substring(), string-length() with edge cases |
+| Basic Selection | Full | Element, attribute, wildcard selection |
+| Attribute Queries | Full | Attribute existence, value matching, complex conditions |
+| Text Functions | Full | text(), contains(), starts-with(), normalize-space() |
+| Position Functions | Full | position(), last(), numeric positions |
+| Axes Navigation | 12 of 13 axes | The `namespace::` axis and namespace-prefix resolver are not implemented |
+| Complex Predicates | Full | Boolean logic, nested predicates, unions |
+| String Functions | Full | substring(), string-length() with edge cases |
 
-## 📋 Important Compatibility Notes
+## Important Compatibility Notes
 
 ### HTML Entity Handling
 
@@ -117,7 +121,7 @@ fmt.Println(results[0].TextContent) // Text with & < > characters
 fmt.Println(results[0].Value)       // original <p>...</p> source
 ```
 
-📖 **[Read the complete HTML Entity Handling guide](docs/HTML_ENTITY_HANDLING.md)** for detailed information and best practices.
+See the **[HTML Entity Handling guide](docs/HTML_ENTITY_HANDLING.md)** for details and best practices.
 
 ### Unicode Position Tracking
 
@@ -129,10 +133,10 @@ fmt.Println(results[0].Value)       // original <p>...</p> source
 ```
 
 **Why byte-based positioning:**
-- ✅ **Go idiomatic** - Aligns with Go's string handling and byte slice operations
-- ✅ **Performance** - No Unicode code point counting overhead during parsing
-- ✅ **Memory efficient** - Direct byte offset calculations
-- ✅ **Deterministic** - Consistent across all platforms and Go versions
+- **Go idiomatic** - Aligns with Go's string handling and byte slice operations
+- **Performance** - No Unicode code point counting overhead during parsing
+- **Memory efficient** - Direct byte offset calculations
+- **Deterministic** - Consistent across all platforms and Go versions
 
 **Working with Unicode positions:**
 ```go
@@ -148,7 +152,7 @@ func ByteToCharPos(s string, bytePos int) int {
 }
 ```
 
-### ⚠️ Compatibility Considerations
+### Compatibility Considerations
 
 While XPath-Go aims for high compatibility with web standards, there are some intentional design choices:
 
@@ -158,7 +162,7 @@ While XPath-Go aims for high compatibility with web standards, there are some in
 
 For complete compatibility details, see [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md).
 
-## 🔍 Advanced Usage
+## Advanced Usage
 
 ### Location Tracking
 
@@ -225,7 +229,7 @@ results, err := xpath.Query("//div[contains(@class, 'complex')]//p[last()]", htm
 // Detailed evaluation steps logged to stderr
 ```
 
-## 📚 Examples
+## Examples
 
 ### Basic Selections
 
@@ -312,7 +316,7 @@ fmt.Printf("Inner content: %s\n", html[result.ContentStart:result.ContentEnd])
 - **Full elements** (`ContentsOnly: false`): HTML processing, DOM manipulation, complete element extraction
 - **Content only** (`ContentsOnly: true`): Text processing, content analysis, clean text extraction without tags
 
-## 📈 Performance
+## Performance
 
 Designed for production use:
 
@@ -330,7 +334,7 @@ compiled, _ := xpath.Compile("//div[@class='item'][position()>1]")
 results, _ := compiled.Evaluate(html)
 ```
 
-## 🛠️ API Reference
+## API Reference
 
 ### Core Functions
 
@@ -400,7 +404,7 @@ are then unavailable.
 their convenience defaults. The explicit `*WithOptions` APIs use the supplied
 value as-is, so `Options{}` leaves location fields at zero.
 
-## 🔧 Development
+## Development
 
 ### Testing
 
@@ -421,7 +425,7 @@ make test-bench
 
 See [Testing](docs/TESTING.md) for the purpose and expected use of each layer.
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! 
 
@@ -434,11 +438,11 @@ cd xpath-go && go mod download
 make test-all
 ```
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Built with high compatibility goals for [jsdom](https://github.com/jsdom/jsdom) and web standards
 - Inspired by the [W3C XPath 1.0 Specification](https://www.w3.org/TR/xpath/)

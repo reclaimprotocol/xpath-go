@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 	"unicode/utf8"
 
@@ -1396,13 +1397,7 @@ func (p *HTMLParser) parseElement(parent *types.Node, startPos, startLine, start
 				insideHTML := p.documentHTML != nil && node != p.documentHTML && nodeWithin(node, p.documentHTML)
 				if (name == "body" && insideBody) || (name == "html" && insideHTML) {
 					if name != "html" || node != p.documentBody {
-						seen := false
-						for _, pending := range p.nodesClosedAtDocumentEnd {
-							if pending == node {
-								seen = true
-								break
-							}
-						}
+						seen := slices.Contains(p.nodesClosedAtDocumentEnd, node)
 						if !seen {
 							p.nodesClosedAtDocumentEnd = append(p.nodesClosedAtDocumentEnd, node)
 						}

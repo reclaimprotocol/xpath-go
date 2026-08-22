@@ -57,14 +57,14 @@ func BeginTrace() func() {
 }
 
 // Trace logs a message if trace mode is enabled
-func Trace(format string, args ...interface{}) {
+func Trace(format string, args ...any) {
 	if IsTraceEnabled() {
 		fmt.Fprintf(os.Stderr, "[XPATH-TRACE] "+format+"\n", args...)
 	}
 }
 
 // TraceEvaluation logs evaluation details
-func TraceEvaluation(stage, expr, nodeInfo string, result interface{}) {
+func TraceEvaluation(stage, expr, nodeInfo string, result any) {
 	if IsTraceEnabled() {
 		fmt.Fprintf(os.Stderr, "[XPATH-TRACE] %s: expr='%s', node='%s', result=%v\n",
 			stage, expr, nodeInfo, result)
