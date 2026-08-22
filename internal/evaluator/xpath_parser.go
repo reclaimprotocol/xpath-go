@@ -7,6 +7,7 @@ package evaluator
 
 import (
 	"fmt"
+	"slices"
 	"strconv"
 	"strings"
 	"unicode"
@@ -306,12 +307,7 @@ func (p *XPathParser) parseBinary(next func() (Expression, error), allowed []str
 	}
 }
 func oneOf(value string, allowed []string) bool {
-	for _, candidate := range allowed {
-		if value == candidate {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(allowed, value)
 }
 func (p *XPathParser) parseUnary() (Expression, error) {
 	if p.current().kind == xpathOperator && p.current().text == "-" {
