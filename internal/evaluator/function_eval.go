@@ -208,10 +208,7 @@ func (e *Evaluator) evaluateFunctionLegacy(fn *FunctionCall, node *types.Node) s
 		start := int(startFloat)
 
 		// XPath is 1-based, Go is 0-based
-		start = start - 1
-		if start < 0 {
-			start = 0
-		}
+		start = max(start-1, 0)
 		if start >= len(text) {
 			return ""
 		}
@@ -230,10 +227,7 @@ func (e *Evaluator) evaluateFunctionLegacy(fn *FunctionCall, node *types.Node) s
 			}
 			length := int(lengthFloat)
 
-			end := start + length
-			if end > len(text) {
-				end = len(text)
-			}
+			end := min(start+length, len(text))
 
 			result := text[start:end]
 			Trace("substring('%s', %d, %d) = '%s'", text, start+1, length, result)

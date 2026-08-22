@@ -140,6 +140,6 @@ type XPathStep struct {
 
 // XPathPredicate represents an XPath predicate
 type XPathPredicate struct {
-	Expression string      `json:"expression"`
-	Parsed     interface{} `json:"parsed,omitempty"`
+	Expression string `json:"expression"`
+	Parsed     any    `json:"parsed,omitempty"`
 }

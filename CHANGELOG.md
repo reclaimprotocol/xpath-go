@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Added Go 1.27 to the supported CI matrix and made its latest patch release
+  the quality, race, build, benchmark, and release toolchain.
+
 ## [1.7.0] - 2026-08-22
 
 ### Added

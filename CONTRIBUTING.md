@@ -16,8 +16,8 @@ Thanks for contributing. By participating, you agree to follow the
 
 ## Development setup
 
-The module declares Go 1.21. The browser-compatibility checks also require
-Node.js 20 or later.
+The module declares Go 1.21 and CI includes a Go 1.27 validation lane. The
+browser-compatibility checks also require Node.js 20 or later.
 
 ```sh
 git clone https://github.com/reclaimprotocol/xpath-go.git
