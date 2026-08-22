@@ -53,6 +53,9 @@ func main() {
 go get github.com/reclaimprotocol/xpath-go
 ```
 
+The module requires Go 1.21 or newer. CI validates Go 1.21, 1.22, 1.24, and
+1.27; release and quality jobs use the latest Go 1.27 patch release.
+
 ## XPath Support
 
 ### Axes (12 of 13 XPath 1.0 axes)
