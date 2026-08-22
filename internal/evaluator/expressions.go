@@ -87,19 +87,20 @@ func (a *AxisExpression) Evaluate(node *types.Node, evaluator *Evaluator) string
 }
 
 func (a *AxisExpression) String() string {
-	value := fmt.Sprintf("%s::%s", a.Axis, a.NodeTest)
+	var value strings.Builder
+	fmt.Fprintf(&value, "%s::%s", a.Axis, a.NodeTest)
 	for _, predicate := range a.Predicates {
-		value += "[" + predicate.String() + "]"
+		value.WriteString("[" + predicate.String() + "]")
 	}
 	for _, step := range a.Following {
 		if step.Descendant {
-			value += "//"
+			value.WriteString("//")
 		} else {
-			value += "/"
+			value.WriteString("/")
 		}
-		value += pathStepString(step)
+		value.WriteString(pathStepString(step))
 	}
-	return value
+	return value.String()
 }
 
 // PathStep represents a single step in a path
@@ -586,8 +587,8 @@ func evaluatePathSteps(steps []PathStep, currentNodes []*types.Node, evaluator *
 				nextNodes = append(nextNodes, matching...)
 				continue
 			}
-			if strings.HasPrefix(step.Name, "@") {
-				name := strings.TrimPrefix(step.Name, "@")
+			if after, ok := strings.CutPrefix(step.Name, "@"); ok {
+				name := after
 				matching := make([]*types.Node, 0)
 				for _, attribute := range evaluator.getAttributeNodes(current) {
 					if name == "*" || attribute.Name == name {

@@ -112,10 +112,7 @@ func (p *HTMLParser) consumeNamedCharacterReference(attribute bool) (string, boo
 	// 32 bytes. No lookup can succeed beyond this bound, so do not scan an
 	// untrusted alphanumeric run quadratically.
 	const longestNamedCharacterReference = len("CounterClockwiseContourIntegral;")
-	lookupLimit := p.pos + 1 + longestNamedCharacterReference
-	if lookupLimit > len(p.content) {
-		lookupLimit = len(p.content)
-	}
+	lookupLimit := min(p.pos+1+longestNamedCharacterReference, len(p.content))
 	for nameEnd < lookupLimit && isASCIIAlphanumeric(p.content[nameEnd]) {
 		nameEnd++
 	}
