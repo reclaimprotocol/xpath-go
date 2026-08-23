@@ -86,8 +86,9 @@ The generated report is
   resolver/namespace axis, and unimplemented core functions such as `id`,
   `lang`, `sum`, `substring-before`, `substring-after`, `translate`, `floor`,
   `ceiling`, and `round` remain outside the validated subset.
-- **XPath 2.0 and later are not targets:** sequences, richer type systems,
-  FLWOR/conditional expressions, and XPath 2.0+ functions are deferred.
+- **Language scope is the documented XPath 1.0 subset:** sequences, richer type
+  systems, variable-binding expressions, and functions outside the validated
+  subset are not targets.
 - **HTML rather than general XML:** parsing and recovery intentionally follow an
   HTML/browser model; this is not a validating or namespace-aware general XML
   parser.
