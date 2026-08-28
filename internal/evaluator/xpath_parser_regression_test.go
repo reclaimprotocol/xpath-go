@@ -104,3 +104,41 @@ func TestUnifiedParserPersistsAxisAndOperatorSourceSpans(t *testing.T) {
 		t.Fatalf("multiplicative span = %#v", multiply.Span)
 	}
 }
+
+func TestParenthesizedNodeSetPredicateAndPathSuffix(t *testing.T) {
+	const content = `<div><span class="preferred_name">First</span></div>` +
+		`<div><span class="preferred_name">Second</span></div>` +
+		`<span class="surname">Rivera</span>`
+
+	for expression, want := range map[string]string{
+		`(//span[@class='preferred_name'])[1]/text()`: "First",
+		`(//span[@class='surname'])[1]/text()`:        "Rivera",
+	} {
+		program, err := Compile(expression)
+		if err != nil {
+			t.Fatalf("Compile(%q): %v", expression, err)
+		}
+		results, err := NewEvaluator().EvaluateProgramWithDocument(program, content, nil)
+		if err != nil {
+			t.Fatalf("Evaluate(%q): %v", expression, err)
+		}
+		if len(results) != 1 || results[0].TextContent != want {
+			t.Fatalf("Evaluate(%q) = %#v, want one text node %q", expression, results, want)
+		}
+	}
+}
+
+func TestParenthesizedPredicateUsesWholeNodeSetPosition(t *testing.T) {
+	const content = `<div><span>A</span><span>B</span></div><div><span>C</span></div>`
+	program, err := Compile(`(//span)[1]/text()`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	results, err := NewEvaluator().EvaluateProgramWithDocument(program, content, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(results) != 1 || results[0].TextContent != "A" {
+		t.Fatalf("result = %#v, want only A", results)
+	}
+}

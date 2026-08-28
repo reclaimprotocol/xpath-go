@@ -7,9 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.1] - 2026-08-28
+
+### Fixed
+- Added XPath 1.0 filter-expression support for predicates applied to a
+  parenthesized node set and optional relative path suffixes, including
+  `(//span)[1]/text()`. Parenthesized positional predicates now select from the
+  complete node set instead of being rejected or conflated with step-local
+  predicates.
+
 ### Changed
 - Added Go 1.27 to the supported CI matrix and made its latest patch release
   the quality, race, build, benchmark, and release toolchain.
+
+### Tests
+- Added parser and evaluator regressions for parenthesized node-set filtering,
+  path suffixes, and whole-node-set positional semantics.
 
 ## [1.7.0] - 2026-08-22
 

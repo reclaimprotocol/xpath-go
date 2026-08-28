@@ -126,6 +126,38 @@ type PathExpression struct {
 	Span       SourceSpan
 }
 
+// FilterExpression applies predicates to the complete node-set produced by
+// Base before evaluating an optional relative path. This is distinct from a
+// predicate on a location step: (//item)[1] selects the first item in the
+// complete result, while //item[1] selects the first item for each step
+// context.
+type FilterExpression struct {
+	Base       Expression
+	Predicates []Expression
+	Following  []PathStep
+	Span       SourceSpan
+}
+
+func (f *FilterExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
+	return evaluateXPathValue(f, node, evaluator).legacyString()
+}
+
+func (f *FilterExpression) String() string {
+	value := "(" + f.Base.String() + ")"
+	for _, predicate := range f.Predicates {
+		value += "[" + predicate.String() + "]"
+	}
+	for _, step := range f.Following {
+		if step.Descendant {
+			value += "//"
+		} else {
+			value += "/"
+		}
+		value += pathStepString(step)
+	}
+	return value
+}
+
 func (p *PathExpression) Evaluate(node *types.Node, evaluator *Evaluator) string {
 	return evaluateXPathValue(p, node, evaluator).legacyString()
 }
@@ -361,6 +393,20 @@ func evaluateXPathValue(expression Expression, node *types.Node, evaluator *Eval
 
 	case *PathExpression:
 		return nodeSetValue(evaluatePathNodes(expr, node, evaluator)...)
+
+	case *FilterExpression:
+		base := evaluateXPathValue(expr.Base, node, evaluator)
+		if base.kind != nodeSetXPathValue {
+			return xpathValue{kind: invalidXPathValue}
+		}
+		nodes := base.nodes
+		for _, predicate := range expr.Predicates {
+			nodes = evaluator.applyPredicate(nodes, predicate, node)
+		}
+		if len(expr.Following) > 0 {
+			nodes = evaluatePathSteps(expr.Following, nodes, evaluator)
+		}
+		return nodeSetValue(nodes...)
 
 	case *FunctionExpression:
 		return evaluator.evaluateFunctionValue(expr.Function, node)

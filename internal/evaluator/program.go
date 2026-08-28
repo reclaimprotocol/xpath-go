@@ -48,6 +48,8 @@ func isNodeSetExpression(expression Expression) bool {
 	switch value := expression.(type) {
 	case *PathExpression, *ElementExpression, *AxisExpression, *AttributeExpression:
 		return true
+	case *FilterExpression:
+		return isNodeSetExpression(value.Base)
 	case *UnionExpression:
 		for _, operand := range value.Operands {
 			if !isNodeSetExpression(operand) {

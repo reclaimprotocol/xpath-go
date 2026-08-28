@@ -288,7 +288,7 @@ All errors implement the standard Go `error` interface and provide descriptive m
 
 ```go
 // Get library version
-version := xpath.Version        // "1.7.0"
+version := xpath.Version        // "1.7.1"
 apiVersion := xpath.APIVersion  // "v1"
 
 // Get build information

@@ -344,18 +344,21 @@ func (p *XPathParser) parseUnion() (Expression, error) {
 
 func (p *XPathParser) parsePrimary() (Expression, error) {
 	t := p.current()
+	var expression Expression
+	var filterStart int
 	switch t.kind {
 	case xpathString:
 		p.next()
-		return &LiteralExpression{Value: t.text, Span: SourceSpan{Start: t.start, End: t.end}}, nil
+		expression = &LiteralExpression{Value: t.text, Span: SourceSpan{Start: t.start, End: t.end}}
 	case xpathNumber:
 		p.next()
 		value, err := strconv.ParseFloat(t.text, 64)
 		if err != nil && !strings.Contains(err.Error(), "value out of range") {
 			return nil, p.errorf(t, "invalid numeric literal %q", t.text)
 		}
-		return &NumberExpression{Value: value, Span: SourceSpan{Start: t.start, End: t.end}}, nil
+		expression = &NumberExpression{Value: value, Span: SourceSpan{Start: t.start, End: t.end}}
 	case xpathLParen:
+		filterStart = t.start
 		p.next()
 		expr, err := p.parseOr()
 		if err != nil {
@@ -364,16 +367,68 @@ func (p *XPathParser) parsePrimary() (Expression, error) {
 		if _, err := p.expect(xpathRParen, "", "')'"); err != nil {
 			return nil, err
 		}
-		return expr, nil
+		expression = expr
 	case xpathName:
 		if p.looksLikeFunction() && !isNodeTestName(t.text) {
-			return p.parseFunction()
+			var err error
+			expression, err = p.parseFunction()
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
-	if p.canStartLocationPath() {
+	if expression == nil && p.canStartLocationPath() {
 		return p.parseLocationPath()
 	}
-	return nil, p.errorf(t, "expected XPath expression")
+	if expression == nil {
+		return nil, p.errorf(t, "expected XPath expression")
+	}
+	return p.parseFilterSuffix(expression, filterStart)
+}
+
+// parseFilterSuffix implements XPath 1.0 FilterExpr and the FilterExpr path
+// forms. In particular, it accepts (//item)[1]/text() without folding [1]
+// into the final step of //item, which would change its meaning.
+func (p *XPathParser) parseFilterSuffix(base Expression, start int) (Expression, error) {
+	var predicates []Expression
+	for p.accept(xpathLBracket, "") {
+		if p.current().kind == xpathRBracket {
+			return nil, p.errorf(p.current(), "empty predicate")
+		}
+		predicate, err := p.parseOr()
+		if err != nil {
+			return nil, err
+		}
+		if _, err := p.expect(xpathRBracket, "", "']'"); err != nil {
+			return nil, err
+		}
+		predicates = append(predicates, predicate)
+	}
+
+	var following []PathStep
+	for p.current().kind == xpathSlash || p.current().kind == xpathDoubleSlash {
+		deep := p.next().kind == xpathDoubleSlash
+		if !p.canStartLocationPath() {
+			return nil, p.errorf(p.current(), "expected location step")
+		}
+		step, err := p.parseLocationStep()
+		if err != nil {
+			return nil, err
+		}
+		step.Descendant = deep
+		following = append(following, step)
+	}
+
+	if len(predicates) == 0 && len(following) == 0 {
+		return base, nil
+	}
+	if start == 0 && expressionSpan(base).Start != 0 {
+		start = expressionSpan(base).Start
+	}
+	return &FilterExpression{
+		Base: base, Predicates: predicates, Following: following,
+		Span: SourceSpan{Start: start, End: p.current().start},
+	}, nil
 }
 
 func (p *XPathParser) looksLikeFunction() bool {
@@ -541,6 +596,8 @@ func expressionSpan(expression Expression) SourceSpan {
 	case *AxisExpression:
 		return value.Span
 	case *PathExpression:
+		return value.Span
+	case *FilterExpression:
 		return value.Span
 	case *FunctionExpression:
 		return value.Span
