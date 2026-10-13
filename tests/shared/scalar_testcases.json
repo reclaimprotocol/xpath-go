@@ -154,5 +154,23 @@
     "html": "<p>name:first</p><p>name:second</p>",
     "xpath": "substring-after(//p, ':')",
     "want": "first"
+  },
+  {
+    "name": "count overlapping descendants",
+    "html": "<div><div><p>one</p></div></div>",
+    "xpath": "count(//div//p)",
+    "want": "1"
+  },
+  {
+    "name": "count shared parents",
+    "html": "<div><p>one</p><p>two</p></div>",
+    "xpath": "count(//p/..)",
+    "want": "1"
+  },
+  {
+    "name": "path function uses document order",
+    "html": "<div id=\"outer\"><div id=\"inner\"><p>one</p></div></div>",
+    "xpath": "string(//p/ancestor::div/@id)",
+    "want": "outer"
   }
 ]

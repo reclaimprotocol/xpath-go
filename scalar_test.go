@@ -134,3 +134,10 @@ func TestScalarNodeNames(t *testing.T) {
 		})
 	}
 }
+
+func TestScalarFilterDeduplicatesInput(t *testing.T) {
+	results, err := Query(`string((//div//p)[2])`, `<div><div><p>one</p></div><p>two</p></div>`)
+	if err != nil || !reflect.DeepEqual(results, []Result{{Value: "two", TextContent: "two"}}) {
+		t.Fatalf("got %#v, %v; want second distinct node's value", results, err)
+	}
+}
