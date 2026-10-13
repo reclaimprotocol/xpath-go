@@ -60,7 +60,7 @@ jobs:
         run: go test -count=1 -coverpkg=./... -coverprofile=coverage.out ./...
       - name: Upload coverage
         if: matrix.go-version == env.GO_VERSION
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v7
         with:
           files: ./coverage.out
           flags: unittests
