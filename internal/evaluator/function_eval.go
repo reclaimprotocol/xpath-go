@@ -146,24 +146,27 @@ func (e *Evaluator) evaluateFunctionValue(fn *FunctionCall, node *types.Node) xp
 		}
 		return booleanValue(false)
 
-	case "local-name":
-		if len(fn.Arguments) != 0 || node.Type != types.ElementNode && node.Type != types.AttributeNode && node.Type != types.ProcessingInstructionNode {
+	case "local-name", "name", "namespace-uri":
+		if len(fn.Arguments) == 1 {
+			value := evaluateXPathValue(fn.Arguments[0], node, e)
+			if value.kind != nodeSetXPathValue {
+				return xpathValue{kind: invalidXPathValue}
+			}
+			if len(value.nodes) == 0 {
+				return stringValue("")
+			}
+			node = value.nodes[0]
+		}
+		if node == nil || node.Type != types.ElementNode && node.Type != types.AttributeNode && node.Type != types.ProcessingInstructionNode {
 			return stringValue("")
 		}
-		if node.LocalName != "" {
+		if fn.Name == "namespace-uri" {
+			return stringValue(node.NamespaceURI)
+		}
+		if fn.Name == "local-name" && node.LocalName != "" {
 			return stringValue(node.LocalName)
 		}
 		return stringValue(node.Name)
-	case "name":
-		if len(fn.Arguments) != 0 || node.Type != types.ElementNode && node.Type != types.AttributeNode && node.Type != types.ProcessingInstructionNode {
-			return stringValue("")
-		}
-		return stringValue(node.Name)
-	case "namespace-uri":
-		if len(fn.Arguments) != 0 {
-			return stringValue("")
-		}
-		return stringValue(node.NamespaceURI)
 	}
 
 	// Substring retains its existing bounded implementation for this batch;

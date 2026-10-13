@@ -106,3 +106,31 @@ func TestScalarDocumentContext(t *testing.T) {
 		}
 	}
 }
+
+func TestScalarNodeNames(t *testing.T) {
+	for _, tc := range []struct{ expression, html, want string }{
+		{`name(//p)`, `<p>text</p>`, "p"},
+		{`local-name(//p)`, `<p>text</p>`, "p"},
+		{`name(//a | //z)`, `<z>first</z><a>second</a>`, "z"},
+		{`name(//p/@id)`, `<p id="value">text</p>`, "id"},
+		{`local-name(//svg/@*[name()='xlink:href'])`, `<svg xlink:href="#target"></svg>`, "href"},
+		{`name(//p/text())`, `<p>text</p>`, ""},
+		{`name(//missing)`, `<p>text</p>`, ""},
+		{`local-name(//missing)`, `<p>text</p>`, ""},
+		{`namespace-uri(//missing)`, `<p>text</p>`, ""},
+		{`namespace-uri(//svg)`, `<svg></svg>`, "http://www.w3.org/2000/svg"},
+		{`namespace-uri(//svg/@*[name()='xlink:href'])`, `<svg xlink:href="#target"></svg>`, "http://www.w3.org/1999/xlink"},
+		{`name()`, `<p>text</p>`, ""},
+	} {
+		t.Run(tc.expression, func(t *testing.T) {
+			compiled, err := Compile(tc.expression)
+			if err != nil {
+				t.Fatal(err)
+			}
+			got, err := compiled.Evaluate(tc.html)
+			if err != nil || !reflect.DeepEqual(got, []Result{{Value: tc.want, TextContent: tc.want}}) {
+				t.Fatalf("got %#v, %v; want %q", got, err, tc.want)
+			}
+		})
+	}
+}
