@@ -1,0 +1,158 @@
+[
+  {
+    "name": "concat input name fields",
+    "html": "<input id=\"firstname\" value=\"Ada\"><input id=\"lastname\" value=\"Lovelace\">",
+    "xpath": "concat(//input[@id='firstname']/@value, ' ', //input[@id='lastname']/@value)",
+    "want": "Ada Lovelace"
+  },
+  {
+    "name": "concat uses first matching attribute",
+    "html": "<input id=\"firstname\" value=\"Ada\"><input id=\"firstname\" value=\"Other\"><input id=\"lastname\" value=\"Lovelace\">",
+    "xpath": "concat(//input[@id='firstname']/@value, ' ', //input[@id='lastname']/@value)",
+    "want": "Ada Lovelace"
+  },
+  {
+    "name": "OrangeHRM JSON name fields",
+    "html": "<oxd-layout :user=\"{&quot;firstName&quot;:&quot;Zoë&quot;,&quot;lastName&quot;:&quot;李&quot;}\"></oxd-layout>",
+    "xpath": "concat(\n substring-before(substring-after(string(//oxd-layout/@*[name()=':user']), '\"firstName\":\"'), '\"'),\n ' ',\n substring-before(substring-after(string(//oxd-layout/@*[name()=':user']), '\"lastName\":\"'), '\"')\n)",
+    "want": "Zoë 李"
+  },
+  {
+    "name": "decoded attribute values",
+    "html": "<input value=\"A&amp;B\">",
+    "xpath": "concat(//input/@value, '!')",
+    "want": "A&B!"
+  },
+  {
+    "name": "before first occurrence",
+    "html": "<main></main>",
+    "xpath": "substring-before('a:b:c', ':')",
+    "want": "a"
+  },
+  {
+    "name": "after first occurrence",
+    "html": "<main></main>",
+    "xpath": "substring-after('a:b:c', ':')",
+    "want": "b:c"
+  },
+  {
+    "name": "before empty delimiter",
+    "html": "<main></main>",
+    "xpath": "substring-before('abc', '')",
+    "want": ""
+  },
+  {
+    "name": "after empty delimiter",
+    "html": "<main></main>",
+    "xpath": "substring-after('abc', '')",
+    "want": "abc"
+  },
+  {
+    "name": "before absent delimiter",
+    "html": "<main></main>",
+    "xpath": "substring-before('abc', 'z')",
+    "want": ""
+  },
+  {
+    "name": "after absent delimiter",
+    "html": "<main></main>",
+    "xpath": "substring-after('abc', 'z')",
+    "want": ""
+  },
+  {
+    "name": "before empty input",
+    "html": "<main></main>",
+    "xpath": "substring-before('', ':')",
+    "want": ""
+  },
+  {
+    "name": "after empty input",
+    "html": "<main></main>",
+    "xpath": "substring-after('', ':')",
+    "want": ""
+  },
+  {
+    "name": "before Unicode delimiter",
+    "html": "<main></main>",
+    "xpath": "substring-before('Zoë🌟李🌟Fin', '🌟')",
+    "want": "Zoë"
+  },
+  {
+    "name": "after Unicode delimiter",
+    "html": "<main></main>",
+    "xpath": "substring-after('Zoë🌟李🌟Fin', '🌟')",
+    "want": "李🌟Fin"
+  },
+  {
+    "name": "substring numeric conversion",
+    "html": "<main></main>",
+    "xpath": "substring-before(12345, 34)",
+    "want": "12"
+  },
+  {
+    "name": "substring boolean conversion",
+    "html": "<main></main>",
+    "xpath": "substring-after(true(), 'r')",
+    "want": "ue"
+  },
+  {
+    "name": "substring missing node",
+    "html": "<main></main>",
+    "xpath": "substring-after(//missing, ':')",
+    "want": ""
+  },
+  {
+    "name": "empty string scalar",
+    "html": "<main></main>",
+    "xpath": "string(//missing)",
+    "want": ""
+  },
+  {
+    "name": "zero scalar",
+    "html": "<main></main>",
+    "xpath": "count(//missing)",
+    "want": "0"
+  },
+  {
+    "name": "false scalar",
+    "html": "<main></main>",
+    "xpath": "boolean(//missing)",
+    "want": "false"
+  },
+  {
+    "name": "true scalar",
+    "html": "<main></main>",
+    "xpath": "true()",
+    "want": "true"
+  },
+  {
+    "name": "arithmetic scalar",
+    "html": "<main></main>",
+    "xpath": "2 + 3 * 4",
+    "want": "14"
+  },
+  {
+    "name": "NaN scalar",
+    "html": "<main></main>",
+    "xpath": "number('invalid')",
+    "want": "NaN"
+  },
+  {
+    "name": "infinity scalar",
+    "html": "<main></main>",
+    "xpath": "1 div 0",
+    "want": "Infinity"
+  },
+  {
+    "name": "literal scalar",
+    "html": "<main></main>",
+    "xpath": "'hello'",
+    "want": "hello"
+  },
+  {
+    "name": "substring node set conversion",
+    "html": "<p>name:first</p><p>name:second</p>",
+    "xpath": "substring-after(//p, ':')",
+    "want": "first"
+  }
+]

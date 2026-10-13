@@ -71,7 +71,7 @@ subset and known gaps.
 
 ### Functions (validated subset)
 - **Node Functions**: `text()`, `node()`, `position()`, `last()`, `count()`
-- **String Functions**: `string()`, `normalize-space()`, `starts-with()`, `contains()`, `substring()`
+- **String Functions**: `string()`, `concat()`, `normalize-space()`, `starts-with()`, `contains()`, `substring()`, `substring-before()`, `substring-after()`
 - **Boolean Functions**: `boolean()`, `not()`
 - **Number Functions**: `number()`, `string-length()`
 
@@ -258,6 +258,27 @@ xpath.Query("//li[1]", html)                    // First list item
 xpath.Query("//tr[last()]", html)               // Last table row  
 xpath.Query("//div[position()>2]", html)        // Divs after second
 ```
+
+### Computed Values
+
+Top-level string, number, and boolean expressions return one `Result` with
+`Value` and `TextContent` set to the XPath string representation, including
+empty strings, `0`, and `false`. `NodeType` is `0`; node metadata, `Path`, and
+source locations are empty or zero. Output format and content-only options
+apply to node selections and do not change computed values.
+
+```go
+results, err := xpath.Query(
+    `concat(//input[@id='firstname']/@value, ' ', //input[@id='lastname']/@value)`,
+    `<input id="firstname" value="Ada"><input id="lastname" value="Lovelace">`,
+)
+// On success, results[0].Value is "Ada Lovelace".
+```
+
+The same behavior is available through `Compile` and all query/evaluation
+variants. `substring-before(text, delimiter)` and
+`substring-after(text, delimiter)` split at the first occurrence of the
+delimiter, returning an empty string when it is absent.
 
 ### Complex Predicates
 

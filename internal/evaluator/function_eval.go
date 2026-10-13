@@ -114,6 +114,21 @@ func (e *Evaluator) evaluateFunctionValue(fn *FunctionCall, node *types.Node) xp
 			evaluateXPathValue(fn.Arguments[1], node, e).toString(),
 		))
 
+	case "substring-before", "substring-after":
+		if len(fn.Arguments) != 2 {
+			return xpathValue{kind: invalidXPathValue}
+		}
+		text := evaluateXPathValue(fn.Arguments[0], node, e).toString()
+		search := evaluateXPathValue(fn.Arguments[1], node, e).toString()
+		index := strings.Index(text, search)
+		if index < 0 {
+			return stringValue("")
+		}
+		if fn.Name == "substring-before" {
+			return stringValue(text[:index])
+		}
+		return stringValue(text[index+len(search):])
+
 	case "concat":
 		var result strings.Builder
 		for _, argument := range fn.Arguments {

@@ -29,6 +29,14 @@ Evaluates an XPath expression against browser-recovered HTML with default option
 - `[]Result`: Slice of matching results with location tracking
 - `error`: Error if parsing or evaluation fails
 
+Node selections return one result per matching node. String, number, and
+boolean expressions return exactly one result with both `Value` and
+`TextContent` containing the XPath string representation. An empty string is
+one result; an empty node set is zero results. Scalar results have `NodeType: 0`,
+empty node metadata and `Path`, and zero source locations. `OutputFormat`,
+`ContentsOnly`, and `IncludeLocation` do not change scalar results. This
+contract also applies to the byte-oriented and compiled evaluation APIs.
+
 **Example:**
 ```go
 results, err := xpath.Query("//div[@id='main']", htmlContent)
@@ -288,7 +296,7 @@ All errors implement the standard Go `error` interface and provide descriptive m
 
 ```go
 // Get library version
-version := xpath.Version        // "1.7.1"
+version := xpath.Version        // "1.8.0"
 apiVersion := xpath.APIVersion  // "v1"
 
 // Get build information

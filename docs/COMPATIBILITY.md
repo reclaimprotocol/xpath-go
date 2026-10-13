@@ -27,6 +27,9 @@ conformance.
   `string`, `number`, `boolean`, `true`, `false`, `concat`, `name`,
   `local-name`, `namespace-uri`, string functions, positional functions, and
   arithmetic/boolean precedence.
+- Added top-level scalar results through the public query and compiled APIs,
+  plus `substring-before` and `substring-after`. Shared Go/browser fixtures
+  cover concatenated input values and name extraction from a JSON attribute.
 
 ### Browser-style HTML parsing
 
@@ -84,7 +87,7 @@ The generated report is
   browser fixtures can still expose unsupported recovery or XPath behavior.
 - **XPath 1.0 surface not yet complete:** variable references, a namespace
   resolver/namespace axis, and unimplemented core functions such as `id`,
-  `lang`, `sum`, `substring-before`, `substring-after`, `translate`, `floor`,
+  `lang`, `sum`, `translate`, `floor`,
   `ceiling`, and `round` remain outside the validated subset.
 - **Language scope is the documented XPath 1.0 subset:** sequences, richer type
   systems, variable-binding expressions, and functions outside the validated

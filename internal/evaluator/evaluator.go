@@ -62,8 +62,28 @@ func (e *Evaluator) EvaluateWithDocument(xpathExpr, content string, prepareDocum
 // program. The Evaluator remains per-call mutable because it owns the parsed
 // document and axis/order indexes.
 func (e *Evaluator) EvaluateProgramWithDocument(program *Program, content string, prepareDocument func(*types.Node)) ([]types.Node, error) {
+	result, err := e.EvaluateProgramValueWithDocument(program, content, prepareDocument)
+	if err != nil {
+		return nil, err
+	}
+	if result.Scalar != nil {
+		return nil, fmt.Errorf("XPath program did not select a node set")
+	}
+	return result.Nodes, nil
+}
+
+// Evaluation holds either selected nodes or a scalar in XPath string form.
+// A non-nil Scalar distinguishes an empty string from an empty node set.
+type Evaluation struct {
+	Nodes  []types.Node
+	Scalar *string
+}
+
+// EvaluateProgramValueWithDocument evaluates node sets and scalar expressions
+// against a document context with position and size both equal to one.
+func (e *Evaluator) EvaluateProgramValueWithDocument(program *Program, content string, prepareDocument func(*types.Node)) (Evaluation, error) {
 	if program == nil || program.root == nil {
-		return nil, fmt.Errorf("XPath program is nil")
+		return Evaluation{}, fmt.Errorf("XPath program is nil")
 	}
 
 	// Parse HTML/XML content
@@ -72,18 +92,23 @@ func (e *Evaluator) EvaluateProgramWithDocument(program *Program, content string
 	e.attributeNodes = make(map[*types.Node][]*types.Node)
 	documentNode, err := e.htmlParser.Parse(content)
 	if err != nil {
-		return nil, fmt.Errorf("HTML parsing failed: %w", err)
+		return Evaluation{}, fmt.Errorf("HTML parsing failed: %w", err)
 	}
 	if prepareDocument != nil {
 		prepareDocument(documentNode)
 	}
 	e.prepareAxisOrder(documentNode)
+	e.contextPosition, e.contextSize = 1, 1
 
 	// Evaluate the immutable typed tree directly.  In particular, this does not
 	// call a parser: compiled XPath values are safe to share between goroutines.
 	value := evaluateXPathValue(program.root, documentNode, e)
+	if value.kind == invalidXPathValue {
+		return Evaluation{}, fmt.Errorf("XPath program returned an invalid value")
+	}
 	if value.kind != nodeSetXPathValue {
-		return nil, fmt.Errorf("XPath program did not select a node set")
+		scalar := value.toString()
+		return Evaluation{Scalar: &scalar}, nil
 	}
 	nodes := e.removeDuplicates(value.nodes)
 	e.sortNodePointersByTreeOrder(nodes, documentNode)
@@ -96,7 +121,7 @@ func (e *Evaluator) EvaluateProgramWithDocument(program *Program, content string
 		result.Origin = node
 		results = append(results, result)
 	}
-	return results, nil
+	return Evaluation{Nodes: results}, nil
 }
 
 // applyNodeTest filters nodes based on node test
