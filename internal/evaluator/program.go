@@ -24,9 +24,6 @@ func Compile(expression string) (*Program, error) {
 	if err != nil {
 		return nil, fmt.Errorf("XPath parsing failed: %w", err)
 	}
-	if !isNodeSetExpression(root) {
-		return nil, fmt.Errorf("XPath parsing failed: top-level XPath expression must select nodes")
-	}
 	return &Program{root: root}, nil
 }
 

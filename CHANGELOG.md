@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-10-13
+
+### Fixed
+- Support top-level string, number, and boolean results, including `concat`,
+  through query and compiled evaluation APIs.
+- Implement XPath 1.0 `substring-before` and `substring-after`, including
+  nested extraction from JSON stored in HTML attributes.
+
 ## [1.7.1] - 2026-08-28
 
 ### Fixed

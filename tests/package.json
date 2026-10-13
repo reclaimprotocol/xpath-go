@@ -1,6 +1,6 @@
 {
   "name": "xpath-go-tests",
-  "version": "1.7.1",
+  "version": "1.8.0",
   "private": true,
   "description": "XPath Go library compatibility tests with jsdom",
   "main": "comprehensive_compare.js",

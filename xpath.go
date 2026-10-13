@@ -8,7 +8,8 @@ import (
 	"github.com/reclaimprotocol/xpath-go/pkg/types"
 )
 
-// Result represents an XPath query result with location tracking
+// Result represents a selected node or a scalar XPath value. Scalars populate
+// Value and TextContent; NodeType, source locations, and Path remain zero-valued.
 type Result struct {
 	Value         string            `json:"value"`
 	NodeName      string            `json:"nodeName"`
@@ -88,13 +89,12 @@ func QueryBytesWithOptions(xpathExpr string, content []byte, opts Options) ([]Re
 	eval.SetScriptingEnabled(opts.ScriptingEnabled)
 	stopTrace := enableEvaluationTrace(opts.Debug)
 	defer stopTrace()
-	nodes, err := eval.EvaluateProgramWithDocument(program, decodedContent, mapper.remapDocumentLocations)
+	result, err := eval.EvaluateProgramValueWithDocument(program, decodedContent, mapper.remapDocumentLocations)
 	if err != nil {
 		return nil, err
 	}
 
-	// Convert nodes to results
-	return convertNodesToResults(nodes, opts, string(content)), nil
+	return convertEvaluationToResults(result, opts, string(content)), nil
 }
 
 // Compile pre-compiles an XPath expression for repeated use
@@ -144,12 +144,19 @@ func (x *XPath) EvaluateBytesWithOptions(content []byte, opts Options) ([]Result
 	}
 	stopTrace := enableEvaluationTrace(opts.Debug)
 	defer stopTrace()
-	nodes, err := eval.EvaluateProgramWithDocument(x.program, decodedContent, mapper.remapDocumentLocations)
+	result, err := eval.EvaluateProgramValueWithDocument(x.program, decodedContent, mapper.remapDocumentLocations)
 	if err != nil {
 		return nil, err
 	}
 
-	return convertNodesToResults(nodes, opts, string(content)), nil
+	return convertEvaluationToResults(result, opts, string(content)), nil
+}
+
+func convertEvaluationToResults(result evaluator.Evaluation, opts Options, originalContent string) []Result {
+	if result.Scalar != nil {
+		return []Result{{Value: *result.Scalar, TextContent: *result.Scalar}}
+	}
+	return convertNodesToResults(result.Nodes, opts, originalContent)
 }
 
 // GetExpression returns the original XPath expression

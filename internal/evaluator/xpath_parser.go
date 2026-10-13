@@ -337,6 +337,11 @@ func (p *XPathParser) parseUnion() (Expression, error) {
 		operands = append(operands, right)
 	}
 	if operands != nil {
+		for _, operand := range operands {
+			if !isNodeSetExpression(operand) {
+				return nil, p.errorf(p.current(), "union operands must select nodes")
+			}
+		}
 		return &UnionExpression{Operands: operands, Span: SourceSpan{Start: expressionSpan(operands[0]).Start, End: expressionSpan(operands[len(operands)-1]).End}}, nil
 	}
 	return left, nil
@@ -421,6 +426,9 @@ func (p *XPathParser) parseFilterSuffix(base Expression, start int) (Expression,
 
 	if len(predicates) == 0 && len(following) == 0 {
 		return base, nil
+	}
+	if !isNodeSetExpression(base) {
+		return nil, p.errorf(p.current(), "filter and path expressions must select nodes")
 	}
 	if start == 0 && expressionSpan(base).Start != 0 {
 		start = expressionSpan(base).Start
@@ -639,7 +647,7 @@ func validateFunctionArity(name string, arguments int) error {
 		if arguments > 1 {
 			return fmt.Errorf("%s() expects zero or one argument, got %d", name, arguments)
 		}
-	case "contains", "starts-with":
+	case "contains", "starts-with", "substring-before", "substring-after":
 		if arguments != 2 {
 			return fmt.Errorf("%s() expects exactly two arguments, got %d", name, arguments)
 		}

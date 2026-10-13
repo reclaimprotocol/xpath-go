@@ -27,3 +27,18 @@ for (const testCase of cases) {
 }
 
 console.log(`typed conversion browser oracle: ${cases.length} cases passed`);
+
+const scalarCases = JSON.parse(fs.readFileSync(
+    path.join(__dirname, 'shared', 'scalar_testcases.json'),
+    'utf8'
+));
+for (const testCase of scalarCases) {
+    const dom = new JSDOM(testCase.html);
+    const document = dom.window.document;
+    const result = document.evaluate(
+        testCase.xpath, document, null, dom.window.XPathResult.STRING_TYPE, null
+    );
+    assert.strictEqual(result.stringValue, testCase.want, testCase.name);
+    dom.window.close();
+}
+console.log(`scalar browser oracle: ${scalarCases.length} cases passed`);

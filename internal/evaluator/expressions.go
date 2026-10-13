@@ -599,6 +599,13 @@ func evaluatePathNodes(path *PathExpression, node *types.Node, evaluator *Evalua
 // node set. Axis expressions use this after their typed node test, which keeps
 // an explicit axis followed by a location path out of string-based parsing.
 func evaluatePathSteps(steps []PathStep, currentNodes []*types.Node, evaluator *Evaluator) []*types.Node {
+	if len(currentNodes) == 0 {
+		return currentNodes
+	}
+	root := currentNodes[0]
+	for root.Parent != nil {
+		root = root.Parent
+	}
 	for _, step := range steps {
 		var nextNodes []*types.Node
 		stepContexts := currentNodes
@@ -607,6 +614,7 @@ func evaluatePathSteps(steps []PathStep, currentNodes []*types.Node, evaluator *
 			for _, current := range currentNodes {
 				stepContexts = append(stepContexts, evaluator.getDescendantNodes(current, true)...)
 			}
+			stepContexts = evaluator.removeDuplicates(stepContexts)
 		}
 		for _, current := range stepContexts {
 			if step.Axis != "" && step.Axis != "child" {
@@ -658,7 +666,10 @@ func evaluatePathSteps(steps []PathStep, currentNodes []*types.Node, evaluator *
 			}
 			nextNodes = append(nextNodes, matching...)
 		}
-		currentNodes = nextNodes
+		// Each step produces a node set, including when a function or filter
+		// consumes it before the public result conversion.
+		currentNodes = evaluator.removeDuplicates(nextNodes)
+		evaluator.sortNodePointersByTreeOrder(currentNodes, root)
 		if len(currentNodes) == 0 {
 			break
 		}
